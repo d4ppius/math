@@ -16,8 +16,8 @@ return new class extends Migration
             $table->boolean('is_correct');
             $table->unsignedInteger('response_time_ms');
             $table->integer('points_awarded')->default(0);
-            $table->timestamp('question_issued_at');
-            $table->timestamp('answered_at');
+            $table->dateTime('question_issued_at');
+            $table->dateTime('answered_at');
             $table->timestamps();
         });
     }

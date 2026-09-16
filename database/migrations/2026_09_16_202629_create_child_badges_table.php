@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('child_id')->constrained()->cascadeOnDelete();
             $table->foreignId('badge_id')->constrained()->cascadeOnDelete();
-            $table->timestamp('earned_at');
+            $table->dateTime('earned_at');
             $table->timestamps();
 
             $table->unique(['child_id', 'badge_id']);
