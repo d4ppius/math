@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+#[Fillable(['child_id', 'exercise_type_id', 'active_groups', 'session_duration_minutes', 'target_frequency', 'target_days', 'sound_enabled'])]
+class ChildExerciseSetting extends Model
+{
+    use HasFactory;
+
+    protected function casts(): array
+    {
+        return [
+            'active_groups' => 'array',
+            'target_days' => 'array',
+            'sound_enabled' => 'boolean',
+        ];
+    }
+
+    public function child(): BelongsTo
+    {
+        return $this->belongsTo(Child::class);
+    }
+
+    public function exerciseType(): BelongsTo
+    {
+        return $this->belongsTo(ExerciseType::class);
+    }
+}
