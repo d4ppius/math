@@ -58,11 +58,14 @@ chmod -R 775 storage bootstrap/cache
 
 Je nach Plesk-Setup muss der Besitzer/die Gruppe auf den PHP-Ausführungsuser des Plesk-Webspace angepasst werden.
 
-## 6. Datenbank migrieren
+## 6. Datenbank migrieren und Aufgaben seeden
 
 ```bash
 php artisan migrate --force
+php artisan db:seed --force
 ```
+
+Der Seed-Schritt ist **nicht optional**: er legt die Aufgabentypen (z.B. "Einmaleins") und alle Fakten (1×1 bis 9×10) an. Ohne ihn bleiben Übungseinstellungen und Statistik für jedes Kind leer, ohne dass ein Fehler auftritt. Der Befehl ist gefahrlos mehrfach ausführbar (`updateOrCreate`, keine Duplikate).
 
 ## 7. Cronjob für den Laravel-Scheduler anlegen
 
@@ -84,6 +87,7 @@ composer install --no-dev --optimize-autoloader
 npm ci
 npm run build
 php artisan migrate --force
+php artisan db:seed --force
 php artisan optimize
 ```
 

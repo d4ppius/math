@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Parent;
 
 use App\Http\Controllers\Controller;
 use App\Models\Child;
-use App\Models\ExerciseType;
-use App\Services\ExerciseTypes\ExerciseTypeRegistry;
+use App\Services\ExerciseTypes\ExerciseSettingsProvisioner;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -24,7 +23,7 @@ class ChildController extends Controller
         ]);
     }
 
-    public function store(Request $request, ExerciseTypeRegistry $registry): RedirectResponse
+    public function store(Request $request, ExerciseSettingsProvisioner $provisioner): RedirectResponse
     {
         $validated = $this->validateChild($request);
 
@@ -44,7 +43,7 @@ class ChildController extends Controller
             $child->setPin($validated['pin']);
         }
 
-        $this->createDefaultExerciseSettings($child, $registry);
+        $provisioner->ensureDefaultsFor($child);
 
         return redirect()->route('parent.children.edit', $child)
             ->with('plain_login_token', $plainToken)
@@ -107,25 +106,6 @@ class ChildController extends Controller
         return redirect()->route('parent.children.edit', $child)
             ->with('plain_login_token', $plainToken)
             ->with('status', 'Neuer Link wurde erzeugt. Der alte Homescreen-Icon funktioniert nicht mehr.');
-    }
-
-    private function createDefaultExerciseSettings(Child $child, ExerciseTypeRegistry $registry): void
-    {
-        foreach ($registry->all() as $implementation) {
-            $exerciseType = ExerciseType::where('key', $implementation->key())->first();
-
-            if (! $exerciseType) {
-                continue;
-            }
-
-            $child->exerciseSettings()->create([
-                'exercise_type_id' => $exerciseType->id,
-                'active_groups' => $implementation->defaultActiveGroups(),
-                'session_duration_minutes' => 10,
-                'target_frequency' => 'daily',
-                'sound_enabled' => true,
-            ]);
-        }
     }
 
     private function validateChild(Request $request, ?Child $child = null): array

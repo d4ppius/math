@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Parent;
 
 use App\Http\Controllers\Controller;
 use App\Models\Child;
+use App\Services\ExerciseTypes\ExerciseSettingsProvisioner;
 use App\Services\ExerciseTypes\ExerciseTypeRegistry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,9 +12,14 @@ use Illuminate\View\View;
 
 class ExerciseSettingController extends Controller
 {
-    public function edit(Request $request, Child $child, ExerciseTypeRegistry $registry): View
+    public function edit(Request $request, Child $child, ExerciseTypeRegistry $registry, ExerciseSettingsProvisioner $provisioner): View
     {
         $this->authorize('view', $child);
+
+        // Self-heal children that predate an exercise type's seed data
+        // (e.g. deployed before `db:seed` was run) instead of showing a
+        // silently empty settings page.
+        $provisioner->ensureDefaultsFor($child);
 
         $settings = $child->exerciseSettings()->with('exerciseType')->get()
             ->map(function ($setting) use ($registry) {
