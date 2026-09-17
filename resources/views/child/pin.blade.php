@@ -1,4 +1,4 @@
-<x-child-layout :child="$child ?? null">
+<x-child-layout :child="$child ?? null" :token="$token ?? null">
     <div class="bg-white rounded-3xl shadow-xl p-8 w-full max-w-sm text-center">
         <div class="text-6xl mb-2">🔒</div>
         <h1 class="text-2xl font-bold mb-4">{{ __('Gib deinen Code ein') }}</h1>

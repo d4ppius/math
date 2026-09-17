@@ -12,7 +12,20 @@
 
         <title>{{ $child?->name ?? config('app.name') }}</title>
 
-        <link rel="manifest" href="/manifest.webmanifest">
+        {{--
+            The manifest link only appears when $token is set — i.e. only
+            on the actual /k/{token} magic-link page. That per-child
+            manifest's start_url points right back at /k/{token}, so "Add
+            to Home Screen" (which iOS resolves via the manifest's
+            start_url once one is present, not the current page) still
+            re-opens the magic link. Pages reached without the token
+            (e.g. plain /kind visits) intentionally omit the manifest —
+            they're never the page a parent bookmarks from.
+        --}}
+        @if ($token)
+            <link rel="manifest" href="{{ route('child.manifest', ['token' => $token]) }}">
+        @endif
+
         @if ($child)
             <link rel="apple-touch-icon" href="{{ route('child.icon', ['child' => $child, 'size' => 180]) }}">
             <link rel="icon" href="{{ route('child.icon', ['child' => $child, 'size' => 32]) }}">

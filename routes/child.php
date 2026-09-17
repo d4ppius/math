@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Child\ChildAuthController;
 use App\Http\Controllers\Child\ChildHomeController;
+use App\Http\Controllers\Child\ChildPushSubscriptionController;
 use App\Http\Controllers\Child\PracticeSessionController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,11 @@ Route::middleware('auth:child')->group(function () {
     Route::post('/kind/logout', [ChildAuthController::class, 'logout'])->name('child.logout');
 
     Route::post('/kind/sessions', [PracticeSessionController::class, 'start'])->name('child.sessions.start');
+
+    Route::post('/kind/push-subscriptions', [ChildPushSubscriptionController::class, 'store'])
+        ->name('child.push-subscriptions.store');
+    Route::delete('/kind/push-subscriptions', [ChildPushSubscriptionController::class, 'destroy'])
+        ->name('child.push-subscriptions.destroy');
 
     Route::middleware('child.owns')->group(function () {
         Route::get('/kind/sessions/{session}', [PracticeSessionController::class, 'show'])->name('child.sessions.show');
