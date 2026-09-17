@@ -172,7 +172,9 @@ class PracticeSessionTest extends TestCase
             ]);
         }
 
-        $this->actingAs($child, 'child')->post(route('child.sessions.finish', $session));
+        $this->actingAs($child, 'child')
+            ->post(route('child.sessions.finish', $session))
+            ->assertRedirect(route('child.sessions.summary', $session));
 
         $log = DailyGoalLog::where('child_id', $child->id)->first();
         $this->assertNotNull($log);

@@ -2,11 +2,8 @@
 
 namespace App\Providers;
 
-use App\Events\PracticeSessionCompleted;
-use App\Listeners\EvaluateDailyGoal;
 use App\Services\ExerciseTypes\ExerciseTypeRegistry;
 use App\Services\Tenancy\FamilyContext;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Event::listen(PracticeSessionCompleted::class, EvaluateDailyGoal::class);
+        // Listeners in app/Listeners are auto-discovered by their handle()
+        // type-hint (see `php artisan event:list`) — registering them here
+        // too would attach them twice per event.
     }
 }

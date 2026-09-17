@@ -57,7 +57,13 @@ class DailyGoalNotificationTest extends TestCase
             ]);
         }
 
-        $this->actingAs($child, 'child')->post(route('child.sessions.finish', $session));
+        // assertRedirect (not just "did something happen") so a 500 from
+        // e.g. a duplicate-listener or date-matching bug in the
+        // PracticeSessionCompleted pipeline can never hide behind a
+        // notification-count assertion again.
+        $this->actingAs($child, 'child')
+            ->post(route('child.sessions.finish', $session))
+            ->assertRedirect(route('child.sessions.summary', $session));
 
         return $session->refresh();
     }
@@ -82,6 +88,20 @@ class DailyGoalNotificationTest extends TestCase
         $child = $this->makeReadyChild();
         User::factory()->for($child->family)->create();
 
+        $this->completeASessionWithAnswers($child, 10);
+        $this->completeASessionWithAnswers($child, 10);
+
+        Notification::assertSentTimes(DailyGoalAchieved::class, 1);
+    }
+
+    public function test_completing_several_sessions_the_same_day_never_errors(): void
+    {
+        Notification::fake();
+
+        $child = $this->makeReadyChild();
+        User::factory()->for($child->family)->create();
+
+        $this->completeASessionWithAnswers($child, 10);
         $this->completeASessionWithAnswers($child, 10);
         $this->completeASessionWithAnswers($child, 10);
 

@@ -19,14 +19,26 @@ class EvaluateDailyGoal
             return;
         }
 
-        $log = DailyGoalLog::firstOrCreate(
-            ['child_id' => $session->child_id, 'date' => $session->started_at->toDateString()],
-            ['goal_met' => true, 'practice_session_id' => $session->id],
-        );
+        $date = $session->started_at->toDateString();
 
-        if (! $log->wasRecentlyCreated) {
+        // Not firstOrCreate(): the 'date' cast serializes with a trailing
+        // "00:00:00", so an exact-string WHERE on the plain date value
+        // never matches the row it just inserted, and every subsequent
+        // session on the same day would crash on the unique constraint.
+        $existing = DailyGoalLog::where('child_id', $session->child_id)
+            ->whereDate('date', $date)
+            ->first();
+
+        if ($existing) {
             return;
         }
+
+        $log = DailyGoalLog::create([
+            'child_id' => $session->child_id,
+            'date' => $date,
+            'goal_met' => true,
+            'practice_session_id' => $session->id,
+        ]);
 
         $child = $session->child;
         $parents = $child->family->users;
