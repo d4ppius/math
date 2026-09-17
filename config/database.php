@@ -59,6 +59,11 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+            // Force the connection's session time_zone to match app.timezone
+            // (UTC) regardless of the MySQL server's own default, so any
+            // TIMESTAMP column's implicit UTC<->session conversion can't
+            // silently drift from what PHP's now() assumes.
+            'timezone' => '+00:00',
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],

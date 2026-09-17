@@ -125,6 +125,25 @@ class PracticeSessionTest extends TestCase
         Carbon::setTestNow();
     }
 
+    public function test_time_remaining_stays_sane_even_if_started_at_drifts_into_the_future(): void
+    {
+        // Regression test: a clock/timezone skew between the request that
+        // created the session and the one reading it back must never turn
+        // "planned - elapsed" into a huge bogus countdown (see
+        // PracticeSessionController::timeRemainingSeconds).
+        $child = $this->makeReadyChild();
+        $this->actingAs($child, 'child')->post(route('child.sessions.start'));
+        $session = PracticeSession::first();
+
+        $session->forceFill(['started_at' => now()->addHours(2)])->save();
+
+        $response = $this->actingAs($child, 'child')
+            ->getJson(route('child.sessions.next-question', $session));
+
+        $response->assertOk();
+        $this->assertLessThanOrEqual(600, $response->json('time_remaining_seconds'));
+    }
+
     public function test_a_child_can_manually_finish_a_session_early(): void
     {
         $child = $this->makeReadyChild();

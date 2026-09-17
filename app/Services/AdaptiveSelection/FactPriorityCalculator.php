@@ -32,7 +32,7 @@ class FactPriorityCalculator
         $speedPenalty = min(max($stat->avg_response_ms / max($targetResponseMs, 1), 0.3), 2.0) / 2.0;
 
         $daysSinceLast = $stat->last_practiced_at
-            ? $stat->last_practiced_at->diffInDays(Carbon::now())
+            ? max(0, $stat->last_practiced_at->diffInDays(Carbon::now(), false))
             : 999;
         $recencyFactor = min($daysSinceLast / 7, 1.0);
 

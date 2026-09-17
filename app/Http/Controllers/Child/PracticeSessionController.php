@@ -152,6 +152,12 @@ class PracticeSessionController extends Controller
 
     private function timeRemainingSeconds(PracticeSession $session): int
     {
-        return max(0, $session->planned_duration_seconds - $session->started_at->diffInSeconds(now()));
+        // Signed diff: negative when started_at is somehow in the future
+        // (clock/timezone skew) rather than the past. Clamping elapsed to
+        // 0 in that case avoids diffInSeconds()'s sign flipping "elapsed"
+        // into a huge bogus remaining-time value.
+        $elapsedSeconds = max(0, $session->started_at->diffInSeconds(now(), false));
+
+        return max(0, $session->planned_duration_seconds - $elapsedSeconds);
     }
 }
