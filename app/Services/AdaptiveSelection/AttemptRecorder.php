@@ -28,7 +28,7 @@ class AttemptRecorder
         $issuedAt = $session->current_question_issued_at;
 
         $now = Carbon::now();
-        $responseTimeMs = max(0, $issuedAt->diffInMilliseconds($now));
+        $responseTimeMs = max(0, (int) round($issuedAt->diffInMilliseconds($now)));
         $isCorrect = $givenAnswer === $fact->correct_answer;
 
         $implementation = $this->registry->get($session->exerciseType->key);
