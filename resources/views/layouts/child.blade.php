@@ -27,8 +27,8 @@
         @endif
 
         @if ($child)
-            <link rel="apple-touch-icon" href="{{ route('child.icon', ['child' => $child, 'size' => 180]) }}">
-            <link rel="icon" href="{{ route('child.icon', ['child' => $child, 'size' => 32]) }}">
+            <link rel="apple-touch-icon" href="{{ $child->iconUrl(180) }}">
+            <link rel="icon" href="{{ $child->iconUrl(32) }}">
         @else
             @include('layouts._head-icons')
         @endif

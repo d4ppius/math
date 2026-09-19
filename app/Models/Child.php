@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
+use App\Services\IconGenerator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use NotificationChannels\WebPush\HasPushSubscriptions;
@@ -88,6 +89,15 @@ class Child extends Model implements AuthenticatableContract
     public function pinMatches(string $pin): bool
     {
         return $this->pin_hash && Hash::check($pin, $this->pin_hash);
+    }
+
+    /**
+     * URL of this child's home-screen icon. The version query busts the
+     * (very sticky) iOS icon caches whenever the artwork changes.
+     */
+    public function iconUrl(int $size): string
+    {
+        return route('child.icon', ['child' => $this, 'size' => $size, 'v' => IconGenerator::VERSION]);
     }
 
     public function requiresPin(): bool

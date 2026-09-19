@@ -3,6 +3,8 @@
         $avatarEmoji = ['fox' => '🦊', 'owl' => '🦉', 'cat' => '🐱', 'bear' => '🐻', 'rabbit' => '🐰', 'panda' => '🐼'];
     @endphp
 
+    <x-mascot class="mascot-float mb-4" />
+
     <div class="bg-white rounded-3xl shadow-xl p-8 w-full max-w-sm text-center">
         <div class="text-7xl mb-2">{{ $avatarEmoji[$child->avatar] ?? '⭐' }}</div>
         <h1 class="text-3xl font-bold mb-1">{{ __('Hallo :name!', ['name' => $child->name]) }}</h1>

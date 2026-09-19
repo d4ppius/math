@@ -34,25 +34,25 @@ class ChildManifestController extends Controller
             'lang' => 'de',
             'icons' => [
                 [
-                    'src' => route('child.icon', ['child' => $child, 'size' => 192]),
+                    'src' => $child->iconUrl(192),
                     'sizes' => '192x192',
                     'type' => 'image/png',
                     'purpose' => 'any',
                 ],
                 [
-                    'src' => route('child.icon', ['child' => $child, 'size' => 512]),
+                    'src' => $child->iconUrl(512),
                     'sizes' => '512x512',
                     'type' => 'image/png',
                     'purpose' => 'any',
                 ],
                 [
-                    'src' => route('child.icon', ['child' => $child, 'size' => 192]),
+                    'src' => $child->iconUrl(192),
                     'sizes' => '192x192',
                     'type' => 'image/png',
                     'purpose' => 'maskable',
                 ],
                 [
-                    'src' => route('child.icon', ['child' => $child, 'size' => 512]),
+                    'src' => $child->iconUrl(512),
                     'sizes' => '512x512',
                     'type' => 'image/png',
                     'purpose' => 'maskable',

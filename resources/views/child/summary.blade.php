@@ -5,6 +5,8 @@
 @endphp
 
 <x-child-layout :child="$child">
+    <x-mascot class="mascot-hop mb-4" />
+
     <div class="bg-white rounded-3xl shadow-xl p-8 w-full max-w-sm text-center">
         <div class="text-6xl mb-3">🏁</div>
         <h1 class="text-2xl font-bold mb-1">{{ __('Super gemacht, :name!', ['name' => $child->name]) }}</h1>

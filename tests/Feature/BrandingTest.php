@@ -2,6 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Child;
+use App\Models\ExerciseType;
+use App\Models\PracticeSession;
+use App\Services\IconGenerator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -17,7 +21,7 @@ class BrandingTest extends TestCase
         $this->assertNotEmpty($manifest['icons']);
 
         foreach ($manifest['icons'] as $icon) {
-            $file = public_path(ltrim($icon['src'], '/'));
+            $file = public_path(ltrim(parse_url($icon['src'], PHP_URL_PATH), '/'));
 
             $this->assertFileExists($file);
             [$width, $height] = getimagesize($file);
@@ -59,5 +63,52 @@ class BrandingTest extends TestCase
             ->assertOk()
             ->assertSee('images/icons/icon-512.png')
             ->assertSee('Rechenfuchs');
+    }
+
+    public function test_the_mascot_is_shown_in_the_child_area(): void
+    {
+        $child = Child::factory()->create(['login_token_hash' => '']);
+        $token = $child->generateLoginToken();
+
+        $this->get(route('child.magic-link', ['token' => $token]))
+            ->assertOk()
+            ->assertSee('images/icons/icon-512.png', false)
+            ->assertSee('mascot-float', false);
+
+        $this->actingAs($child, 'child')->get(route('child.home'))->assertSee('mascot-float', false);
+    }
+
+    public function test_the_mascot_reacts_to_answers_on_the_practice_screen(): void
+    {
+        $child = Child::factory()->create();
+        $session = PracticeSession::create([
+            'child_id' => $child->id,
+            'exercise_type_id' => ExerciseType::create(['key' => 'multiplication', 'name' => 'Einmaleins'])->id,
+            'started_at' => now(),
+            'planned_duration_seconds' => 600,
+            'status' => 'active',
+        ]);
+
+        $this->actingAs($child, 'child')
+            ->get(route('child.sessions.show', $session))
+            ->assertOk()
+            ->assertSee('images/icons/icon-192.png', false)
+            ->assertSee('mascot-hop', false)
+            ->assertSee('mascot-shake', false);
+    }
+
+    public function test_the_child_icon_urls_are_versioned_to_bust_stale_ios_caches(): void
+    {
+        $child = Child::factory()->create(['login_token_hash' => '']);
+        $token = $child->generateLoginToken();
+        $version = 'v='.IconGenerator::VERSION;
+
+        $this->get(route('child.magic-link', ['token' => $token]))
+            ->assertSee("icons/child/{$child->id}/180.png?{$version}", false);
+
+        $icons = $this->getJson(route('child.manifest', ['token' => $token]))->json('icons');
+        foreach ($icons as $icon) {
+            $this->assertStringContainsString($version, $icon['src']);
+        }
     }
 }

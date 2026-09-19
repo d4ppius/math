@@ -1,3 +1,34 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Rechenfuchs mascot animations (child area). */
+@keyframes mascot-float {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-8px) rotate(2deg); }
+}
+
+@keyframes mascot-hop {
+    0% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-14px) scale(1.12); }
+    60% { transform: translateY(0) scale(0.96); }
+    100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes mascot-shake {
+    0%, 100% { transform: rotate(0); }
+    20% { transform: rotate(-10deg); }
+    40% { transform: rotate(8deg); }
+    60% { transform: rotate(-6deg); }
+    80% { transform: rotate(4deg); }
+}
+
+@layer components {
+    .mascot-float { animation: mascot-float 3.2s ease-in-out infinite; }
+    .mascot-hop { animation: mascot-hop 0.7s ease-out; }
+    .mascot-shake { animation: mascot-shake 0.6s ease-in-out; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mascot-float, .mascot-hop, .mascot-shake { animation: none; }
+}

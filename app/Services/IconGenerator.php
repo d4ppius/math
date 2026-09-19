@@ -18,6 +18,9 @@ class IconGenerator
         'purple' => '#a855f7',
     ];
 
+    /** Bump whenever the icon artwork changes, so devices fetch it again. */
+    public const VERSION = 2;
+
     /** GD has no anti-aliasing for ellipses, so draw large and scale down. */
     private const SUPERSAMPLE = 3;
 
@@ -58,7 +61,8 @@ class IconGenerator
     {
         $ttf = $this->builtinFontPath();
 
-        if ($ttf) {
+        // imagettftext() only exists when GD was built with FreeType.
+        if ($ttf && function_exists('imagettftext')) {
             $box = imagettfbbox($fontSize, 0, $ttf, $text);
             $textWidth = $box[2] - $box[0];
             $textHeight = $box[1] - $box[7];

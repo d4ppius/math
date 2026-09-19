@@ -29,7 +29,7 @@ class PracticeReminder extends Notification implements ShouldQueue
     {
         return (new WebPushMessage)
             ->title('🦊 Zeit zum Üben!')
-            ->icon(route('child.icon', ['child' => $notifiable, 'size' => 192]))
+            ->icon($notifiable->iconUrl(192))
             ->body('Lust auf ein paar Runden Einmaleins?')
             ->action('Los geht\'s', 'practice')
             ->data(['url' => route('child.home')]);
