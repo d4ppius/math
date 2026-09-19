@@ -140,4 +140,14 @@ class BrandingTest extends TestCase
             $this->assertStringContainsString($version, $icon['src']);
         }
     }
+
+    public function test_no_page_loads_fonts_or_other_assets_from_a_third_party(): void
+    {
+        $child = Child::factory()->create(['login_token_hash' => '']);
+        $token = $child->generateLoginToken();
+
+        foreach ([route('home'), route('login'), route('register'), route('child.magic-link', ['token' => $token])] as $url) {
+            $this->get($url)->assertOk()->assertDontSee('fonts.bunny.net')->assertDontSee('fonts.googleapis.com');
+        }
+    }
 }

@@ -13,6 +13,7 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                display: ['Baloo 2', 'ui-rounded', ...defaultTheme.fontFamily.sans],
             },
         },
     },

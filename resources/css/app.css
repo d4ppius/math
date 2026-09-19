@@ -1,3 +1,11 @@
+/* Self-hosted fonts (no third-party requests): latin subset covers German umlauts. */
+@import '@fontsource/figtree/latin-400.css';
+@import '@fontsource/figtree/latin-500.css';
+@import '@fontsource/figtree/latin-600.css';
+@import '@fontsource/baloo-2/latin-400.css';
+@import '@fontsource/baloo-2/latin-600.css';
+@import '@fontsource/baloo-2/latin-700.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
