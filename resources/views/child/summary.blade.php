@@ -5,7 +5,14 @@
 @endphp
 
 <x-child-layout :child="$child">
-    <div class="w-full max-w-sm">
+    {{-- Confetti only if something was actually solved; extra cannons for a new badge. --}}
+    <div
+        class="w-full max-w-sm"
+        @if ($session->questions_correct > 0)
+            x-data
+            x-init="celebrate({ big: {{ $newBadges->isNotEmpty() ? 'true' : 'false' }} })"
+        @endif
+    >
         <x-mascot :width="150" :height="229" :overlap="70" class="mascot-hop" />
 
         <div class="relative z-10 bg-white rounded-3xl shadow-xl p-8 text-center">
