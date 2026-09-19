@@ -67,6 +67,16 @@
                         </div>
 
                         <div class="mt-4">
+                            <label class="inline-flex items-center">
+                                <input type="hidden" name="settings[{{ $index }}][speed_bonus_enabled]" value="0">
+                                <input type="checkbox" name="settings[{{ $index }}][speed_bonus_enabled]" value="1" class="rounded border-gray-300"
+                                       {{ $setting->speed_bonus_enabled ? 'checked' : '' }}>
+                                <span class="ms-2 text-sm text-gray-700">{{ __('Tempo-Bonus bei den Punkten') }}</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-1">{{ __('Mit Tempo-Bonus gibt es für schnelle richtige Antworten bis zu 10 Extrapunkte. Ohne bekommt jede richtige Antwort gleich viele Punkte, egal wie schnell. Langsame richtige Antworten bekommen nie weniger als die Grundpunkte.') }}</p>
+                        </div>
+
+                        <div class="mt-4">
                             <x-input-label for="frequency-{{ $index }}" :value="__('Ziel-Häufigkeit')" />
                             <select id="frequency-{{ $index }}" name="settings[{{ $index }}][target_frequency]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                 <option value="daily" {{ $setting->target_frequency === 'daily' ? 'selected' : '' }}>{{ __('Täglich') }}</option>

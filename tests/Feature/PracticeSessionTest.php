@@ -110,6 +110,46 @@ class PracticeSessionTest extends TestCase
         $this->assertSame($response->json('points_awarded'), $child->refresh()->total_points);
     }
 
+    public function test_a_slow_correct_answer_still_earns_the_base_points(): void
+    {
+        Carbon::setTestNow(now());
+
+        $child = $this->makeReadyChild();
+        $this->actingAs($child, 'child')->post(route('child.sessions.start'));
+        $session = PracticeSession::first();
+
+        $this->actingAs($child, 'child')->getJson(route('child.sessions.next-question', $session));
+        $fact = $session->refresh()->currentFact;
+
+        Carbon::setTestNow(now()->addSeconds(30));
+
+        $response = $this->actingAs($child, 'child')->postJson(route('child.sessions.attempts', $session), [
+            'answer' => $fact->correct_answer,
+        ]);
+
+        $this->assertSame(10, $response->json('points_awarded'));
+
+        Carbon::setTestNow();
+    }
+
+    public function test_the_speed_bonus_can_be_switched_off_per_child(): void
+    {
+        $child = $this->makeReadyChild();
+        $child->exerciseSettings()->update(['speed_bonus_enabled' => false]);
+        $this->actingAs($child, 'child')->post(route('child.sessions.start'));
+        $session = PracticeSession::first();
+
+        $this->actingAs($child, 'child')->getJson(route('child.sessions.next-question', $session));
+        $fact = $session->refresh()->currentFact;
+
+        // Answered instantly, which would normally earn the full speed bonus.
+        $response = $this->actingAs($child, 'child')->postJson(route('child.sessions.attempts', $session), [
+            'answer' => $fact->correct_answer,
+        ]);
+
+        $this->assertSame(10, $response->json('points_awarded'));
+    }
+
     public function test_a_wrong_answer_awards_no_points_and_resets_the_streak(): void
     {
         $child = $this->makeReadyChild();

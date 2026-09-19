@@ -52,7 +52,11 @@ class AttemptRecorder
         $stat->save();
 
         $sessionStreakAfter = $this->currentSessionStreak($session, $isCorrect);
-        $points = $this->pointsCalculator->forAnswer($isCorrect, $responseTimeMs, $targetMs, $sessionStreakAfter);
+        $speedBonusEnabled = $session->child->exerciseSettings()
+            ->where('exercise_type_id', $session->exercise_type_id)
+            ->first()?->speed_bonus_enabled ?? true;
+
+        $points = $this->pointsCalculator->forAnswer($isCorrect, $responseTimeMs, $targetMs, $sessionStreakAfter, $speedBonusEnabled);
 
         SessionAttempt::create([
             'practice_session_id' => $session->id,
