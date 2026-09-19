@@ -16,6 +16,7 @@ Eine kleine Webapp, mit der Kinder spielerisch und regelmässig das kleine Einma
 - **Adaptives Üben:** Jede einzelne 1×1-Aufgabe wird pro Kind einzeln getrackt. Aufgaben, die noch nicht sitzen oder langsam beantwortet werden, kommen häufiger wieder – kein reiner Zufall.
 - **Zeitlich begrenzte Sessions:** z.B. 10 Minuten am Stück, in der eigenen Geschwindigkeit des Kindes, serverseitig zeitlich abgesichert.
 - **Punkte, Level, Abzeichen, Konfetti und Töne** als Motivation, siehe [Punkte](#punkte) und [Level und Abzeichen](#level-und-abzeichen).
+- **Öffentliche Startseite** (`/`) für Eltern: erklärt in vier Schritten, wie es funktioniert, mit Funktionen, «Sicher für Kinder» und FAQ, dazu Impressum, Datenschutzerklärung und Kontaktformular, siehe [Öffentliche Seiten](#öffentliche-seiten).
 - **Admin-Bereich** (`/admin`): Für den Betreiber der Installation, siehe [unten](#admin-bereich).
 - **Erweiterbar:** Die Architektur ist so gebaut, dass später weitere Matheaufgaben-Typen (Addition, Division, …) ergänzt werden können, ohne den Kern umzubauen.
 
@@ -120,6 +121,26 @@ npm install
 npm run dev   # oder: npm run build
 php artisan serve
 ```
+
+## Öffentliche Seiten
+
+| Adresse | Inhalt |
+| --- | --- |
+| `/` | Startseite für Eltern: So funktioniert's, Funktionen, «Sicher für Kinder», FAQ, Weiter zu Registrierung und Anmeldung (angemeldete Eltern sehen «Zum Dashboard»). Responsiv von Handy bis Desktop. |
+| `/impressum`, `/datenschutz` | Impressum und Datenschutzerklärung. Die Angaben stehen **nicht im Code**, sondern in der `.env` (`LEGAL_*`, siehe [INSTALL.md](INSTALL.md#rechtliches-und-kontaktformular)). Fehlt ein Pflichtwert, steht auf der Seite sichtbar «[LEGAL_NAME fehlt in der .env]». Die E-Mail-Adresse steht nicht als ein Text im Quelltext (Schutz vor Adress-Sammlern). |
+| `/kontakt` | Kontaktformular für Fragen und Support. |
+
+**Spam-Schutz** (Kontaktformular und Registrierung), bewusst ohne externen Dienst und ohne Rechenaufgabe für Menschen:
+
+- ein für Menschen unsichtbares Falle-Feld (Honeypot), das Bots ausfüllen: Sie bekommen einen vorgetäuschten Erfolg, es wird nichts gespeichert oder gesendet,
+- ein verschlüsselter Zeitstempel, der mit dem Formular ausgegeben wird: Zu schnelle oder gefälschte Absendungen werden abgelehnt (`app/Services/SpamGuard.php`),
+- Begrenzung pro Stunde (Kontaktformular: 3 Nachrichten pro E-Mail-Adresse und 10 pro IP-Adresse; Registrierung: 10 pro IP-Adresse) und höchstens zwei Links pro Nachricht.
+
+Das Kontaktformular sendet **keine** automatische Bestätigung an den Absender, so lässt es sich nicht als Spam-Schleuder gegen Dritte missbrauchen. Nachrichten werden in der Datenbank gespeichert und, falls `CONTACT_MAIL_TO` gesetzt ist, per E-Mail weitergeleitet (der Absender als Antwort-Adresse). Der Admin-Bereich hat dafür einen Reiter **Nachrichten** (offen/erledigt, Antworten, löschen). Erledigte Nachrichten werden nach 12 Monaten automatisch gelöscht.
+
+**Registrierung:** Sie ist offen, aber die E-Mail-Adresse muss bestätigt werden, bevor der Eltern-Bereich nutzbar ist. Konten, die nicht innerhalb von 7 Tagen bestätigt werden, löscht ein täglicher Job samt der dadurch leeren Familie. Wer als letzte Elternperson das eigene Konto löscht, löscht auch die Familie, alle Kinder und ihre Übungsdaten.
+
+**Suchmaschinen:** Startseite, Impressum, Datenschutz und Kontakt sind indexierbar. Persönliche Login-Links der Kinder, Kinder-, Eltern- und Admin-Bereich sind per `robots.txt` und `noindex` ausgeschlossen. Alle Schriften werden lokal ausgeliefert, die Seiten laden nichts von Dritten.
 
 ## Admin-Bereich
 

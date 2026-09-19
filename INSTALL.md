@@ -41,7 +41,7 @@ Danach `.env` von Hand bearbeiten:
 
 - `APP_URL` auf die echte Domain setzen, `APP_ENV=production`, `APP_DEBUG=false`
 - `DB_*` mit den Zugangsdaten aus Schritt 1 ausfüllen
-- `MAIL_*` für den echten Mailversand konfigurieren (Fallback-Kanal für die Eltern-Benachrichtigungen)
+- `MAIL_*` für den echten Mailversand konfigurieren (`MAIL_MAILER=smtp` mit den Zugangsdaten des Providers). **Das ist nötig:** Ohne Mailversand kommen Bestätigungs-Mails der Registrierung, Passwort-Zurücksetzen und Kontaktformular nicht an, und neue Eltern können sich nicht anmelden. Für gute Zustellung sollte die Absender-Domain SPF und DKIM haben.
 - VAPID-Schlüsselpaar für Web-Push erzeugen und eintragen:
   ```bash
   php artisan webpush:vapid
@@ -49,6 +49,27 @@ Danach `.env` von Hand bearbeiten:
   Das trägt `VAPID_PUBLIC_KEY` und `VAPID_PRIVATE_KEY` direkt in die `.env` ein.
 
 Die `.env`-Datei bleibt ausschliesslich auf dem Server und wird nie eingecheckt.
+
+### Rechtliches und Kontaktformular
+
+Impressum und Datenschutzerklärung (`/impressum`, `/datenschutz`) lesen ihre Angaben aus der `.env`. Ohne diese Werte zeigt die Seite sichtbar «[LEGAL_NAME fehlt in der .env]». **Bitte vor dem Livegang ausfüllen:**
+
+```
+LEGAL_NAME="Firma oder Name"
+LEGAL_STREET="Strasse Nr."
+LEGAL_ZIP_CITY="PLZ Ort"
+LEGAL_COUNTRY=Schweiz
+LEGAL_EMAIL=kontakt@beispiel.ch
+LEGAL_PHONE=            # optional
+LEGAL_UID=              # optional, z.B. CHE-123.456.789
+LEGAL_RESPONSIBLE=      # optional, vertretungsberechtigte Person
+LEGAL_HOSTER="Hosting-Anbieter, Land"   # wird in der Datenschutzerklärung genannt
+CONTACT_MAIL_TO=support@beispiel.ch     # Empfänger der Kontaktformular-Nachrichten
+```
+
+Die Adresse in `LEGAL_NAME`/`LEGAL_STREET`/`LEGAL_ZIP_CITY` steht öffentlich im Impressum. `CONTACT_MAIL_TO` ist optional: Ohne sie werden Nachrichten trotzdem gespeichert und im Admin-Bereich unter **Nachrichten** angezeigt, aber nicht per E-Mail weitergeleitet. Die Datenschutzerklärung ist ein Entwurf nach bestem Wissen und ersetzt keine Rechtsberatung. Bitte einmal prüfen (lassen), besonders wenn die Seite öffentlich beworben wird.
+
+Nach Änderungen an der `.env` `php artisan optimize` ausführen, sonst bleibt der alte Wert im Cache (das Deployment-Skript macht das ohnehin).
 
 ## 5. Schreibrechte setzen
 
@@ -94,7 +115,7 @@ Im Plesk-Panel unter **Geplante Aufgaben** (Scheduled Tasks) einen neuen Cronjob
 * * * * * php /pfad/zum/projekt/artisan schedule:run >> /dev/null 2>&1
 ```
 
-Darüber laufen alle zeitgesteuerten Aufgaben der App (z.B. das Aufräumen abgelaufener Übungssessions).
+Darüber laufen alle zeitgesteuerten Aufgaben der App: die Erinnerungen an die Kinder (täglich 17:00), das Löschen erledigter Kontakt-Nachrichten nach 12 Monaten (`contact:prune`) und das Löschen von Konten, die ihre E-Mail-Adresse nicht innerhalb von 7 Tagen bestätigt haben (`accounts:prune-unverified`).
 
 ## 9. Redeploy bei Updates
 
