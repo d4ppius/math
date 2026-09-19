@@ -7,6 +7,7 @@
             timeRemaining: {{ $session->planned_duration_seconds }},
             loading: true,
             totalPoints: {{ $session->total_points }},
+            soundEnabled: {{ $soundEnabled ? 'true' : 'false' }},
             timerInterval: null,
             csrfToken: document.querySelector('meta[name=csrf-token]').content,
             nextQuestionUrl: '{{ route('child.sessions.next-question', $session) }}',
@@ -32,6 +33,8 @@
                 this.loading = false;
             },
             press(digit) {
+                // A tap is the moment iOS allows audio to be unlocked.
+                if (this.soundEnabled) window.unlockAudio();
                 if (this.loading || this.feedback) return;
                 if (this.answer.length < 4) this.answer += digit;
             },
@@ -40,6 +43,7 @@
                 this.answer = this.answer.slice(0, -1);
             },
             async submit() {
+                if (this.soundEnabled) window.unlockAudio();
                 if (this.answer === '' || this.loading || this.feedback) return;
                 this.loading = true;
                 const res = await fetch(this.attemptUrl, {
@@ -53,6 +57,7 @@
                 });
                 const data = await res.json();
                 this.feedback = data;
+                if (this.soundEnabled) window.playFeedbackSound(data.is_correct ? 'correct' : 'wrong');
                 this.totalPoints = data.session_total_points ?? this.totalPoints;
                 this.timeRemaining = data.time_remaining_seconds ?? this.timeRemaining;
                 setTimeout(() => {

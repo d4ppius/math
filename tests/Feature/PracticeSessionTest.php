@@ -110,6 +110,25 @@ class PracticeSessionTest extends TestCase
         $this->assertSame($response->json('points_awarded'), $child->refresh()->total_points);
     }
 
+    public function test_the_practice_screen_plays_sounds_unless_a_parent_switched_them_off(): void
+    {
+        $child = $this->makeReadyChild();
+        $this->actingAs($child, 'child')->post(route('child.sessions.start'));
+        $session = PracticeSession::first();
+
+        $this->actingAs($child, 'child')
+            ->get(route('child.sessions.show', $session))
+            ->assertOk()
+            ->assertSee('soundEnabled: true', false)
+            ->assertSee('playFeedbackSound', false);
+
+        $child->exerciseSettings()->update(['sound_enabled' => false]);
+
+        $this->actingAs($child, 'child')
+            ->get(route('child.sessions.show', $session))
+            ->assertSee('soundEnabled: false', false);
+    }
+
     public function test_a_slow_correct_answer_still_earns_the_base_points(): void
     {
         Carbon::setTestNow(now());

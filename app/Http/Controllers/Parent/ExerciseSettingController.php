@@ -47,6 +47,7 @@ class ExerciseSettingController extends Controller
             'settings.*.target_frequency' => ['required', 'in:daily,weekdays,custom'],
             'settings.*.show_timer' => ['required', 'boolean'],
             'settings.*.speed_bonus_enabled' => ['required', 'boolean'],
+            'settings.*.sound_enabled' => ['required', 'boolean'],
         ]);
 
         foreach ($validated['settings'] as $settingInput) {
@@ -58,6 +59,7 @@ class ExerciseSettingController extends Controller
                 'target_frequency' => $settingInput['target_frequency'],
                 'show_timer' => (bool) $settingInput['show_timer'],
                 'speed_bonus_enabled' => (bool) $settingInput['speed_bonus_enabled'],
+                'sound_enabled' => (bool) $settingInput['sound_enabled'],
             ]);
         }
 

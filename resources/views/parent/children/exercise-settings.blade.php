@@ -77,6 +77,16 @@
                         </div>
 
                         <div class="mt-4">
+                            <label class="inline-flex items-center">
+                                <input type="hidden" name="settings[{{ $index }}][sound_enabled]" value="0">
+                                <input type="checkbox" name="settings[{{ $index }}][sound_enabled]" value="1" class="rounded border-gray-300"
+                                       {{ $setting->sound_enabled ? 'checked' : '' }}>
+                                <span class="ms-2 text-sm text-gray-700">{{ __('Töne bei richtigen und falschen Antworten') }}</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-1">{{ __('Ein heller Klang bei richtigen, ein leiser tiefer Ton bei falschen Antworten. Praktisch ausschalten, wenn das Kind in Ruhe oder unterwegs übt.') }}</p>
+                        </div>
+
+                        <div class="mt-4">
                             <x-input-label for="frequency-{{ $index }}" :value="__('Ziel-Häufigkeit')" />
                             <select id="frequency-{{ $index }}" name="settings[{{ $index }}][target_frequency]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                 <option value="daily" {{ $setting->target_frequency === 'daily' ? 'selected' : '' }}>{{ __('Täglich') }}</option>

@@ -66,6 +66,7 @@ class ExerciseSettingsProvisioningTest extends TestCase
             'target_frequency' => 'daily',
             'show_timer' => $showTimer,
             'speed_bonus_enabled' => 1,
+            'sound_enabled' => 1,
         ]]];
 
         $this->actingAs($user)
@@ -100,9 +101,38 @@ class ExerciseSettingsProvisioningTest extends TestCase
                 'target_frequency' => 'daily',
                 'show_timer' => 1,
                 'speed_bonus_enabled' => 0,
+                'sound_enabled' => 1,
             ]]])
             ->assertRedirect();
 
         $this->assertFalse($setting->refresh()->speed_bonus_enabled);
+    }
+
+    public function test_parents_can_switch_the_sounds_off_per_exercise(): void
+    {
+        ExerciseType::create(['key' => 'multiplication', 'name' => 'Einmaleins']);
+
+        $family = Family::factory()->create();
+        $user = User::factory()->for($family)->create();
+        $child = Child::factory()->for($family)->create();
+
+        $this->actingAs($user)->get(route('parent.children.exercise-settings.edit', $child));
+        $setting = $child->exerciseSettings()->first();
+
+        $this->assertTrue($setting->sound_enabled, 'Sounds are on by default.');
+
+        $this->actingAs($user)
+            ->put(route('parent.children.exercise-settings.update', $child), ['settings' => [[
+                'id' => $setting->id,
+                'active_groups' => [1],
+                'session_duration_minutes' => 10,
+                'target_frequency' => 'daily',
+                'show_timer' => 1,
+                'speed_bonus_enabled' => 1,
+                'sound_enabled' => 0,
+            ]]])
+            ->assertRedirect();
+
+        $this->assertFalse($setting->refresh()->sound_enabled);
     }
 }

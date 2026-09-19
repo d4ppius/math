@@ -30,6 +30,72 @@ window.celebrate = async function ({ big = false } = {}) {
     }
 };
 
+let audioContext = null;
+
+/**
+ * Prepares audio. Must be called from a tap handler: iOS only lets sound
+ * start from a user gesture, and once the context is running later sounds
+ * (e.g. after the server has answered) are allowed.
+ */
+window.unlockAudio = function () {
+    try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) {
+            return;
+        }
+
+        audioContext = audioContext || new AudioContextClass();
+
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+    } catch (error) {
+        // No audio available: the app is fully usable without sound.
+    }
+};
+
+function playTone(frequency, startOffsetSeconds, durationSeconds, { type = 'sine', volume = 0.16 } = {}) {
+    const start = audioContext.currentTime + startOffsetSeconds;
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    oscillator.type = type;
+    oscillator.frequency.value = frequency;
+
+    // Quick fade in and out so the tone doesn't click.
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(volume, start + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + durationSeconds);
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+    oscillator.start(start);
+    oscillator.stop(start + durationSeconds + 0.05);
+}
+
+/**
+ * Short synthesized feedback, no audio files needed. "correct" is a bright
+ * rising two-note chime; "wrong" is a soft, low, gently falling "boop", never
+ * a harsh buzzer.
+ */
+window.playFeedbackSound = function (kind) {
+    if (!audioContext || audioContext.state !== 'running') {
+        return;
+    }
+
+    try {
+        if (kind === 'correct') {
+            playTone(659.25, 0, 0.16, { type: 'triangle' });
+            playTone(880, 0.12, 0.26, { type: 'triangle' });
+        } else {
+            playTone(392, 0, 0.18, { volume: 0.12 });
+            playTone(311.13, 0.14, 0.28, { volume: 0.12 });
+        }
+    } catch (error) {
+        // Ignore: sound is a nicety.
+    }
+};
+
 Alpine.start();
 
 if ('serviceWorker' in navigator) {

@@ -66,6 +66,7 @@ class PracticeSessionController extends Controller
             'child' => $session->child,
             // The countdown always runs; this only controls whether it is shown.
             'showTimer' => $settings?->show_timer ?? true,
+            'soundEnabled' => $settings?->sound_enabled ?? true,
         ]);
     }
 
