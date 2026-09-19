@@ -36,7 +36,7 @@ class DailyGoalAchieved extends Notification implements ShouldQueue
             ->line("Ergebnis: {$this->session->total_points} Punkte, {$accuracy}% richtig beantwortet.")
             ->action('Statistik ansehen', route('parent.children.statistics', $this->child))
             ->line('Weiter so!')
-            ->salutation('Viele Grüsse, dein 1x1 Trainer');
+            ->salutation('Viele Grüsse, dein Rechenfuchs');
     }
 
     public function toWebPush(object $notifiable, self $notification): WebPushMessage

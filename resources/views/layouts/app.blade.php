@@ -9,8 +9,7 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         <link rel="manifest" href="/manifest.webmanifest">
-        <link rel="apple-touch-icon" href="/images/icons/icon-192.png">
-        <link rel="icon" href="/images/icons/icon-192.png">
+        @include('layouts._head-icons')
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

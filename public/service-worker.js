@@ -12,7 +12,7 @@ self.addEventListener('push', (event) => {
     }
 
     const payload = event.data.json();
-    const title = payload.title || '1x1 Trainer';
+    const title = payload.title || 'Rechenfuchs';
 
     const options = {
         body: payload.body,

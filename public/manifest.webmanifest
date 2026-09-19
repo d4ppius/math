@@ -1,6 +1,6 @@
 {
-    "name": "1x1 Trainer",
-    "short_name": "1x1 Trainer",
+    "name": "Rechenfuchs",
+    "short_name": "Rechenfuchs",
     "description": "Spielerisch das kleine Einmaleins üben",
     "start_url": "/eltern/dashboard",
     "scope": "/eltern/",

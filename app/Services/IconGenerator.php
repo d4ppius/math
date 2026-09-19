@@ -3,9 +3,10 @@
 namespace App\Services;
 
 /**
- * Renders small PNG icons with plain GD (no image assets to ship).
- * Used for the PWA app icons and each child's personalized
- * apple-touch-icon (a colored circle with their first initial).
+ * Renders each child's personalized home-screen icon with plain GD: the
+ * Rechenfuchs app icon plus a small badge in the child's colour showing
+ * their first initial, so several children on one iPad stay tellable apart.
+ * The artwork itself is the static public/images/icons/icon-base.png.
  */
 class IconGenerator
 {
@@ -17,50 +18,31 @@ class IconGenerator
         'purple' => '#a855f7',
     ];
 
-    /**
-     * The main app icon: an orange rounded square with a white "×".
-     * Content is kept within a safe zone so it also works as a
-     * maskable icon.
-     */
-    public function appIcon(int $size): string
-    {
-        $image = imagecreatetruecolor($size, $size);
-        imagesavealpha($image, true);
-        imagealphablending($image, true);
-
-        $transparent = imagecolorallocatealpha($image, 0, 0, 0, 127);
-        imagefill($image, 0, 0, $transparent);
-
-        $bg = $this->allocateHex($image, '#f97316');
-        $this->filledRoundedSquare($image, $size, $bg, (int) round($size * 0.18));
-
-        $white = imagecolorallocate($image, 255, 255, 255);
-        $fontSize = (int) round($size * 0.42);
-        $this->centeredText($image, '×', $fontSize, $white, $size);
-
-        return $this->toPngString($image);
-    }
+    /** GD has no anti-aliasing for ellipses, so draw large and scale down. */
+    private const SUPERSAMPLE = 3;
 
     public function childIcon(string $name, string $colorTheme, int $size): string
     {
-        $image = imagecreatetruecolor($size, $size);
-        imagesavealpha($image, true);
-        imagealphablending($image, true);
+        $work = $size * self::SUPERSAMPLE;
 
-        $transparent = imagecolorallocatealpha($image, 0, 0, 0, 127);
-        imagefill($image, 0, 0, $transparent);
+        $base = imagecreatefrompng(public_path('images/icons/icon-base.png'));
+        $canvas = imagecreatetruecolor($work, $work);
+        imagecopyresampled($canvas, $base, 0, 0, 0, 0, $work, $work, imagesx($base), imagesy($base));
 
-        $hex = self::COLOR_HEXES[$colorTheme] ?? self::COLOR_HEXES['orange'];
-        $bg = $this->allocateHex($image, $hex);
+        $color = $this->allocateHex($canvas, self::COLOR_HEXES[$colorTheme] ?? self::COLOR_HEXES['orange']);
+        $white = imagecolorallocate($canvas, 255, 255, 255);
 
-        $center = (int) ($size / 2);
-        $radius = (int) round($size * 0.47);
-        imagefilledellipse($image, $center, $center, $radius * 2, $radius * 2, $bg);
+        $center = (int) round($work * 0.74);
+        $ring = (int) round($work * 0.38);
+        $dot = (int) round($work * 0.31);
+        imagefilledellipse($canvas, $center, $center, $ring, $ring, $white);
+        imagefilledellipse($canvas, $center, $center, $dot, $dot, $color);
 
-        $white = imagecolorallocate($image, 255, 255, 255);
         $initial = mb_strtoupper(mb_substr($name, 0, 1));
-        $fontSize = (int) round($size * 0.4);
-        $this->centeredText($image, $initial, $fontSize, $white, $size);
+        $this->centeredText($canvas, $initial, (int) round($work * 0.15), $white, $center, $center);
+
+        $image = imagecreatetruecolor($size, $size);
+        imagecopyresampled($image, $canvas, 0, 0, 0, 0, $size, $size, $work, $work);
 
         return $this->toPngString($image);
     }
@@ -72,36 +54,26 @@ class IconGenerator
         return imagecolorallocate($image, $r, $g, $b);
     }
 
-    private function filledRoundedSquare($image, int $size, int $color, int $radius): void
+    private function centeredText($image, string $text, int $fontSize, int $color, int $centerX, int $centerY): void
     {
-        imagefilledrectangle($image, $radius, 0, $size - $radius, $size, $color);
-        imagefilledrectangle($image, 0, $radius, $size, $size - $radius, $color);
-        imagefilledellipse($image, $radius, $radius, $radius * 2, $radius * 2, $color);
-        imagefilledellipse($image, $size - $radius, $radius, $radius * 2, $radius * 2, $color);
-        imagefilledellipse($image, $radius, $size - $radius, $radius * 2, $radius * 2, $color);
-        imagefilledellipse($image, $size - $radius, $size - $radius, $radius * 2, $radius * 2, $color);
-    }
-
-    private function centeredText($image, string $text, int $fontSize, int $color, int $canvasSize): void
-    {
-        $font = 5; // GD built-in font, scaled via imagestring is fixed size; use TTF fallback below if available.
         $ttf = $this->builtinFontPath();
 
         if ($ttf) {
             $box = imagettfbbox($fontSize, 0, $ttf, $text);
             $textWidth = $box[2] - $box[0];
             $textHeight = $box[1] - $box[7];
-            $x = (int) (($canvasSize - $textWidth) / 2 - $box[0]);
-            $y = (int) (($canvasSize - $textHeight) / 2 - $box[7]);
+            $x = (int) ($centerX - $textWidth / 2 - $box[0]);
+            $y = (int) ($centerY - $textHeight / 2 - $box[7]);
             imagettftext($image, $fontSize, 0, $x, $y, $color, $ttf, $text);
 
             return;
         }
 
         // Fallback: GD's built-in bitmap font, centered as best effort.
+        $font = 5;
         $textWidth = imagefontwidth($font) * strlen($text);
         $textHeight = imagefontheight($font);
-        imagestring($image, $font, (int) (($canvasSize - $textWidth) / 2), (int) (($canvasSize - $textHeight) / 2), $text, $color);
+        imagestring($image, $font, (int) ($centerX - $textWidth / 2), (int) ($centerY - $textHeight / 2), $text, $color);
     }
 
     private function builtinFontPath(): ?string

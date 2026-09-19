@@ -30,8 +30,7 @@
             <link rel="apple-touch-icon" href="{{ route('child.icon', ['child' => $child, 'size' => 180]) }}">
             <link rel="icon" href="{{ route('child.icon', ['child' => $child, 'size' => 32]) }}">
         @else
-            <link rel="apple-touch-icon" href="/images/icons/icon-192.png">
-            <link rel="icon" href="/images/icons/icon-192.png">
+            @include('layouts._head-icons')
         @endif
 
         <link rel="preconnect" href="https://fonts.bunny.net">

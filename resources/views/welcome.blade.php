@@ -5,6 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ config('app.name') }}</title>
 
+        @include('layouts._head-icons')
+
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=baloo-2:400,600,700&display=swap" rel="stylesheet" />
 
@@ -16,7 +18,7 @@
     </head>
     <body class="min-h-screen bg-gradient-to-br from-orange-100 via-amber-50 to-sky-100 text-gray-800">
         <div class="min-h-screen flex flex-col items-center justify-center px-4 text-center">
-            <div class="text-6xl mb-4">✨🔢✨</div>
+            <img src="{{ asset('images/icons/icon-512.png') }}" alt="" class="w-36 h-36 mb-4 drop-shadow-lg">
             <h1 class="text-2xl font-bold mb-2">{{ config('app.name') }}</h1>
             <p class="text-gray-500 max-w-sm">
                 {{ __('Diese App ist für ein persönliches Homescreen-Icon gedacht. Frag deine Eltern nach dem Link!') }}

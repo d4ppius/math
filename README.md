@@ -1,4 +1,8 @@
-# 1×1 Trainer
+<p align="center">
+  <img src="public/images/logo.png" alt="Rechenfuchs" width="240">
+</p>
+
+# Rechenfuchs
 
 Eine kleine Webapp, mit der Kinder spielerisch und regelmässig das kleine Einmaleins üben – als installierbare PWA auf dem iPad, mit persönlichem Homescreen-Icon pro Kind.
 
