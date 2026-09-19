@@ -64,6 +64,29 @@ class PracticeSessionTest extends TestCase
         $this->assertNotNull($session->refresh()->current_fact_id);
     }
 
+    public function test_the_countdown_is_hidden_from_the_child_when_the_timer_is_switched_off(): void
+    {
+        $child = $this->makeReadyChild();
+        $this->actingAs($child, 'child')->post(route('child.sessions.start'));
+        $session = PracticeSession::first();
+
+        $this->actingAs($child, 'child')
+            ->get(route('child.sessions.show', $session))
+            ->assertOk()
+            ->assertSee('⏱')
+            ->assertDontSee('Gleich geschafft');
+
+        $child->exerciseSettings()->update(['show_timer' => false]);
+
+        $this->actingAs($child, 'child')
+            ->get(route('child.sessions.show', $session))
+            ->assertOk()
+            ->assertDontSee('⏱')
+            ->assertSee('Gleich geschafft')
+            // The countdown itself keeps running in the background.
+            ->assertSee('timeRemaining');
+    }
+
     public function test_a_correct_answer_awards_points_and_updates_fact_stats(): void
     {
         $child = $this->makeReadyChild();

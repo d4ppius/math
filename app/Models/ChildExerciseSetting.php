@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['child_id', 'exercise_type_id', 'active_groups', 'session_duration_minutes', 'target_frequency', 'target_days', 'sound_enabled'])]
+#[Fillable(['child_id', 'exercise_type_id', 'active_groups', 'session_duration_minutes', 'target_frequency', 'target_days', 'sound_enabled', 'show_timer'])]
 class ChildExerciseSetting extends Model
 {
     use HasFactory;
@@ -18,6 +18,7 @@ class ChildExerciseSetting extends Model
             'active_groups' => 'array',
             'target_days' => 'array',
             'sound_enabled' => 'boolean',
+            'show_timer' => 'boolean',
         ];
     }
 

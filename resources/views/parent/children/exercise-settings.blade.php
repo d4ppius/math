@@ -57,6 +57,16 @@
                         </div>
 
                         <div class="mt-4">
+                            <label class="inline-flex items-center">
+                                <input type="hidden" name="settings[{{ $index }}][show_timer]" value="0">
+                                <input type="checkbox" name="settings[{{ $index }}][show_timer]" value="1" class="rounded border-gray-300"
+                                       {{ $setting->show_timer ? 'checked' : '' }}>
+                                <span class="ms-2 text-sm text-gray-700">{{ __('Timer während der Übung anzeigen') }}</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-1">{{ __('Ohne Timer läuft die Zeit im Hintergrund weiter. Kurz vor Schluss erscheint stattdessen ein sanftes „Gleich geschafft!“ ganz ohne Zahlen.') }}</p>
+                        </div>
+
+                        <div class="mt-4">
                             <x-input-label for="frequency-{{ $index }}" :value="__('Ziel-Häufigkeit')" />
                             <select id="frequency-{{ $index }}" name="settings[{{ $index }}][target_frequency]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                 <option value="daily" {{ $setting->target_frequency === 'daily' ? 'selected' : '' }}>{{ __('Täglich') }}</option>

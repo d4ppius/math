@@ -68,7 +68,11 @@
     >
         <div class="flex items-center justify-between text-orange-700 font-semibold mb-3 px-1">
             <span>⭐ <span x-text="totalPoints"></span> {{ __('Punkte') }}</span>
-            <span>⏱ <span x-text="minutes()"></span>:<span x-text="seconds()"></span></span>
+            @if ($showTimer)
+                <span>⏱ <span x-text="minutes()"></span>:<span x-text="seconds()"></span></span>
+            @else
+                <span x-show="timeRemaining > 0 && timeRemaining <= 60" x-transition.opacity>🎉 {{ __('Gleich geschafft!') }}</span>
+            @endif
         </div>
 
         <div class="bg-white rounded-3xl shadow-xl p-8 text-center relative overflow-hidden">

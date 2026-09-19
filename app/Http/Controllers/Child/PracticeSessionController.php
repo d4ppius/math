@@ -52,9 +52,15 @@ class PracticeSessionController extends Controller
 
     public function show(PracticeSession $session): View
     {
+        $settings = $session->child->exerciseSettings()
+            ->where('exercise_type_id', $session->exercise_type_id)
+            ->first();
+
         return view('child.practice', [
             'session' => $session,
             'child' => $session->child,
+            // The countdown always runs; this only controls whether it is shown.
+            'showTimer' => $settings?->show_timer ?? true,
         ]);
     }
 

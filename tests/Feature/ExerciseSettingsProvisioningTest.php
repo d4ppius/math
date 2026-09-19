@@ -45,4 +45,36 @@ class ExerciseSettingsProvisioningTest extends TestCase
 
         $this->assertSame(1, $child->exerciseSettings()->count());
     }
+
+    public function test_parents_can_toggle_the_timer_visibility_per_exercise(): void
+    {
+        ExerciseType::create(['key' => 'multiplication', 'name' => 'Einmaleins']);
+
+        $family = Family::factory()->create();
+        $user = User::factory()->for($family)->create();
+        $child = Child::factory()->for($family)->create();
+
+        $this->actingAs($user)->get(route('parent.children.exercise-settings.edit', $child));
+        $setting = $child->exerciseSettings()->first();
+
+        $this->assertTrue($setting->show_timer, 'The timer is shown by default.');
+
+        $payload = fn (int $showTimer) => ['settings' => [[
+            'id' => $setting->id,
+            'active_groups' => [1],
+            'session_duration_minutes' => 10,
+            'target_frequency' => 'daily',
+            'show_timer' => $showTimer,
+        ]]];
+
+        $this->actingAs($user)
+            ->put(route('parent.children.exercise-settings.update', $child), $payload(0))
+            ->assertRedirect();
+        $this->assertFalse($setting->refresh()->show_timer);
+
+        $this->actingAs($user)
+            ->put(route('parent.children.exercise-settings.update', $child), $payload(1))
+            ->assertRedirect();
+        $this->assertTrue($setting->refresh()->show_timer);
+    }
 }
