@@ -53,12 +53,13 @@
             {{-- Weekly points --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Punkte diese Woche') }}</h3>
-                <div class="flex items-end gap-3 h-40">
+                <div class="flex gap-3 h-40">
                     @foreach ($weeklyPoints as $day)
                         @php $heightPct = max(4, round($day['points'] / $maxWeeklyPoints * 100)); @endphp
-                        <div class="flex-1 flex flex-col items-center gap-1">
+                        {{-- The bar track must fill the column (flex-1): a percentage height needs a definite parent height. --}}
+                        <div class="flex-1 flex flex-col items-center gap-1 h-full">
                             <span class="text-xs text-gray-500">{{ $day['points'] }}</span>
-                            <div class="w-full bg-orange-100 rounded-t-md flex items-end" style="height: 100%;">
+                            <div class="w-full flex-1 min-h-0 bg-orange-100 rounded-t-md flex items-end">
                                 <div class="w-full bg-orange-500 rounded-t-md" style="height: {{ $heightPct }}%;" title="{{ $day['points'] }} {{ __('Punkte') }}"></div>
                             </div>
                             <span class="text-xs text-gray-400 uppercase">{{ $day['label'] }}</span>
