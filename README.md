@@ -82,7 +82,9 @@ Ergebnis: 0 bis 30 Punkte pro Antwort. Beispiel für eine 3er-Aufgabe (Zielzeit 
 | **Blitzrechner** ⚡ | In einer Session mindestens 10 richtige Antworten, im Schnitt unter 2 Sekunden. Wird bei Kindern mit ausgeschaltetem Tempo-Bonus nie vergeben, damit niemand zum Hetzen verleitet wird. |
 | **Meister der N-er-Reihe** 👑 (N = 1 bis 9) | Die Reihe zu mindestens 90 % richtig, mit mindestens 15 Versuchen über mindestens 8 der 10 Aufgaben der Reihe |
 
-Neue Abzeichen erscheinen auf der Zusammenfassung nach der Übung, alle verdienten auf der Startseite des Kindes, und die Eltern-Statistik zeigt den ganzen Katalog (nicht verdiente ausgegraut).
+Neue Abzeichen erscheinen auf der Zusammenfassung nach der Übung. Damit die Startseite des Kindes schlank bleibt, zeigt sie nur eine kompakte Karte «Meine Abzeichen» (Anzahl und die drei neuesten). Ein Tipp darauf öffnet die Seite **Meine Erfolge** (`/kind/erfolge`), die Statistik-Seite des Kindes: Level mit Fortschritt, Punkte, die verdienten Abzeichen mit Datum und, falls die Eltern es erlauben, darunter «Das kannst du noch schaffen»: die noch offenen Abzeichen ausgegraut, mit einer kurzen Beschreibung, wie man sie bekommt. Die Eltern-Statistik zeigt den ganzen Katalog (nicht verdiente ausgegraut).
+
+Eltern schalten das pro Kind ein und aus: Kind bearbeiten → **«Abzeichen zeigen, die noch nicht verdient sind»** (standardmässig an). Aus: Das Kind sieht nur die bereits verdienten. Bei Kindern mit ausgeschaltetem Tempo-Bonus wird der Blitzrechner gar nicht erst als Ziel angezeigt, weil sie ihn nie bekommen können (die Zähler heissen dann z.B. «3 von 11»).
 
 **Konfetti und Töne:** Am Ende einer Session mit mindestens einer richtigen Antwort regnet es Konfetti, bei einem neuen Abzeichen zusätzlich von beiden Seiten. Es läuft nur auf der Zusammenfassung, nie während des Übens, und entfällt bei aktivierter Systemeinstellung «Bewegung reduzieren». Die Töne werden im Browser erzeugt (keine Audio-Dateien); auf iOS starten sie nach dem ersten Tipp auf eine Zifferntaste.
 
