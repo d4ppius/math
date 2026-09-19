@@ -15,7 +15,7 @@ Eine kleine Webapp, mit der Kinder spielerisch und regelmässig das kleine Einma
 - **Kind-Login ganz ohne Passwort:** Jedes Kind bekommt einen persönlichen Magic-Link, den die Eltern einmalig als Homescreen-Icon auf dem iPad einrichten. Ein Tap auf das Icon reicht zum Einloggen (optional zusätzlich geschützt durch einen 4-stelligen PIN-Code, falls mehrere Kinder sich ein Gerät teilen).
 - **Adaptives Üben:** Jede einzelne 1×1-Aufgabe wird pro Kind einzeln getrackt. Aufgaben, die noch nicht sitzen oder langsam beantwortet werden, kommen häufiger wieder – kein reiner Zufall.
 - **Zeitlich begrenzte Sessions:** z.B. 10 Minuten am Stück, in der eigenen Geschwindigkeit des Kindes, serverseitig zeitlich abgesichert.
-- **Punkte, Level, Badges** als Motivation.
+- **Punkte, Level, Abzeichen, Konfetti und Töne** als Motivation, siehe [Punkte](#punkte) und [Level und Abzeichen](#level-und-abzeichen).
 - **Admin-Bereich** (`/admin`): Für den Betreiber der Installation, siehe [unten](#admin-bereich).
 - **Erweiterbar:** Die Architektur ist so gebaut, dass später weitere Matheaufgaben-Typen (Addition, Division, …) ergänzt werden können, ohne den Kern umzubauen.
 
@@ -29,9 +29,10 @@ Eltern stellen diese Optionen pro Kind und pro Übung ein (Eltern-Bereich → Ki
 | **Session-Dauer** | 3, 5, 10, 15 oder 20 Minuten. Die Zeit wird serverseitig überwacht. |
 | **Timer anzeigen** | Aus: Der Countdown ist für das Kind unsichtbar, läuft aber im Hintergrund weiter. Kurz vor Schluss (letzte Minute) erscheint ein sanftes «Gleich geschafft!» ohne Zahlen. Gedacht für Kinder, die der Timer stresst. |
 | **Tempo-Bonus** | Aus: Jede richtige Antwort gibt gleich viele Punkte, egal wie schnell (siehe unten). |
+| **Töne** | Aus: Keine Töne bei richtigen und falschen Antworten. An: Ein heller Klang bei richtig, ein leiser tiefer Ton bei falsch (bewusst kein schrilles Signal). |
 | **Ziel-Häufigkeit** | Täglich oder nur wochentags (Montag bis Freitag). Bestimmt, an welchen Tagen die Push-Erinnerung an das Kind verschickt wird. |
 
-Beide Schalter (Timer, Tempo-Bonus) sind standardmässig **an**. Bestehende Kinder behalten also ihr bisheriges Verhalten, bis Eltern etwas ändern.
+Alle Schalter (Timer, Tempo-Bonus, Töne) sind standardmässig **an**. Bestehende Kinder behalten also ihr bisheriges Verhalten, bis Eltern etwas ändern.
 
 ## Punkte
 
@@ -54,6 +55,45 @@ Punkte = (10 + Tempo-Bonus) × Serien-Multiplikator     (gerundet)
 - **Serien-Multiplikator:** Zählt die richtigen Antworten in Folge innerhalb der laufenden Session: ab der 5. gilt ×1,2, ab der 10. gilt ×1,5.
 
 Ergebnis: 0 bis 30 Punkte pro Antwort. Beispiel für eine 3er-Aufgabe (Zielzeit 3,5 s): in 1,75 s richtig ergibt 15 Punkte, in 3,5 s oder langsamer 10 Punkte, in 3,5 s als 5. richtige Antwort in Folge 12 Punkte. Die Punkte zählen für die Session und zusätzlich für das Gesamtkonto des Kindes.
+
+## Level und Abzeichen
+
+**Level:** Aus den Gesamtpunkten eines Kindes werden zehn Level abgeleitet (`app/Services/Gamification/LevelCalculator.php`, nichts davon wird gespeichert). Auf der Startseite des Kindes steht der Titel mit einem Fortschrittsbalken zum nächsten Level, Eltern sehen es in der Statistik. Eine Session bringt grob 300 bis 650 Punkte, die Schwellen wachsen deshalb: Das erste Level-Up kommt nach etwa einer Session, das letzte nach einigen Monaten regelmässigem Üben.
+
+| Level | ab Punkten | Titel |
+| --- | --- | --- |
+| 1 | 0 | Rechen-Anfänger 🌱 |
+| 2 | 400 | Zahlen-Entdecker 🔍 |
+| 3 | 1200 | Rechen-Lehrling 📘 |
+| 4 | 2500 | Zahlen-Flitzer 🏃 |
+| 5 | 4500 | Rechen-Profi ⭐ |
+| 6 | 7500 | Knobel-Meister 🧩 |
+| 7 | 11500 | Zahlen-Zauberer 🪄 |
+| 8 | 16500 | Rechen-Ass 🎯 |
+| 9 | 22500 | Mathe-Held 🦸 |
+| 10 | 30000 | Rechenfuchs-Meister 🦊 |
+
+**Abzeichen:** Nach jeder abgeschlossenen Session prüft `BadgeEvaluator` alle noch nicht verdienten Abzeichen. Ein Abzeichen wird nie doppelt vergeben. Den festen Katalog legt `BadgeSeeder` an (mehrfach ausführbar, läuft bei jedem Deployment mit `db:seed`).
+
+| Abzeichen | Bedingung |
+| --- | --- |
+| **Erste Übung** 🎉 | Erste Session mit mindestens 5 beantworteten Aufgaben |
+| **7-Tage-Serie** 🔥 | Das Tagesziel an 7 Tagen hintereinander erreicht (die heutige Session zählt mit) |
+| **Blitzrechner** ⚡ | In einer Session mindestens 10 richtige Antworten, im Schnitt unter 2 Sekunden. Wird bei Kindern mit ausgeschaltetem Tempo-Bonus nie vergeben, damit niemand zum Hetzen verleitet wird. |
+| **Meister der N-er-Reihe** 👑 (N = 1 bis 9) | Die Reihe zu mindestens 90 % richtig, mit mindestens 15 Versuchen über mindestens 8 der 10 Aufgaben der Reihe |
+
+Neue Abzeichen erscheinen auf der Zusammenfassung nach der Übung, alle verdienten auf der Startseite des Kindes, und die Eltern-Statistik zeigt den ganzen Katalog (nicht verdiente ausgegraut).
+
+**Konfetti und Töne:** Am Ende einer Session mit mindestens einer richtigen Antwort regnet es Konfetti, bei einem neuen Abzeichen zusätzlich von beiden Seiten. Es läuft nur auf der Zusammenfassung, nie während des Übens, und entfällt bei aktivierter Systemeinstellung «Bewegung reduzieren». Die Töne werden im Browser erzeugt (keine Audio-Dateien); auf iOS starten sie nach dem ersten Tipp auf eine Zifferntaste.
+
+### Eigene Bilder für Abzeichen
+
+Solange kein Bild vorhanden ist, zeigt ein Abzeichen sein Emoji. Bilder legt man als PNG in `public/images/badges/` ab, ganz ohne Code-Änderung (quadratisch, transparenter Hintergrund, 512 × 512 Pixel empfohlen). Die Anzeige sucht in dieser Reihenfolge:
+
+1. `public/images/badges/{key}.png` für ein einzelnes Abzeichen: `first_session.png`, `streak_7.png`, `blitz.png`, `row_mastery_1.png` bis `row_mastery_9.png`
+2. `public/images/badges/{typ}.png` als gemeinsames Bild einer ganzen Gruppe. Für die Reihen-Meister genügt **ein** Bild `row_mastery.png`: Die Reihen-Nummer wird als kleines Schild darübergelegt.
+
+Nicht verdiente Abzeichen zeigt die Eltern-Statistik automatisch ausgegraut, es braucht dafür kein zweites Bild.
 
 ## Tech-Stack
 
