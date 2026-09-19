@@ -27,6 +27,23 @@
                 {{ __(':count Aufgaben gelöst', ['count' => $session->questions_answered]) }}
             </p>
 
+            @if ($newBadges->isNotEmpty())
+                <div class="mt-6 rounded-2xl bg-amber-50 p-4">
+                    <div class="font-bold text-amber-700 mb-3">🏅 {{ trans_choice('Neues Abzeichen!|Neue Abzeichen!', $newBadges->count()) }}</div>
+                    <div class="space-y-3">
+                        @foreach ($newBadges as $badge)
+                            <div class="flex items-center gap-3 text-left">
+                                <x-badge-medal :badge="$badge" :size="56" />
+                                <div>
+                                    <div class="font-semibold text-gray-800">{{ $badge->name }}</div>
+                                    <div class="text-xs text-gray-500">{{ $badge->description }}</div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <a href="{{ route('child.home') }}" class="mt-6 inline-block w-full bg-orange-500 hover:bg-orange-600 text-white text-lg font-bold rounded-2xl py-4">
                 {{ __('Zurück') }}
             </a>

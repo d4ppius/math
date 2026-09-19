@@ -142,6 +142,7 @@ class PracticeSessionController extends Controller
         return view('child.summary', [
             'session' => $session,
             'child' => $session->child,
+            'newBadges' => $session->child->badgesEarnedDuring($session),
         ]);
     }
 

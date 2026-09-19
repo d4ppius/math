@@ -8,6 +8,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -105,6 +106,15 @@ class Child extends Model implements AuthenticatableContract
     public function level(): array
     {
         return app(LevelCalculator::class)->forPoints($this->total_points);
+    }
+
+    /**
+     * Badges earned since the given session started, i.e. by that session
+     * (sessions never overlap). Derived from the database so it survives reloads.
+     */
+    public function badgesEarnedDuring(PracticeSession $session): Collection
+    {
+        return $this->badges()->wherePivot('earned_at', '>=', $session->started_at)->get();
     }
 
     public function requiresPin(): bool

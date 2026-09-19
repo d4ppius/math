@@ -24,6 +24,23 @@
                 </button>
             </form>
 
+            @php
+                $earnedBadges = $child->badges;
+                $badgeTotal = \App\Models\Badge::count();
+            @endphp
+            @if ($earnedBadges->isNotEmpty())
+                <div class="mt-6">
+                    <div class="text-sm font-semibold text-orange-700 mb-3">
+                        🏅 {{ __('Deine Abzeichen') }} ({{ $earnedBadges->count() }} {{ __('von') }} {{ $badgeTotal }})
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-3">
+                        @foreach ($earnedBadges as $badge)
+                            <x-badge-medal :badge="$badge" :size="52" />
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <div
                 x-data="{
                     status: 'idle',

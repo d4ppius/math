@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Notification;
 
 class EvaluateDailyGoal
 {
-    private const DAILY_GOAL_QUESTIONS = 10;
+    public const DAILY_GOAL_QUESTIONS = 10;
 
     public function handle(PracticeSessionCompleted $event): void
     {

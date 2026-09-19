@@ -19,6 +19,28 @@ class Badge extends Model
         ];
     }
 
+    /**
+     * Artwork for this badge, if any: public/images/badges/{key}.png, else a
+     * shared public/images/badges/{criteria.type}.png. Null means "use the
+     * emoji in `icon`".
+     */
+    public function imageUrl(): ?string
+    {
+        foreach ([$this->key, $this->criteria['type'] ?? null] as $name) {
+            if ($name && is_file(public_path("images/badges/{$name}.png"))) {
+                return asset("images/badges/{$name}.png").'?v='.filemtime(public_path("images/badges/{$name}.png"));
+            }
+        }
+
+        return null;
+    }
+
+    /** The multiplication row a row-mastery badge belongs to (shown on top of a shared image). */
+    public function rowNumber(): ?int
+    {
+        return ($this->criteria['type'] ?? null) === 'row_mastery' ? ($this->criteria['difficulty_group'] ?? null) : null;
+    }
+
     public function children(): BelongsToMany
     {
         return $this->belongsToMany(Child::class, 'child_badges')->withPivot('earned_at');
