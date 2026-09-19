@@ -12,4 +12,5 @@ Route::get('/icons/child/{child}/{size}.png', [ChildIconController::class, 'show
 Route::get('/manifest/kind/{token}.webmanifest', [ChildManifestController::class, 'show'])->name('child.manifest');
 
 require __DIR__.'/parent.php';
+require __DIR__.'/admin.php';
 require __DIR__.'/child.php';

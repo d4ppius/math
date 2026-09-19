@@ -22,6 +22,11 @@ class PracticeSessionController extends Controller
 
         $exerciseType = ExerciseType::where('key', 'multiplication')->firstOrFail();
 
+        if (! $exerciseType->is_active) {
+            return redirect()->route('child.home')
+                ->withErrors(['exercise' => 'Diese Übung ist gerade nicht verfügbar.']);
+        }
+
         $existing = $child->practiceSessions()
             ->where('exercise_type_id', $exerciseType->id)
             ->where('status', 'active')

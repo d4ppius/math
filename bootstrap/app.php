@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureChildOwnsResource;
+use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\ResolveFamilyContext;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Foundation\Application;
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth.child' => Authenticate::class.':child',
             'child.owns' => EnsureChildOwnsResource::class,
+            'admin' => EnsureUserIsAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
