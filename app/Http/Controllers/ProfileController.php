@@ -6,6 +6,7 @@ use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -47,10 +48,19 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+        $family = $user->family;
 
         Auth::logout();
 
-        $user->delete();
+        DB::transaction(function () use ($user, $family) {
+            $user->delete();
+
+            // The last parent leaving takes the family with them: its children
+            // and all their practice data cascade away. Nothing is left behind.
+            if ($family && ! $family->users()->exists()) {
+                $family->delete();
+            }
+        });
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

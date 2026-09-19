@@ -5,7 +5,7 @@
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __('Sobald der Account gelöscht ist, werden alle zugehörigen Daten unwiderruflich entfernt.') }}
+            {{ __('Sobald der Account gelöscht ist, werden deine Daten unwiderruflich entfernt. Bist du die letzte Elternperson deiner Familie, werden auch die Familie, alle Kinder und ihre Übungsdaten gelöscht. Gibt es weitere Elternteile, bleiben diese und die Kinder bestehen.') }}
         </p>
     </header>
 
@@ -24,7 +24,7 @@
             </h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                {{ __('Sobald der Account gelöscht ist, werden alle zugehörigen Daten unwiderruflich entfernt. Bitte gib dein Passwort ein, um das Löschen zu bestätigen.') }}
+                {{ __('Bist du die letzte Elternperson deiner Familie, werden auch alle Kinder und ihre Übungsdaten unwiderruflich gelöscht. Bitte gib dein Passwort ein, um das Löschen zu bestätigen.') }}
             </p>
 
             <div class="mt-6">
