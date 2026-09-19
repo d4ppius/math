@@ -6,9 +6,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\LegalController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::view('/', 'landing')->name('home');
 
 Route::get('/impressum', [LegalController::class, 'imprint'])->name('legal.imprint');
 Route::get('/datenschutz', [LegalController::class, 'privacy'])->name('legal.privacy');
