@@ -22,6 +22,10 @@
 
                 {{ $slot }}
             </div>
+
+            <div class="mt-6 pb-6">
+                @include('layouts._legal-links')
+            </div>
         </div>
     </body>
 </html>

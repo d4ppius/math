@@ -44,6 +44,10 @@
             <main>
                 {{ $slot }}
             </main>
+
+            <footer class="py-8">
+                @include('layouts._legal-links')
+            </footer>
         </div>
     </body>
 </html>
