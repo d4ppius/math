@@ -25,6 +25,13 @@
                 </a>
             </div>
 
+            {{-- Level --}}
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Level') }}</h3>
+                <x-level-progress :level="$child->level()" />
+                <p class="text-sm text-gray-500 mt-3">{{ __(':points Punkte insgesamt', ['points' => $child->total_points]) }}</p>
+            </div>
+
             {{-- Weekly points --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Punkte diese Woche') }}</h3>

@@ -9,7 +9,9 @@
         <div class="relative z-10 bg-white rounded-3xl shadow-xl p-8 text-center">
             <div class="text-7xl mb-2">{{ $avatarEmoji[$child->avatar] ?? '⭐' }}</div>
             <h1 class="text-3xl font-bold mb-1">{{ __('Hallo :name!', ['name' => $child->name]) }}</h1>
-            <p class="text-orange-600 font-semibold mb-6">⭐ {{ $child->total_points }} {{ __('Punkte') }}</p>
+            <p class="text-orange-600 font-semibold mb-3">⭐ {{ $child->total_points }} {{ __('Punkte') }}</p>
+
+            <x-level-progress :level="$child->level()" class="mb-6" />
 
             @if ($errors->any())
                 <p class="text-red-600 text-sm mb-4">{{ $errors->first('exercise') }}</p>

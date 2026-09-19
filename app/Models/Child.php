@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Services\Gamification\LevelCalculator;
+use App\Services\IconGenerator;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -12,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
-use App\Services\IconGenerator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use NotificationChannels\WebPush\HasPushSubscriptions;
@@ -98,6 +99,12 @@ class Child extends Model implements AuthenticatableContract
     public function iconUrl(int $size): string
     {
         return route('child.icon', ['child' => $this, 'size' => $size, 'v' => IconGenerator::VERSION]);
+    }
+
+    /** @return array<string, mixed> See LevelCalculator::forPoints(). */
+    public function level(): array
+    {
+        return app(LevelCalculator::class)->forPoints($this->total_points);
     }
 
     public function requiresPin(): bool
