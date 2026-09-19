@@ -5,7 +5,9 @@
         ['Kinder', route('admin.children.index'), request()->routeIs('admin.children.*')],
         ['Sessions', route('admin.sessions.index'), request()->routeIs('admin.sessions.*')],
         ['Übungen', route('admin.exercises.index'), request()->routeIs('admin.exercises.*', 'admin.facts.*')],
+        ['Nachrichten', route('admin.messages.index'), request()->routeIs('admin.messages.*')],
     ];
+    $openMessages = \App\Models\ContactMessage::whereNull('handled_at')->count();
 @endphp
 
 <h2 class="font-semibold text-xl text-gray-800 leading-tight">{{ $title }}</h2>
@@ -13,6 +15,9 @@
     @foreach ($tabs as [$label, $url, $active])
         <a href="{{ $url }}" class="pb-1 border-b-2 {{ $active ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
             {{ __($label) }}
+            @if ($label === 'Nachrichten' && $openMessages > 0)
+                <span class="ms-1 rounded-full bg-orange-500 px-1.5 py-0.5 text-xs font-semibold text-white">{{ $openMessages }}</span>
+            @endif
         </a>
     @endforeach
 </nav>

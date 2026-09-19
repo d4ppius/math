@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Child;
+use App\Models\ContactMessage;
 use App\Models\Family;
 use App\Models\PracticeSession;
 use App\Models\User;
@@ -14,6 +15,7 @@ class DashboardController extends Controller
     public function __invoke(): View
     {
         return view('admin.dashboard', [
+            'openMessages' => ContactMessage::whereNull('handled_at')->count(),
             'counts' => [
                 'families' => Family::count(),
                 'parents' => User::count(),

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ExerciseTypeController;
 use App\Http\Controllers\Admin\FactController;
 use App\Http\Controllers\Admin\FamilyController;
 use App\Http\Controllers\Admin\ImpersonationController;
+use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\SessionController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
 
     Route::get('/sessions', [SessionController::class, 'index'])->name('sessions.index');
     Route::get('/sessions/{session}', [SessionController::class, 'show'])->name('sessions.show');
+
+    Route::get('/nachrichten', [MessageController::class, 'index'])->name('messages.index');
+    Route::get('/nachrichten/{message}', [MessageController::class, 'show'])->name('messages.show');
+    Route::patch('/nachrichten/{message}', [MessageController::class, 'update'])->name('messages.update');
+    Route::delete('/nachrichten/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
 
     Route::get('/uebungen', [ExerciseTypeController::class, 'index'])->name('exercises.index');
     Route::patch('/uebungen/{exerciseType}', [ExerciseTypeController::class, 'update'])->name('exercises.update');

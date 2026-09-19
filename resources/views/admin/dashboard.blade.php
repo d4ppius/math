@@ -5,6 +5,12 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             @include('admin._flash')
 
+            @if ($openMessages > 0)
+                <a href="{{ route('admin.messages.index') }}" class="block rounded-lg border border-orange-200 bg-orange-50 p-4 text-sm text-orange-900 hover:bg-orange-100">
+                    ✉️ {{ trans_choice(':count offene Nachricht aus dem Kontaktformular|:count offene Nachrichten aus dem Kontaktformular', $openMessages) }} →
+                </a>
+            @endif
+
             <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
                 @foreach ([
                     ['Familien', $counts['families']],
