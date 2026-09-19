@@ -67,7 +67,26 @@ php artisan db:seed --force
 
 Der Seed-Schritt ist **nicht optional**: er legt die Aufgabentypen (z.B. "Einmaleins") und alle Fakten (1×1 bis 9×10) an. Ohne ihn bleiben Übungseinstellungen und Statistik für jedes Kind leer, ohne dass ein Fehler auftritt. Der Befehl ist gefahrlos mehrfach ausführbar (`updateOrCreate`, keine Duplikate).
 
-## 7. Cronjob für den Laravel-Scheduler anlegen
+## 7. Admin-Zugang einrichten
+
+Der Admin-Bereich (`/admin`) ist für dich als Betreiber gedacht: Er zeigt alle Familien, Eltern, Kinder, Sessions und Aufgaben. Es gibt bewusst **keinen** Weg, sich über die Oberfläche zum Admin zu machen. Das geht nur auf dem Server:
+
+1. Ganz normal über `/eltern/register` ein Konto registrieren (falls noch nicht geschehen).
+2. Danach per SSH:
+   ```bash
+   php artisan app:make-admin deine@mail.example
+   ```
+3. Nach dem nächsten Laden erscheint in der Navigation der Punkt **Admin**.
+
+Admin-Rechte wieder entziehen:
+
+```bash
+php artisan app:make-admin deine@mail.example --revoke
+```
+
+Was der Admin kann, steht im Abschnitt [Admin-Bereich](README.md#admin-bereich) der README. Wer nicht Admin ist, bekommt auf `/admin` einen 404.
+
+## 8. Cronjob für den Laravel-Scheduler anlegen
 
 Im Plesk-Panel unter **Geplante Aufgaben** (Scheduled Tasks) einen neuen Cronjob anlegen, der **jede Minute** läuft:
 
@@ -77,19 +96,34 @@ Im Plesk-Panel unter **Geplante Aufgaben** (Scheduled Tasks) einen neuen Cronjob
 
 Darüber laufen alle zeitgesteuerten Aufgaben der App (z.B. das Aufräumen abgelaufener Übungssessions).
 
-## 8. Redeploy bei Updates
+## 9. Redeploy bei Updates
 
-Bei jedem weiteren Deployment (nach `git pull`):
+Für Updates liegt im Projektordner das Skript `deploy.sh`. Es führt alle nötigen Schritte in der richtigen Reihenfolge aus, damit nach einem Update nichts vergessen geht (z.B. eine neue Migration):
 
 ```bash
-git pull
-composer install --no-dev --optimize-autoloader
-npm ci
-npm run build
-php artisan migrate --force
-php artisan db:seed --force
-php artisan optimize
+./deploy.sh
 ```
+
+Das Skript macht der Reihe nach:
+
+1. Wartungsmodus einschalten (`artisan down`)
+2. `git pull --ff-only` (bricht ab, falls auf dem Server lokale Änderungen liegen)
+3. `composer install --no-dev --optimize-autoloader`
+4. `npm ci` und `npm run build`
+5. `php artisan migrate --force`
+6. `php artisan db:seed --force`
+7. `php artisan optimize`
+8. Wartungsmodus ausschalten (`artisan up`)
+
+Schlägt ein Schritt fehl, bleibt die Seite **bewusst im Wartungsmodus**, damit neuer Code nicht mit einer halb migrierten Datenbank läuft. Fehler beheben und `./deploy.sh` erneut ausführen; oder mit `php artisan up` die Seite wieder freigeben.
+
+Liegen `php` oder `composer` auf dem Server nicht im Standardpfad, können sie als Variablen mitgegeben werden:
+
+```bash
+PHP=/opt/plesk/php/8.5/bin/php COMPOSER=/usr/local/bin/composer ./deploy.sh
+```
+
+Für die Erstinstallation ist das Skript nicht gedacht, dort gelten die Schritte 1 bis 8 dieser Anleitung.
 
 ## Hinweise
 
