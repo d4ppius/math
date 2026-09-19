@@ -18,7 +18,7 @@
     </head>
     <body class="min-h-screen bg-gradient-to-br from-orange-100 via-amber-50 to-sky-100 text-gray-800">
         <div class="min-h-screen flex flex-col items-center justify-center px-4 text-center">
-            <img src="{{ asset('images/icons/icon-512.png') }}" alt="" class="w-36 h-36 mb-4 drop-shadow-lg">
+            <x-mascot :width="150" :height="229" class="mascot-float mb-4" />
             <h1 class="text-2xl font-bold mb-2">{{ config('app.name') }}</h1>
             <p class="text-gray-500 max-w-sm">
                 {{ __('Diese App ist für ein persönliches Homescreen-Icon gedacht. Frag deine Eltern nach dem Link!') }}

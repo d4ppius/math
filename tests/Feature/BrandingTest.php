@@ -52,7 +52,7 @@ class BrandingTest extends TestCase
         }
     }
 
-    public function test_the_login_page_shows_the_logo_and_the_landing_page_the_icon(): void
+    public function test_the_login_page_shows_the_logo_and_the_landing_page_the_mascot(): void
     {
         $this->get(route('login'))
             ->assertOk()
@@ -61,7 +61,7 @@ class BrandingTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('images/icons/icon-512.png')
+            ->assertSee('images/mascot.png')
             ->assertSee('Rechenfuchs');
     }
 
@@ -72,10 +72,39 @@ class BrandingTest extends TestCase
 
         $this->get(route('child.magic-link', ['token' => $token]))
             ->assertOk()
-            ->assertSee('images/icons/icon-512.png', false)
+            ->assertSee('images/mascot.png', false)
             ->assertSee('mascot-float', false);
 
-        $this->actingAs($child, 'child')->get(route('child.home'))->assertSee('mascot-float', false);
+        $this->actingAs($child, 'child')->get(route('child.home'))->assertSee('images/mascot.png', false);
+    }
+
+    public function test_the_mascot_peeks_over_the_card_on_the_pin_page_with_an_explicit_size(): void
+    {
+        $child = Child::factory()->create(['login_token_hash' => '']);
+        $token = $child->generateLoginToken();
+        $child->setPin('1234');
+
+        // The size is inline, so it can't blow up to the artwork's full size
+        // when the built CSS is stale.
+        $this->get(route('child.magic-link', ['token' => $token]))
+            ->assertOk()
+            ->assertSee('Gib deinen Code ein')
+            ->assertSee('images/mascot.png', false)
+            ->assertSee('width="150"', false)
+            ->assertSee('width:150px', false)
+            ->assertSee('margin:0 auto -70px', false);
+    }
+
+    public function test_the_mascot_image_is_a_transparent_png_of_a_sensible_size(): void
+    {
+        [$width, $height] = getimagesize(public_path('images/mascot.png'));
+
+        $this->assertSame(400, $width);
+        $this->assertSame(611, $height);
+        $this->assertLessThan(400_000, filesize(public_path('images/mascot.png')));
+
+        $image = imagecreatefrompng(public_path('images/mascot.png'));
+        $this->assertSame(127, (imagecolorat($image, 0, 0) >> 24) & 127, 'corner should be transparent');
     }
 
     public function test_the_mascot_reacts_to_answers_on_the_practice_screen(): void

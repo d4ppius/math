@@ -2,7 +2,7 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "daepp/math-1x1-trainer",
     "type": "project",
-    "description": "Adaptive 1x1-Uebungs-Webapp fuer Kinder, mandantenfaehig nach Familien.",
+    "description": "Adaptive Rechen-Uebungs-Webapp fuer Kinder, mandantenfaehig nach Familien.",
     "keywords": ["laravel", "education", "math"],
     "license": "MIT",
     "require": {

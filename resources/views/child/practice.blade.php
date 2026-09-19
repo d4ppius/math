@@ -68,7 +68,7 @@
     >
         <div class="flex items-center justify-between text-orange-700 font-semibold mb-3 px-1">
             <span class="flex items-center gap-2">
-                <x-mascot size="w-11 h-11" file="icon-192" class="rounded-xl" ::class="feedback ? (feedback.is_correct ? 'mascot-hop' : 'mascot-shake') : ''" />
+                <x-mascot src="images/icons/icon-192.png" :width="44" :height="44" class="rounded-xl" ::class="feedback ? (feedback.is_correct ? 'mascot-hop' : 'mascot-shake') : ''" />
                 <span>⭐ <span x-text="totalPoints"></span> {{ __('Punkte') }}</span>
             </span>
             @if ($showTimer)
