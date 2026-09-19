@@ -1,6 +1,11 @@
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
         @csrf
+        <x-spam-guard />
+
+        @error('form')
+            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800" role="alert">{{ $message }}</div>
+        @enderror
 
         @if ($inviteToken)
             <input type="hidden" name="invite_token" value="{{ $inviteToken }}">
@@ -54,6 +59,15 @@
                             name="password_confirmation" required autocomplete="new-password" />
 
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        </div>
+
+        <div class="mt-5">
+            <label class="flex items-start gap-3 text-sm text-gray-600">
+                <input type="checkbox" name="privacy" value="1" class="mt-0.5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" @checked(old('privacy')) required>
+                <span>{{ __('Ich habe die') }} <a href="{{ route('legal.privacy') }}" target="_blank" rel="noopener" class="underline text-indigo-600">{{ __('Datenschutzerklärung') }}</a> {{ __('gelesen und bin damit einverstanden.') }}</span>
+            </label>
+            <x-input-error :messages="$errors->get('privacy')" class="mt-2" />
+            <p class="mt-3 text-xs text-gray-500">{{ __('Wir schicken dir eine E-Mail, um deine Adresse zu bestätigen.') }}</p>
         </div>
 
         <div class="flex items-center justify-end mt-4">

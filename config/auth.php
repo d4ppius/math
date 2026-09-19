@@ -103,6 +103,13 @@ return [
     |
     */
 
+    /*
+    | Accounts whose e-mail address is still unverified after this many days are
+    | deleted by `accounts:prune-unverified` (mentioned in the privacy statement).
+    */
+
+    'unverified_retention_days' => 7,
+
     'passwords' => [
         'users' => [
             'provider' => 'users',

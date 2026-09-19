@@ -118,7 +118,7 @@
             <p>
                 Wir bewahren Ihre Daten so lange auf, wie Ihr Konto besteht. <strong>Eltern können jederzeit</strong>
                 einzelne Kinder samt deren Übungsdaten löschen (im Eltern-Bereich beim jeweiligen Kind) oder ihr eigenes Konto
-                löschen (Profil → Account löschen). Löscht die letzte Elternperson einer Familie ihr Konto, werden auch die
+                löschen (Profil → Account löschen). Konten, deren E-Mail-Adresse nicht innerhalb von {{ config('auth.unverified_retention_days') }} Tagen bestätigt wird, löschen wir automatisch. Löscht die letzte Elternperson einer Familie ihr Konto, werden auch die
                 Familie, alle Kinder und deren Übungsdaten unwiderruflich gelöscht. Nachrichten aus dem Kontaktformular
                 werden wie oben beschrieben gelöscht.
             </p>

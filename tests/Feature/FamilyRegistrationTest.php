@@ -5,10 +5,12 @@ namespace Tests\Feature;
 use App\Models\Family;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Concerns\PassesSpamGuard;
 use Tests\TestCase;
 
 class FamilyRegistrationTest extends TestCase
 {
+    use PassesSpamGuard;
     use RefreshDatabase;
 
     public function test_registering_without_invite_creates_a_new_family(): void
@@ -19,7 +21,7 @@ class FamilyRegistrationTest extends TestCase
             'email' => 'maria@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
-        ]);
+        ] + $this->humanFormFields());
 
         $this->assertAuthenticated();
 
@@ -38,7 +40,7 @@ class FamilyRegistrationTest extends TestCase
             'email' => 'papa@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
-        ]);
+        ] + $this->humanFormFields());
 
         $this->assertAuthenticated();
 

@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('reminders:send')->dailyAt('17:00');
 Schedule::command('contact:prune')->daily();
+Schedule::command('accounts:prune-unverified')->daily();

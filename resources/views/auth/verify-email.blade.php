@@ -1,6 +1,6 @@
 <x-guest-layout>
     <div class="mb-4 text-sm text-gray-600">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
+        {{ __('Danke für deine Registrierung! Bevor es losgeht, bestätige bitte deine E-Mail-Adresse über den Link, den wir dir gerade geschickt haben. Schau auch im Spam-Ordner nach. Hast du keine E-Mail erhalten, senden wir dir gern eine neue.') }}
     </div>
 
     @if (session('status') == 'verification-link-sent')
