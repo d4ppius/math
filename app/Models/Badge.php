@@ -35,6 +35,12 @@ class Badge extends Model
         return null;
     }
 
+    /** The speed badge can only be earned where the speed bonus is on. */
+    public function isAttainableBy(Child $child): bool
+    {
+        return ($this->criteria['type'] ?? null) !== 'blitz' || $child->hasSpeedBonus();
+    }
+
     /** The multiplication row a row-mastery badge belongs to (shown on top of a shared image). */
     public function rowNumber(): ?int
     {

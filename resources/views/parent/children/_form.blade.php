@@ -52,6 +52,15 @@
     <x-input-error :messages="$errors->get('pin')" class="mt-2" />
 </div>
 
+<div>
+    <label class="inline-flex items-center">
+        <input type="hidden" name="show_locked_badges" value="0">
+        <input type="checkbox" name="show_locked_badges" value="1" class="rounded border-gray-300" {{ old('show_locked_badges', $child?->show_locked_badges ?? true) ? 'checked' : '' }}>
+        <span class="ms-2 text-sm text-gray-600">{{ __('Abzeichen zeigen, die noch nicht verdient sind') }}</span>
+    </label>
+    <p class="text-xs text-gray-500 mt-1">{{ __('An: Das Kind sieht auf seiner Abzeichen-Seite auch ausgegraut, welche Abzeichen es noch gibt und wie es sie bekommt. Aus: Es sieht nur die bereits verdienten.') }}</p>
+</div>
+
 @if ($child)
     <div>
         <label class="inline-flex items-center">

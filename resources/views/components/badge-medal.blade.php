@@ -9,12 +9,14 @@
     $image = $badge->imageUrl();
     $row = $badge->rowNumber();
     $lockedStyle = $earned ? '' : 'filter:grayscale(1);opacity:.4;';
+    // A caller-supplied style (e.g. an overlap margin) is appended, not a second style attribute.
+    $style = "width:{$size}px;height:{$size}px;{$lockedStyle}".$attributes->get('style');
 @endphp
 
 <span
     title="{{ $badge->name }}"
-    {{ $attributes->merge(['class' => 'relative inline-flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-200 to-orange-300 ring-4 ring-white shadow']) }}
-    style="width:{{ $size }}px;height:{{ $size }}px;{{ $lockedStyle }}"
+    {{ $attributes->except('style')->merge(['class' => 'relative inline-flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-200 to-orange-300 ring-4 ring-white shadow']) }}
+    style="{{ $style }}"
 >
     @if ($image)
         <img src="{{ $image }}" alt="" draggable="false" style="width:86%;height:86%;object-fit:contain" class="pointer-events-none select-none">

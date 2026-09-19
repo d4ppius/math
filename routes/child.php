@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Child\AchievementsController;
 use App\Http\Controllers\Child\ChildAuthController;
 use App\Http\Controllers\Child\ChildHomeController;
 use App\Http\Controllers\Child\ChildPushSubscriptionController;
@@ -16,6 +17,7 @@ Route::post('/k/{token}', [ChildAuthController::class, 'verifyPin'])
 
 Route::middleware('auth:child')->group(function () {
     Route::get('/kind', ChildHomeController::class)->name('child.home');
+    Route::get('/kind/erfolge', AchievementsController::class)->name('child.achievements');
     Route::post('/kind/logout', [ChildAuthController::class, 'logout'])->name('child.logout');
 
     Route::post('/kind/sessions', [PracticeSessionController::class, 'start'])->name('child.sessions.start');

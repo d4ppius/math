@@ -23,6 +23,7 @@ class ChildFactory extends Factory
             'color_theme' => fake()->randomElement(['orange', 'blue', 'green', 'pink', 'purple']),
             'login_token_hash' => hash('sha256', Str::random(48)),
             'active' => true,
+            'show_locked_badges' => true,
             'total_points' => 0,
         ];
     }

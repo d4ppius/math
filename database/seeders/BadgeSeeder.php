@@ -21,21 +21,21 @@ class BadgeSeeder extends Seeder
             [
                 'key' => 'first_session',
                 'name' => 'Erste Übung',
-                'description' => 'Du hast deine erste Übung geschafft!',
+                'description' => 'Schaffe deine erste Übung mit mindestens 5 Aufgaben.',
                 'icon' => '🎉',
                 'criteria' => ['type' => 'first_session', 'min_questions' => 5],
             ],
             [
                 'key' => 'streak_7',
                 'name' => '7-Tage-Serie',
-                'description' => '7 Tage hintereinander das Tagesziel erreicht.',
+                'description' => 'Erreiche 7 Tage hintereinander dein Tagesziel.',
                 'icon' => '🔥',
                 'criteria' => ['type' => 'streak_days', 'days' => 7],
             ],
             [
                 'key' => 'blitz',
                 'name' => 'Blitzrechner',
-                'description' => 'In einer Übung mindestens 10 richtige Antworten, im Schnitt unter 2 Sekunden.',
+                'description' => 'Gib in einer Übung mindestens 10 richtige Antworten, im Schnitt unter 2 Sekunden.',
                 'icon' => '⚡',
                 'criteria' => ['type' => 'blitz', 'min_correct_in_session' => 10, 'max_avg_response_ms' => 2000],
             ],
@@ -45,7 +45,7 @@ class BadgeSeeder extends Seeder
             $badges[] = [
                 'key' => "row_mastery_{$row}",
                 'name' => "Meister der {$row}er-Reihe",
-                'description' => "Die {$row}er-Reihe zu über 90 % richtig gelöst.",
+                'description' => "Löse die {$row}er-Reihe zu über 90 % richtig.",
                 'icon' => '👑',
                 'criteria' => [
                     'type' => 'row_mastery',

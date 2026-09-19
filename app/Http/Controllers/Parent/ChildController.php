@@ -32,6 +32,7 @@ class ChildController extends Controller
             'name' => $validated['name'],
             'avatar' => $validated['avatar'],
             'color_theme' => $validated['color_theme'],
+            'show_locked_badges' => $request->boolean('show_locked_badges', true),
         ]);
         // login_token_hash is required (unique, not-null) before the first save.
         $child->login_token_hash = '';
@@ -76,6 +77,7 @@ class ChildController extends Controller
             'avatar' => $validated['avatar'],
             'color_theme' => $validated['color_theme'],
             'active' => $request->boolean('active', true),
+            'show_locked_badges' => $request->boolean('show_locked_badges', true),
         ]);
 
         if ($request->filled('pin')) {

@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 
-#[Fillable(['family_id', 'name', 'avatar', 'color_theme', 'active'])]
+#[Fillable(['family_id', 'name', 'avatar', 'color_theme', 'active', 'show_locked_badges'])]
 #[Hidden(['login_token_hash', 'pin_hash', 'remember_token'])]
 class Child extends Model implements AuthenticatableContract
 {
@@ -29,6 +29,7 @@ class Child extends Model implements AuthenticatableContract
     {
         return [
             'active' => 'boolean',
+            'show_locked_badges' => 'boolean',
             'last_seen_at' => 'datetime',
         ];
     }
@@ -115,6 +116,30 @@ class Child extends Model implements AuthenticatableContract
     public function badgesEarnedDuring(PracticeSession $session): Collection
     {
         return $this->badges()->wherePivot('earned_at', '>=', $session->started_at)->get();
+    }
+
+    /** Whether any of the child's exercises awards a speed bonus (true if none are set up yet). */
+    public function hasSpeedBonus(): bool
+    {
+        $settings = $this->exerciseSettings;
+
+        return $settings->isEmpty() || $settings->contains('speed_bonus_enabled', true);
+    }
+
+    /**
+     * Every badge this child has earned or can still work towards, in catalogue
+     * order. Badges that can never be earned by this child (the speed badge
+     * when the speed bonus is off) are left out, so nothing unreachable is shown.
+     *
+     * @return Collection<int, Badge>
+     */
+    public function attainableBadges(): Collection
+    {
+        $earnedIds = $this->badges()->pluck('badges.id');
+
+        return Badge::orderBy('id')->get()
+            ->filter(fn (Badge $badge) => $earnedIds->contains($badge->id) || $badge->isAttainableBy($this))
+            ->values();
     }
 
     public function requiresPin(): bool

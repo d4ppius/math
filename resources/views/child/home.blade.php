@@ -26,19 +26,22 @@
 
             @php
                 $earnedBadges = $child->badges;
-                $badgeTotal = \App\Models\Badge::count();
+                $visibleBadges = $child->show_locked_badges ? $child->attainableBadges() : $earnedBadges;
             @endphp
-            @if ($earnedBadges->isNotEmpty())
-                <div class="mt-6">
-                    <div class="text-sm font-semibold text-orange-700 mb-3">
-                        🏅 {{ __('Deine Abzeichen') }} ({{ $earnedBadges->count() }} {{ __('von') }} {{ $badgeTotal }})
+            {{-- The details live on the achievements page; only shown if there is something to see. --}}
+            @if ($child->show_locked_badges || $earnedBadges->isNotEmpty())
+                <a href="{{ route('child.achievements') }}" class="mt-6 flex items-center justify-between gap-3 rounded-2xl bg-amber-50 px-4 py-3 text-left hover:bg-amber-100 active:scale-95 transition">
+                    <div>
+                        <div class="font-semibold text-amber-800">🏅 {{ __('Meine Abzeichen') }}</div>
+                        <div class="text-xs text-gray-500">{{ $earnedBadges->count() }} {{ __('von') }} {{ $visibleBadges->count() }}</div>
                     </div>
-                    <div class="flex flex-wrap justify-center gap-3">
-                        @foreach ($earnedBadges as $badge)
-                            <x-badge-medal :badge="$badge" :size="52" />
+                    <div class="flex items-center">
+                        @foreach ($earnedBadges->sortByDesc('pivot.earned_at')->take(3) as $badge)
+                            <x-badge-medal :badge="$badge" :size="36" style="margin-left:-6px" />
                         @endforeach
+                        <span class="ms-3 text-amber-600 text-xl" aria-hidden="true">›</span>
                     </div>
-                </div>
+                </a>
             @endif
 
             <div

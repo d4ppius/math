@@ -238,7 +238,7 @@ class BadgeTest extends TestCase
             ->assertDontSee('Neues Abzeichen!');
     }
 
-    public function test_the_child_home_lists_earned_badges(): void
+    public function test_the_child_home_links_to_the_badges_with_a_count_and_the_latest_ones(): void
     {
         $child = Child::factory()->create();
         $child->badges()->attach(Badge::where('key', 'blitz')->first()->id, ['earned_at' => now()]);
@@ -246,16 +246,24 @@ class BadgeTest extends TestCase
         $this->actingAs($child, 'child')
             ->get(route('child.home'))
             ->assertOk()
-            ->assertSee('Deine Abzeichen')
+            ->assertSee('Meine Abzeichen')
             ->assertSee('1 von 12')
+            ->assertSee(route('child.achievements'), false)
             ->assertSee('⚡');
     }
 
-    public function test_the_home_shows_no_badge_section_before_the_first_badge(): void
+    public function test_the_home_invites_to_the_badges_before_the_first_one_when_locked_ones_are_shown(): void
     {
         $child = Child::factory()->create();
 
-        $this->actingAs($child, 'child')->get(route('child.home'))->assertDontSee('Deine Abzeichen');
+        $this->actingAs($child, 'child')->get(route('child.home'))->assertSee('Meine Abzeichen')->assertSee('0 von 12');
+    }
+
+    public function test_the_home_hides_the_badge_card_when_nothing_is_earned_and_locked_ones_are_off(): void
+    {
+        $child = Child::factory()->create(['show_locked_badges' => false]);
+
+        $this->actingAs($child, 'child')->get(route('child.home'))->assertDontSee('Meine Abzeichen');
     }
 
     public function test_parents_see_all_badges_with_earned_and_locked_ones(): void
