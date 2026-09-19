@@ -1,2 +1,10 @@
+# Public pages (start page, imprint, privacy statement, contact) may be indexed.
+# Everything private is kept out: the children's personal login links, the
+# child area, the parent area, the admin area and generated icons/manifests.
 User-agent: *
-Disallow:
+Disallow: /k/
+Disallow: /kind
+Disallow: /eltern/
+Disallow: /admin
+Disallow: /icons/
+Disallow: /manifest/
