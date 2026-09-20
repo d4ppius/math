@@ -28,6 +28,22 @@ class MultiplicationExerciseType implements ExerciseTypeContract
         ];
     }
 
+    /** One group per row: 1er-Reihe to 9er-Reihe, shown as the plain number. */
+    public function groups(): array
+    {
+        return array_combine(range(1, 9), array_map('strval', range(1, 9)));
+    }
+
+    public function groupsLabel(): string
+    {
+        return 'Reihen';
+    }
+
+    public function enabledByDefault(): bool
+    {
+        return true;
+    }
+
     public function generateFacts(): array
     {
         $facts = [];

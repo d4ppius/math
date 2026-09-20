@@ -17,10 +17,23 @@ interface ExerciseTypeContract
     public function label(): string;
 
     /**
-     * @return array{rows: int[], cols: int[]} the full grid of difficulty
-     *                                         groups (rows) and operands (cols) used for the parent heatmap.
+     * @return array{rows: int[], cols: int[]} the operand values shown as rows
+     *                                         (operand_a) and columns (operand_b) of the parent heatmap.
      */
     public function gridDefinition(): array;
+
+    /**
+     * The difficulty groups parents can switch on, with the name shown to them.
+     *
+     * @return array<int, string> difficulty group => name
+     */
+    public function groups(): array;
+
+    /** What the groups are called in the parent settings, e.g. "Reihen". */
+    public function groupsLabel(): string;
+
+    /** Whether the exercise starts switched on when it is first set up for a child. */
+    public function enabledByDefault(): bool;
 
     /**
      * @return list<array{operand_a: int, operand_b: int, correct_answer: int, difficulty_group: int}>

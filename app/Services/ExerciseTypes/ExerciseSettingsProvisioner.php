@@ -29,6 +29,7 @@ class ExerciseSettingsProvisioner
             $child->exerciseSettings()->firstOrCreate(
                 ['exercise_type_id' => $exerciseType->id],
                 [
+                    'enabled' => $implementation->enabledByDefault(),
                     'active_groups' => $implementation->defaultActiveGroups(),
                     'session_duration_minutes' => 10,
                     'target_frequency' => 'daily',

@@ -22,7 +22,7 @@ class SendPracticeReminders extends Command
             ->where('active', true)
             ->whereDoesntHave('dailyGoalLogs', fn ($query) => $query->whereDate('date', $today)->where('goal_met', true))
             ->whereHas('pushSubscriptions')
-            ->with('exerciseSettings')
+            ->with(['exerciseSettings' => fn ($query) => $query->where('enabled', true)])
             ->get();
 
         $sent = 0;

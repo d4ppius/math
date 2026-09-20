@@ -24,23 +24,44 @@
                 @csrf
                 @method('PUT')
 
+                @if ($errors->any())
+                    <div class="bg-red-50 border border-red-200 text-red-800 text-sm rounded-lg p-4" role="alert">
+                        <ul class="list-disc ps-5 space-y-1">
+                            @foreach ($errors->all() as $message)
+                                <li>{{ $message }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 @foreach ($settings as $index => $setting)
-                    @php $grid = $setting->implementation->gridDefinition(); @endphp
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    @php $groups = $setting->implementation->groups(); @endphp
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6" x-data="{ enabled: {{ $setting->enabled ? 'true' : 'false' }} }">
                         <input type="hidden" name="settings[{{ $index }}][id]" value="{{ $setting->id }}">
 
                         <h3 class="text-lg font-medium text-gray-900">{{ $setting->implementation->label() }}</h3>
 
+                        <div class="mt-3">
+                            <label class="inline-flex items-center">
+                                <input type="hidden" name="settings[{{ $index }}][enabled]" value="0">
+                                <input type="checkbox" name="settings[{{ $index }}][enabled]" value="1" class="rounded border-gray-300" x-model="enabled"
+                                       {{ $setting->enabled ? 'checked' : '' }}>
+                                <span class="ms-2 text-sm font-medium text-gray-700">{{ __('Für :name freischalten', ['name' => $child->name]) }}</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-1">{{ __('Ist die Übung aus, sieht :name sie nicht auf der Startseite. Deine Einstellungen darunter bleiben erhalten.', ['name' => $child->name]) }}</p>
+                        </div>
+
+                        <div x-show="enabled" x-cloak>
                         <div class="mt-4">
-                            <x-input-label :value="__('Aktive Reihen')" />
-                            <p class="text-xs text-gray-500 mb-2">{{ __('Nur ausgewählte Reihen werden abgefragt. Am besten mit 1-2 Reihen starten.') }}</p>
+                            <x-input-label :value="__('Aktive :label', ['label' => $setting->implementation->groupsLabel()])" />
+                            <p class="text-xs text-gray-500 mb-2">{{ __('Nur die ausgewählten :label werden abgefragt. Am besten mit wenigen starten.', ['label' => $setting->implementation->groupsLabel()]) }}</p>
                             <div class="flex flex-wrap gap-2">
-                                @foreach ($grid['rows'] as $row)
+                                @foreach ($groups as $group => $groupLabel)
                                     <label class="cursor-pointer">
-                                        <input type="checkbox" name="settings[{{ $index }}][active_groups][]" value="{{ $row }}" class="peer sr-only"
-                                               {{ in_array($row, $setting->active_groups) ? 'checked' : '' }}>
-                                        <span class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-200 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 font-semibold">
-                                            {{ $row }}
+                                        <input type="checkbox" name="settings[{{ $index }}][active_groups][]" value="{{ $group }}" class="peer sr-only"
+                                               {{ in_array($group, $setting->active_groups) ? 'checked' : '' }}>
+                                        <span class="flex items-center justify-center min-w-10 h-10 px-3 rounded-full border-2 border-gray-200 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:border-indigo-600 font-semibold">
+                                            {{ $groupLabel }}
                                         </span>
                                     </label>
                                 @endforeach
@@ -92,6 +113,7 @@
                                 <option value="daily" {{ $setting->target_frequency === 'daily' ? 'selected' : '' }}>{{ __('Täglich') }}</option>
                                 <option value="weekdays" {{ $setting->target_frequency === 'weekdays' ? 'selected' : '' }}>{{ __('Wochentags') }}</option>
                             </select>
+                        </div>
                         </div>
                     </div>
                 @endforeach
