@@ -20,20 +20,32 @@ Eine kleine Webapp, mit der Kinder spielerisch und regelmässig Einmaleins und P
 - **Admin-Bereich** (`/admin`): Für den Betreiber der Installation, siehe [unten](#admin-bereich).
 - **Erweiterbar:** Die Architektur ist so gebaut, dass später weitere Matheaufgaben-Typen (Addition, Division, …) ergänzt werden können, ohne den Kern umzubauen.
 
+## Übungen
+
+Rechenfuchs hat zwei Übungen. Weitere Aufgabentypen lassen sich nach demselben Muster ergänzen (`ExerciseTypeContract`, Eintrag in `config/exercise_types.php`).
+
+| Übung | Aufgaben | Gruppen (Eltern wählen) |
+| --- | --- | --- |
+| **Einmaleins** | 90 Aufgaben, 1×1 bis 9×10 | Reihen 1 bis 9 |
+| **Plus bis 20** | 100 Aufgaben, beide Summanden von 1 bis 10 (Einspluseins) | «Plus bis 10» (45), «Plus mit der 10» (19), «Zehnerübergang» (36) |
+
+Eltern schalten pro Kind frei, welche Übungen es gibt. Einmaleins ist von Anfang an aktiv, **Plus ist aus**, bis die Eltern es in den Übungseinstellungen freischalten. Ist genau eine Übung aktiv, sieht das Kind wie bisher einen grossen Knopf. Sind mehrere aktiv, wählt es auf der Startseite (eine Karte pro Übung, «Weiter üben», wenn dort noch eine Session läuft). Der Server prüft die Auswahl selbst, ein Kind kann keine Übung starten, die nicht freigeschaltet oder vom Admin deaktiviert ist. Punkte, Level und Tagesziel sind für beide Übungen gemeinsam. Die Eltern-Statistik zeigt pro Übung eine eigene Heatmap.
+
 ## Übungseinstellungen
 
 Eltern stellen diese Optionen pro Kind und pro Übung ein (Eltern-Bereich → Kind → Übungseinstellungen):
 
 | Einstellung | Wirkung |
 | --- | --- |
-| **Aktive Reihen** | Nur die ausgewählten Reihen werden abgefragt. Am besten mit 1–2 Reihen starten. |
+| **Für [Kind] freischalten** | Schaltet die Übung für das Kind ein oder aus. Aus: Das Kind sieht sie nicht, die übrigen Einstellungen bleiben erhalten. Mindestens eine Übung muss aktiv bleiben. |
+| **Aktive Reihen / Aufgabenarten** | Nur die ausgewählten Gruppen werden abgefragt (bei Einmaleins «Reihen», bei Plus «Aufgabenarten»). Am besten mit wenigen starten. Eine aktive Übung braucht mindestens eine Gruppe. |
 | **Session-Dauer** | 3, 5, 10, 15 oder 20 Minuten. Die Zeit wird serverseitig überwacht. |
 | **Timer anzeigen** | Aus: Der Countdown ist für das Kind unsichtbar, läuft aber im Hintergrund weiter. Kurz vor Schluss (letzte Minute) erscheint ein sanftes «Gleich geschafft!» ohne Zahlen. Gedacht für Kinder, die der Timer stresst. |
 | **Tempo-Bonus** | Aus: Jede richtige Antwort gibt gleich viele Punkte, egal wie schnell (siehe unten). |
 | **Töne** | Aus: Keine Töne bei richtigen und falschen Antworten. An: Ein heller Klang bei richtig, ein leiser tiefer Ton bei falsch (bewusst kein schrilles Signal). |
 | **Ziel-Häufigkeit** | Täglich oder nur wochentags (Montag bis Freitag). Bestimmt, an welchen Tagen die Push-Erinnerung an das Kind verschickt wird. |
 
-Alle Schalter (Timer, Tempo-Bonus, Töne) sind standardmässig **an**. Bestehende Kinder behalten also ihr bisheriges Verhalten, bis Eltern etwas ändern.
+Timer, Tempo-Bonus und Töne sind standardmässig **an**, und alle Einstellungen gelten je Übung. Bestehende Kinder behalten ihr bisheriges Verhalten, bis Eltern etwas ändern.
 
 ## Punkte
 
@@ -46,11 +58,13 @@ Punkte = (10 + Tempo-Bonus) × Serien-Multiplikator     (gerundet)
 - **Grundpunkte:** 10 pro richtiger Antwort. Eine falsche Antwort gibt 0 Punkte und beendet die Serie.
 - **Tempo-Bonus:** 0 bis +10, je nachdem, wie deutlich die Zielzeit unterboten wird. Er wird nie negativ: Auch eine langsame, richtige Antwort gibt mindestens die 10 Grundpunkte. Ohne Bonus (Einstellung oben) ist er immer 0.
 
-  | Reihe der Aufgabe | Zielzeit |
+  | Übung und Gruppe | Zielzeit |
   | --- | --- |
-  | 1er, 2er | 2,5 s |
-  | 3er bis 5er | 3,5 s |
-  | 6er bis 10er | 4,5 s |
+  | Einmaleins: 1er, 2er | 2,5 s |
+  | Einmaleins: 3er bis 5er | 3,5 s |
+  | Einmaleins: 6er bis 9er | 4,5 s |
+  | Plus: bis 10, mit der 10 | 2,0 s |
+  | Plus: Zehnerübergang | 3,5 s |
 
   Sofort beantwortet: +10. In der Zielzeit oder langsamer: +0. Dazwischen linear. Die Zeit misst der Server, von der Ausgabe der Frage bis zum Eingang der Antwort.
 - **Serien-Multiplikator:** Zählt die richtigen Antworten in Folge innerhalb der laufenden Session: ab der 5. gilt ×1,2, ab der 10. gilt ×1,5.
@@ -74,18 +88,26 @@ Ergebnis: 0 bis 30 Punkte pro Antwort. Beispiel für eine 3er-Aufgabe (Zielzeit 
 | 9 | 22500 | Mathe-Held 🦸 |
 | 10 | 30000 | Rechenfuchs-Meister 🦊 |
 
-**Abzeichen:** Nach jeder abgeschlossenen Session prüft `BadgeEvaluator` alle noch nicht verdienten Abzeichen. Ein Abzeichen wird nie doppelt vergeben. Den festen Katalog legt `BadgeSeeder` an (mehrfach ausführbar, läuft bei jedem Deployment mit `db:seed`).
+**Abzeichen:** Nach jeder abgeschlossenen Session prüft `BadgeEvaluator` alle noch nicht verdienten Abzeichen. Ein Abzeichen wird nie doppelt vergeben. Es gibt 18 Abzeichen. Den festen Katalog legt `BadgeSeeder` an (mehrfach ausführbar, läuft bei jedem Deployment mit `db:seed`).
 
 | Abzeichen | Bedingung |
 | --- | --- |
 | **Erste Übung** 🎉 | Erste Session mit mindestens 5 beantworteten Aufgaben |
 | **7-Tage-Serie** 🔥 | Das Tagesziel an 7 Tagen hintereinander erreicht (die heutige Session zählt mit) |
-| **Blitzrechner** ⚡ | In einer Session mindestens 10 richtige Antworten, im Schnitt unter 2 Sekunden. Wird bei Kindern mit ausgeschaltetem Tempo-Bonus nie vergeben, damit niemand zum Hetzen verleitet wird. |
+| **Blitzrechner** ⚡ | In einer **Einmaleins**-Session mindestens 10 richtige Antworten, im Schnitt unter 2 Sekunden. Wird bei Kindern mit ausgeschaltetem Tempo-Bonus nie vergeben, damit niemand zum Hetzen verleitet wird. |
 | **Meister der N-er-Reihe** 👑 (N = 1 bis 9) | Die Reihe zu mindestens 90 % richtig, mit mindestens 15 Versuchen über mindestens 8 der 10 Aufgaben der Reihe |
+| **Plus-Starter** ➕ | Erste Plus-Session mit mindestens 5 beantworteten Aufgaben |
+| **Meister von Plus bis 10** 🥇 | «Plus bis 10» zu mindestens 90 % richtig, mit mindestens 50 Versuchen über mindestens 34 der 45 Aufgaben |
+| **Meister von Plus mit der 10** 🥇 | «Plus mit der 10» zu mindestens 90 % richtig, mit mindestens 22 Versuchen über mindestens 14 der 19 Aufgaben |
+| **Meister des Zehnerübergangs** 🥇 | «Zehnerübergang» zu mindestens 90 % richtig, mit mindestens 40 Versuchen über mindestens 27 der 36 Aufgaben |
+| **Plus-Blitz** ⚡ | In einer Plus-Session mindestens 10 richtige Antworten, im Schnitt unter 1,5 Sekunden (nur bei aktivem Tempo-Bonus für Plus) |
+| **Allrounder** 🌟 | Am selben Tag beide Übungen mit je mindestens 5 beantworteten Aufgaben geübt |
+
+Ein Abzeichen ist nur erreichbar (und wird dem Kind nur als Ziel gezeigt), wenn seine Übung für das Kind freigeschaltet ist. Der Allrounder braucht mindestens zwei aktive Übungen, ein Speed-Abzeichen zusätzlich den Tempo-Bonus der jeweiligen Übung. Schon verdiente Abzeichen bleiben immer sichtbar. Auf der Erfolgsseite und in der Eltern-Statistik sind die Abzeichen in «Allgemein» und einen Abschnitt je Übung gegliedert.
 
 Neue Abzeichen erscheinen auf der Zusammenfassung nach der Übung. Damit die Startseite des Kindes schlank bleibt, zeigt sie nur eine kompakte Karte «Meine Abzeichen» (Anzahl und die drei neuesten). Ein Tipp darauf öffnet die Seite **Meine Erfolge** (`/kind/erfolge`), die Statistik-Seite des Kindes: Level mit Fortschritt, Punkte, die verdienten Abzeichen mit Datum und, falls die Eltern es erlauben, darunter «Das kannst du noch schaffen»: die noch offenen Abzeichen ausgegraut, mit einer kurzen Beschreibung, wie man sie bekommt. Die Eltern-Statistik zeigt den ganzen Katalog (nicht verdiente ausgegraut).
 
-Eltern schalten das pro Kind ein und aus: Kind bearbeiten → **«Abzeichen zeigen, die noch nicht verdient sind»** (standardmässig an). Aus: Das Kind sieht nur die bereits verdienten. Bei Kindern mit ausgeschaltetem Tempo-Bonus wird der Blitzrechner gar nicht erst als Ziel angezeigt, weil sie ihn nie bekommen können (die Zähler heissen dann z.B. «3 von 11»).
+Eltern schalten das pro Kind ein und aus: Kind bearbeiten → **«Abzeichen zeigen, die noch nicht verdient sind»** (standardmässig an). Aus: Das Kind sieht nur die bereits verdienten. Was ein Kind nicht erreichen kann (z.B. Plus-Abzeichen ohne Plus, oder ein Speed-Abzeichen ohne Tempo-Bonus), wird ihm gar nicht erst als Ziel angezeigt. Die Zähler passen sich an, z.B. «3 von 11».
 
 **Konfetti und Töne:** Am Ende einer Session mit mindestens einer richtigen Antwort regnet es Konfetti, bei einem neuen Abzeichen zusätzlich von beiden Seiten. Es läuft nur auf der Zusammenfassung, nie während des Übens, und entfällt bei aktivierter Systemeinstellung «Bewegung reduzieren». Die Töne werden im Browser erzeugt (keine Audio-Dateien); auf iOS starten sie nach dem ersten Tipp auf eine Zifferntaste.
 
@@ -93,8 +115,8 @@ Eltern schalten das pro Kind ein und aus: Kind bearbeiten → **«Abzeichen zeig
 
 Solange kein Bild vorhanden ist, zeigt ein Abzeichen sein Emoji. Bilder legt man als PNG in `public/images/badges/` ab, ganz ohne Code-Änderung (quadratisch, transparenter Hintergrund, 512 × 512 Pixel empfohlen). Die Anzeige sucht in dieser Reihenfolge:
 
-1. `public/images/badges/{key}.png` für ein einzelnes Abzeichen: `first_session.png`, `streak_7.png`, `blitz.png`, `row_mastery_1.png` bis `row_mastery_9.png`
-2. `public/images/badges/{typ}.png` als gemeinsames Bild einer ganzen Gruppe. Für die Reihen-Meister genügt **ein** Bild `row_mastery.png`: Die Reihen-Nummer wird als kleines Schild darübergelegt.
+1. `public/images/badges/{key}.png` für ein einzelnes Abzeichen: `first_session.png`, `streak_7.png`, `blitz.png`, `row_mastery_1.png` bis `row_mastery_9.png`, `addition_first_session.png`, `addition_mastery_1.png` bis `addition_mastery_3.png`, `addition_blitz.png`, `allrounder.png`
+2. `public/images/badges/{typ}.png` als gemeinsames Bild einer ganzen Gruppe. Für die Reihen-Meister genügt **ein** Bild `row_mastery.png` (die Reihen-Nummer wird als kleines Schild darübergelegt), für die drei Plus-Meister **ein** Bild `group_mastery.png` (Schild mit der Marke der Gruppe: «10», «+10», «20»).
 
 Nicht verdiente Abzeichen zeigt die Eltern-Statistik automatisch ausgegraut, es braucht dafür kein zweites Bild.
 

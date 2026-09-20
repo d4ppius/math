@@ -1,6 +1,6 @@
 # Plan: Zweite Übung «Plus bis 20» (Phase 6.1)
 
-**Stand:** 20. September 2026 · **Status:** Entwurf, noch nichts umgesetzt
+**Stand:** 21. September 2026 · **Status:** umgesetzt (Schritte 1 bis 8). Abweichungen zum Entwurf: Die Registrierung des Typs und die Erinnerungs-Anpassung (Schritt 7) sind schon in Schritt 2 erfolgt, damit Eltern nie eine halb fertige Karte sehen und ausgeschaltete Übungen keinen Erinnerungstag auslösen.
 
 Rechenfuchs bekommt einen zweiten Aufgabentyp. Eltern schalten pro Kind frei, welche Übungen es gibt. Sind mehrere freigeschaltet, wählt das Kind auf seiner Startseite. Auch für Plus gibt es Abzeichen zum Sammeln.
 
