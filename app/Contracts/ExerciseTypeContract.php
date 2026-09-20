@@ -16,6 +16,9 @@ interface ExerciseTypeContract
 
     public function label(): string;
 
+    /** The sign between the operands, used in the heatmap labels ("×", "+"). */
+    public function operator(): string;
+
     /** A small emoji shown next to the name when the child chooses an exercise. */
     public function emoji(): string;
 

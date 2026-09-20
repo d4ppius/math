@@ -84,53 +84,77 @@
             </div>
 
             {{-- Heatmap --}}
-            @if ($heatmap)
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-1">{{ $heatmap['label'] }}</h3>
-                    <p class="text-sm text-gray-500 mb-4">{{ __('Prozentzahl = Anteil richtig beantworteter Versuche.') }}</p>
+            @if ($heatmaps->isNotEmpty())
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6" x-data="{ tab: '{{ $heatmaps->first()['key'] }}' }">
+                    @if ($heatmaps->count() > 1)
+                        <div class="flex flex-wrap gap-2 mb-5" role="tablist">
+                            @foreach ($heatmaps as $heatmap)
+                                <button type="button" role="tab"
+                                        @click="tab = '{{ $heatmap['key'] }}'"
+                                        :aria-selected="(tab === '{{ $heatmap['key'] }}').toString()"
+                                        :class="tab === '{{ $heatmap['key'] }}' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                                        class="rounded-full px-4 py-1.5 text-sm font-semibold transition">
+                                    {{ $heatmap['label'] }}@unless ($heatmap['enabled']) <span class="opacity-75 font-normal">({{ __('aus') }})</span>@endunless
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
 
-                    <div class="flex flex-wrap items-center gap-4 mb-4 text-xs">
-                        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded {{ $statusClasses['good'] }}"></span> {{ __('sicher') }}</span>
-                        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded {{ $statusClasses['warning'] }}"></span> {{ __('okay') }}</span>
-                        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded {{ $statusClasses['serious'] }}"></span> {{ __('schwierig') }}</span>
-                        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded {{ $statusClasses['critical'] }}"></span> {{ __('sehr schwierig') }}</span>
-                        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded {{ $statusClasses['unseen'] }}"></span> {{ __('noch nicht geübt') }}</span>
-                    </div>
+                    @foreach ($heatmaps as $heatmap)
+                        <div x-show="tab === '{{ $heatmap['key'] }}'" @unless ($loop->first) x-cloak @endunless>
+                            <h3 class="text-lg font-medium text-gray-900 mb-1">{{ $heatmap['label'] }}</h3>
+                            <p class="text-sm text-gray-500 mb-4">
+                                {{ __('Prozentzahl = Anteil richtig beantworteter Versuche.') }}
+                                @unless ($heatmap['enabled'])
+                                    {{ __('Diese Übung ist für :name ausgeschaltet, der bisherige Verlauf bleibt sichtbar.', ['name' => $child->name]) }}
+                                @endunless
+                            </p>
 
-                    <div class="overflow-x-auto">
-                        <table class="border-collapse">
-                            <thead>
-                                <tr>
-                                    <th class="w-10"></th>
-                                    @foreach ($heatmap['cols'] as $col)
-                                        <th class="text-xs text-gray-400 font-normal w-12 pb-1">×{{ $col }}</th>
-                                    @endforeach
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($heatmap['rows'] as $row)
-                                    <tr>
-                                        <th class="text-xs text-gray-400 font-normal pr-2 text-right">{{ $row }}×</th>
-                                        @foreach ($heatmap['cols'] as $col)
-                                            @php
-                                                $stat = $heatmap['cells']->get($row.'-'.$col);
-                                                $status = $stat ? $stat->masteryStatus() : 'unseen';
-                                                $accuracyLabel = $stat && $stat->attempts_total > 0
-                                                    ? round($stat->accuracy() * 100).'%'
-                                                    : '–';
-                                            @endphp
-                                            <td class="p-0.5">
-                                                <div class="w-12 h-10 rounded flex items-center justify-center text-xs font-semibold {{ $statusClasses[$status] }}"
-                                                     title="{{ $row }} × {{ $col }} = {{ $row * $col }}">
-                                                    {{ $accuracyLabel }}
-                                                </div>
-                                            </td>
+                            <div class="flex flex-wrap items-center gap-4 mb-4 text-xs">
+                                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded {{ $statusClasses['good'] }}"></span> {{ __('sicher') }}</span>
+                                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded {{ $statusClasses['warning'] }}"></span> {{ __('okay') }}</span>
+                                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded {{ $statusClasses['serious'] }}"></span> {{ __('schwierig') }}</span>
+                                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded {{ $statusClasses['critical'] }}"></span> {{ __('sehr schwierig') }}</span>
+                                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded {{ $statusClasses['unseen'] }}"></span> {{ __('noch nicht geübt') }}</span>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="border-collapse">
+                                    <thead>
+                                        <tr>
+                                            <th class="w-10"></th>
+                                            @foreach ($heatmap['cols'] as $col)
+                                                <th class="text-xs text-gray-400 font-normal w-12 pb-1">{{ $heatmap['operator'] }}{{ $col }}</th>
+                                            @endforeach
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($heatmap['rows'] as $row)
+                                            <tr>
+                                                <th class="text-xs text-gray-400 font-normal pr-2 text-right">{{ $row }}{{ $heatmap['operator'] }}</th>
+                                                @foreach ($heatmap['cols'] as $col)
+                                                    @php
+                                                        $stat = $heatmap['cells']->get($row.'-'.$col);
+                                                        $fact = $heatmap['facts']->get($row.'-'.$col);
+                                                        $status = $stat ? $stat->masteryStatus() : 'unseen';
+                                                        $accuracyLabel = $stat && $stat->attempts_total > 0
+                                                            ? round($stat->accuracy() * 100).'%'
+                                                            : '–';
+                                                    @endphp
+                                                    <td class="p-0.5">
+                                                        <div class="w-12 h-10 rounded flex items-center justify-center text-xs font-semibold {{ $statusClasses[$status] }}"
+                                                             title="{{ $fact ? $heatmap['implementation']->formatPrompt($fact).' = '.$fact->correct_answer : '' }}">
+                                                            {{ $accuracyLabel }}
+                                                        </div>
+                                                    </td>
+                                                @endforeach
+                                            </tr>
                                         @endforeach
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             @else
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-sm text-gray-500">

@@ -29,6 +29,11 @@ class AdditionExerciseType implements ExerciseTypeContract
         return 'Plus bis 20';
     }
 
+    public function operator(): string
+    {
+        return '+';
+    }
+
     public function emoji(): string
     {
         return '➕';
