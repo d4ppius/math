@@ -29,6 +29,11 @@ class AdditionExerciseType implements ExerciseTypeContract
         return 'Plus bis 20';
     }
 
+    public function emoji(): string
+    {
+        return '➕';
+    }
+
     /** Summand a in the rows, summand b in the columns. */
     public function gridDefinition(): array
     {

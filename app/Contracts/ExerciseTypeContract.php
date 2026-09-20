@@ -16,6 +16,9 @@ interface ExerciseTypeContract
 
     public function label(): string;
 
+    /** A small emoji shown next to the name when the child chooses an exercise. */
+    public function emoji(): string;
+
     /**
      * @return array{rows: int[], cols: int[]} the operand values shown as rows
      *                                         (operand_a) and columns (operand_b) of the parent heatmap.

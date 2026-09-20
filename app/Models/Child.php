@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\ExerciseTypes\ExerciseTypeRegistry;
 use App\Services\Gamification\LevelCalculator;
 use App\Services\IconGenerator;
 use Illuminate\Auth\Authenticatable;
@@ -140,6 +141,40 @@ class Child extends Model implements AuthenticatableContract
         return Badge::orderBy('id')->get()
             ->filter(fn (Badge $badge) => $earnedIds->contains($badge->id) || $badge->isAttainableBy($this))
             ->values();
+    }
+
+    /**
+     * The exercises this child can choose from: switched on by the parents, not
+     * switched off globally by an admin, and still registered. Each setting carries
+     * its exerciseType and, as `implementation`, the exercise class.
+     *
+     * @return \Illuminate\Support\Collection<int, ChildExerciseSetting>
+     */
+    public function availableExercises(): \Illuminate\Support\Collection
+    {
+        $registry = app(ExerciseTypeRegistry::class);
+        $registered = array_keys(config('exercise_types', []));
+
+        return $this->exerciseSettings()
+            ->where('enabled', true)
+            ->with('exerciseType')
+            ->orderBy('exercise_type_id')
+            ->get()
+            ->filter(fn (ChildExerciseSetting $setting) => $setting->exerciseType?->is_active && in_array($setting->exerciseType->key, $registered, true))
+            ->each(fn (ChildExerciseSetting $setting) => $setting->implementation = $registry->get($setting->exerciseType->key))
+            ->values();
+    }
+
+    /** A running session of this exercise with time left, if the child paused one. */
+    public function resumableSessionFor(int $exerciseTypeId): ?PracticeSession
+    {
+        $session = $this->practiceSessions()
+            ->where('exercise_type_id', $exerciseTypeId)
+            ->where('status', 'active')
+            ->latest('id')
+            ->first();
+
+        return $session?->hasTimeRemaining() ? $session : null;
     }
 
     public function requiresPin(): bool

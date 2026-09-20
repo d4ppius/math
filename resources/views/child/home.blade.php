@@ -17,11 +17,32 @@
                 <p class="text-red-600 text-sm mb-4">{{ $errors->first('exercise') }}</p>
             @endif
 
-            <form method="POST" action="{{ route('child.sessions.start') }}">
+            @php
+                $exercises = $child->availableExercises();
+                $cardColors = ['bg-orange-500 hover:bg-orange-600', 'bg-sky-500 hover:bg-sky-600', 'bg-emerald-500 hover:bg-emerald-600', 'bg-purple-500 hover:bg-purple-600'];
+            @endphp
+            <form method="POST" action="{{ route('child.sessions.start') }}" class="{{ $exercises->count() > 1 ? 'space-y-3' : '' }}">
                 @csrf
-                <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white text-2xl font-bold rounded-2xl py-5 shadow-lg active:scale-95 transition">
-                    🚀 {{ __('Los geht\'s!') }}
-                </button>
+
+                @if ($exercises->count() > 1)
+                    <p class="text-sm font-semibold text-orange-700">{{ __('Was möchtest du üben?') }}</p>
+
+                    @foreach ($exercises as $exercise)
+                        <button type="submit" name="exercise" value="{{ $exercise->exerciseType->key }}" class="w-full {{ $cardColors[$loop->index % count($cardColors)] }} text-white text-2xl font-bold rounded-2xl py-4 shadow-lg active:scale-95 transition">
+                            {{ $exercise->implementation->emoji() }} {{ $exercise->exerciseType->name }}
+                            @if ($child->resumableSessionFor($exercise->exercise_type_id))
+                                <span class="block text-sm font-semibold opacity-90">{{ __('Weiter üben') }}</span>
+                            @endif
+                        </button>
+                    @endforeach
+                @else
+                    @if ($exercises->count() === 1)
+                        <input type="hidden" name="exercise" value="{{ $exercises->first()->exerciseType->key }}">
+                    @endif
+                    <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white text-2xl font-bold rounded-2xl py-5 shadow-lg active:scale-95 transition">
+                        🚀 {{ __('Los geht\'s!') }}
+                    </button>
+                @endif
             </form>
 
             @php

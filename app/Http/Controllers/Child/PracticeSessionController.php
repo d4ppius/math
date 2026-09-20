@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Child;
 
 use App\Events\PracticeSessionCompleted;
 use App\Http\Controllers\Controller;
-use App\Models\ExerciseType;
 use App\Models\PracticeSession;
 use App\Services\AdaptiveSelection\AttemptRecorder;
 use App\Services\AdaptiveSelection\WeightedFactSelector;
@@ -20,39 +19,50 @@ class PracticeSessionController extends Controller
     {
         $child = $request->user('child');
 
-        $exerciseType = ExerciseType::where('key', 'multiplication')->firstOrFail();
+        $request->validate(['exercise' => ['nullable', 'string', 'max:50']]);
 
-        if (! $exerciseType->is_active) {
-            return redirect()->route('child.home')
-                ->withErrors(['exercise' => 'Diese Übung ist gerade nicht verfügbar.']);
+        $enabled = $child->exerciseSettings()->where('enabled', true)->with('exerciseType')->orderBy('exercise_type_id')->get();
+        $available = $child->availableExercises();
+
+        if ($request->filled('exercise')) {
+            // The child chose one; the server checks it, not just the buttons shown.
+            if (! $enabled->contains(fn ($setting) => $setting->exerciseType->key === $request->input('exercise'))) {
+                return $this->backHome('Diese Übung ist nicht freigeschaltet. Frag deine Eltern!');
+            }
+
+            $chosen = $available->first(fn ($setting) => $setting->exerciseType->key === $request->input('exercise'));
+        } elseif ($available->count() === 1) {
+            $chosen = $available->first();
+        } elseif ($available->count() > 1) {
+            return $this->backHome('Wähle aus, was du üben möchtest.');
+        } else {
+            return $this->backHome($enabled->isEmpty()
+                ? 'Die Übung ist noch nicht eingerichtet. Frag deine Eltern!'
+                : 'Diese Übung ist gerade nicht verfügbar.');
         }
 
-        $existing = $child->practiceSessions()
-            ->where('exercise_type_id', $exerciseType->id)
-            ->where('status', 'active')
-            ->latest('id')
-            ->first();
+        if (! $chosen) {
+            return $this->backHome('Diese Übung ist gerade nicht verfügbar.');
+        }
 
-        if ($existing && $existing->hasTimeRemaining()) {
+        if ($existing = $child->resumableSessionFor($chosen->exercise_type_id)) {
             return redirect()->route('child.sessions.show', $existing);
-        }
-
-        $settings = $child->exerciseSettings()->where('exercise_type_id', $exerciseType->id)->first();
-
-        if (! $settings) {
-            return redirect()->route('child.home')
-                ->withErrors(['exercise' => 'Die Übung ist noch nicht eingerichtet. Frag deine Eltern!']);
         }
 
         $session = PracticeSession::create([
             'child_id' => $child->id,
-            'exercise_type_id' => $exerciseType->id,
+            'exercise_type_id' => $chosen->exercise_type_id,
             'started_at' => now(),
-            'planned_duration_seconds' => $settings->session_duration_minutes * 60,
+            'planned_duration_seconds' => $chosen->session_duration_minutes * 60,
             'status' => 'active',
         ]);
 
         return redirect()->route('child.sessions.show', $session);
+    }
+
+    private function backHome(string $message): RedirectResponse
+    {
+        return redirect()->route('child.home')->withErrors(['exercise' => $message]);
     }
 
     public function show(PracticeSession $session): View

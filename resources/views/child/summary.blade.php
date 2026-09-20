@@ -18,6 +18,7 @@
         <div class="relative z-10 bg-white rounded-3xl shadow-xl p-8 text-center">
             <div class="text-6xl mb-3">🏁</div>
             <h1 class="text-2xl font-bold mb-1">{{ __('Super gemacht, :name!', ['name' => $child->name]) }}</h1>
+                <p class="text-sm text-gray-500">{{ $session->exerciseType->name }}</p>
 
             <div class="grid grid-cols-2 gap-4 mt-6">
                 <div class="bg-orange-50 rounded-2xl p-4">

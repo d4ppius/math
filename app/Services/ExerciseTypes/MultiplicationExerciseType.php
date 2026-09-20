@@ -20,6 +20,11 @@ class MultiplicationExerciseType implements ExerciseTypeContract
         return 'Einmaleins';
     }
 
+    public function emoji(): string
+    {
+        return '✖️';
+    }
+
     public function gridDefinition(): array
     {
         return [
