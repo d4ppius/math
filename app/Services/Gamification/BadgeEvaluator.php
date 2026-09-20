@@ -39,12 +39,33 @@ class BadgeEvaluator
         $criteria = $badge->criteria;
 
         return match ($criteria['type'] ?? null) {
-            'first_session' => $session->questions_answered >= ($criteria['min_questions'] ?? 1),
+            'first_session' => $this->isOfBadgeExercise($session, $criteria)
+                && $session->questions_answered >= ($criteria['min_questions'] ?? 1),
             'streak_days' => $this->goalStreakDays($child, $session) >= $criteria['days'],
-            'blitz' => $this->isBlitz($child, $session, $criteria),
-            'row_mastery' => $this->masteredRow($child, $criteria),
+            'blitz' => $this->isOfBadgeExercise($session, $criteria) && $this->isBlitz($child, $session, $criteria),
+            'row_mastery', 'group_mastery' => $this->masteredRow($child, $criteria),
+            'all_exercises_same_day' => $this->practisedAllExercisesToday($child, $session, $criteria),
             default => false,
         };
+    }
+
+    /** A badge tied to one exercise only counts sessions of that exercise. */
+    private function isOfBadgeExercise(PracticeSession $session, array $criteria): bool
+    {
+        return ! isset($criteria['exercise_type']) || $session->exerciseType->key === $criteria['exercise_type'];
+    }
+
+    /** At least N different exercises, each properly practised (enough answers), on the session's day. */
+    private function practisedAllExercisesToday(Child $child, PracticeSession $session, array $criteria): bool
+    {
+        $exercises = $child->practiceSessions()
+            ->where('status', 'completed')
+            ->whereDate('started_at', $session->started_at->toDateString())
+            ->where('questions_answered', '>=', $criteria['min_questions'] ?? 5)
+            ->distinct()
+            ->count('exercise_type_id');
+
+        return $exercises >= ($criteria['min_exercises'] ?? 2);
     }
 
     /**

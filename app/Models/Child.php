@@ -137,10 +137,39 @@ class Child extends Model implements AuthenticatableContract
     public function attainableBadges(): Collection
     {
         $earnedIds = $this->badges()->pluck('badges.id');
+        $context = $this->badgeExerciseContext();
 
         return Badge::orderBy('id')->get()
-            ->filter(fn (Badge $badge) => $earnedIds->contains($badge->id) || $badge->isAttainableBy($this))
+            ->filter(fn (Badge $badge) => $earnedIds->contains($badge->id) || $badge->isAttainableBy($this, $context))
             ->values();
+    }
+
+    /**
+     * Which exercises count for the child's badges: the switched-on, active ones,
+     * with whether each awards a speed bonus. A child without any settings yet
+     * counts as set up with the defaults.
+     *
+     * @return array{available: list<string>, speedBonus: array<string, bool>}
+     */
+    public function badgeExerciseContext(): array
+    {
+        $settings = $this->exerciseSettings()->with('exerciseType')->get();
+
+        if ($settings->isEmpty()) {
+            $registry = app(ExerciseTypeRegistry::class);
+            $keys = collect(array_keys(config('exercise_types', [])))
+                ->filter(fn (string $key) => $registry->get($key)->enabledByDefault())
+                ->values();
+
+            return ['available' => $keys->all(), 'speedBonus' => $keys->mapWithKeys(fn (string $key) => [$key => true])->all()];
+        }
+
+        $enabled = $settings->filter(fn (ChildExerciseSetting $setting) => $setting->enabled && $setting->exerciseType?->is_active);
+
+        return [
+            'available' => $enabled->map(fn (ChildExerciseSetting $setting) => $setting->exerciseType->key)->values()->all(),
+            'speedBonus' => $enabled->mapWithKeys(fn (ChildExerciseSetting $setting) => [$setting->exerciseType->key => (bool) $setting->speed_bonus_enabled])->all(),
+        ];
     }
 
     /**

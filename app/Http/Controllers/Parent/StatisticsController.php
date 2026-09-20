@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Parent;
 
 use App\Http\Controllers\Controller;
-use App\Models\Badge;
 use App\Models\Child;
 use App\Models\ExerciseType;
 use App\Models\Fact;
@@ -29,7 +28,7 @@ class StatisticsController extends Controller
             'heatmaps' => $heatmaps,
             'weeklyPoints' => $weeklyPoints,
             'goalStreak' => $goalStreak,
-            'badges' => Badge::orderBy('id')->get(),
+            'badges' => $child->attainableBadges(),
             'earnedBadges' => $child->badges->keyBy('id'),
         ]);
     }

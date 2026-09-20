@@ -7,7 +7,7 @@
 
 @php
     $image = $badge->imageUrl();
-    $row = $badge->rowNumber();
+    $overlay = $badge->overlay();
     $lockedStyle = $earned ? '' : 'filter:grayscale(1);opacity:.4;';
     // A caller-supplied style (e.g. an overlap margin) is appended, not a second style attribute.
     $style = "width:{$size}px;height:{$size}px;{$lockedStyle}".$attributes->get('style');
@@ -24,10 +24,10 @@
         <span style="font-size:{{ round($size * 0.5) }}px;line-height:1" aria-hidden="true">{{ $badge->icon }}</span>
     @endif
 
-    @if ($row)
+    @if ($overlay !== null)
         <span
             class="absolute -bottom-1 -right-1 flex items-center justify-center rounded-full bg-indigo-600 font-bold text-white ring-2 ring-white"
-            style="width:{{ round($size * 0.42) }}px;height:{{ round($size * 0.42) }}px;font-size:{{ round($size * 0.24) }}px"
-        >{{ $row }}</span>
+            style="width:{{ round($size * 0.42) }}px;height:{{ round($size * 0.42) }}px;font-size:{{ round($size * (mb_strlen($overlay) > 2 ? 0.18 : 0.24)) }}px"
+        >{{ $overlay }}</span>
     @endif
 </span>

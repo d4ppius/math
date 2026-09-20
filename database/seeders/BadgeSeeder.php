@@ -35,9 +35,9 @@ class BadgeSeeder extends Seeder
             [
                 'key' => 'blitz',
                 'name' => 'Blitzrechner',
-                'description' => 'Gib in einer Übung mindestens 10 richtige Antworten, im Schnitt unter 2 Sekunden.',
+                'description' => 'Gib in einer Einmaleins-Übung mindestens 10 richtige Antworten, im Schnitt unter 2 Sekunden.',
                 'icon' => '⚡',
-                'criteria' => ['type' => 'blitz', 'min_correct_in_session' => 10, 'max_avg_response_ms' => 2000],
+                'criteria' => ['type' => 'blitz', 'exercise_type' => 'multiplication', 'min_correct_in_session' => 10, 'max_avg_response_ms' => 2000],
             ],
         ];
 
@@ -57,6 +57,55 @@ class BadgeSeeder extends Seeder
                 ],
             ];
         }
+
+        // Plus bis 20: a starter badge, one master badge per group, a speed badge.
+        $plusGroups = [
+            1 => ['name' => 'Meister von Plus bis 10', 'text' => '«Plus bis 10»', 'overlay' => '10', 'attempts' => 50, 'facts' => 34],
+            2 => ['name' => 'Meister von Plus mit der 10', 'text' => '«Plus mit der 10»', 'overlay' => '+10', 'attempts' => 22, 'facts' => 14],
+            3 => ['name' => 'Meister des Zehnerübergangs', 'text' => 'den «Zehnerübergang»', 'overlay' => '20', 'attempts' => 40, 'facts' => 27],
+        ];
+
+        $badges[] = [
+            'key' => 'addition_first_session',
+            'name' => 'Plus-Starter',
+            'description' => 'Schaffe deine erste Plus-Übung mit mindestens 5 Aufgaben.',
+            'icon' => '➕',
+            'criteria' => ['type' => 'first_session', 'exercise_type' => 'addition', 'min_questions' => 5],
+        ];
+
+        foreach ($plusGroups as $group => $plus) {
+            $badges[] = [
+                'key' => "addition_mastery_{$group}",
+                'name' => $plus['name'],
+                'description' => "Löse {$plus['text']} zu über 90 % richtig.",
+                'icon' => '🥇',
+                'criteria' => [
+                    'type' => 'group_mastery',
+                    'exercise_type' => 'addition',
+                    'difficulty_group' => $group,
+                    'overlay' => $plus['overlay'],
+                    'min_accuracy' => 0.9,
+                    'min_attempts' => $plus['attempts'],
+                    'min_facts' => $plus['facts'],
+                ],
+            ];
+        }
+
+        $badges[] = [
+            'key' => 'addition_blitz',
+            'name' => 'Plus-Blitz',
+            'description' => 'Gib in einer Plus-Übung mindestens 10 richtige Antworten, im Schnitt unter 1,5 Sekunden.',
+            'icon' => '⚡',
+            'criteria' => ['type' => 'blitz', 'exercise_type' => 'addition', 'min_correct_in_session' => 10, 'max_avg_response_ms' => 1500],
+        ];
+
+        $badges[] = [
+            'key' => 'allrounder',
+            'name' => 'Allrounder',
+            'description' => 'Übe am selben Tag mit beiden Übungen.',
+            'icon' => '🌟',
+            'criteria' => ['type' => 'all_exercises_same_day', 'min_exercises' => 2, 'min_questions' => 5],
+        ];
 
         foreach ($badges as $badge) {
             Badge::updateOrCreate(['key' => $badge['key']], $badge);

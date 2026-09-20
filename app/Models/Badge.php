@@ -35,16 +35,58 @@ class Badge extends Model
         return null;
     }
 
-    /** The speed badge can only be earned where the speed bonus is on. */
-    public function isAttainableBy(Child $child): bool
+    /** The exercise this badge belongs to (e.g. "addition"), or null if it is general. */
+    public function exerciseKey(): ?string
     {
-        return ($this->criteria['type'] ?? null) !== 'blitz' || $child->hasSpeedBonus();
+        return $this->criteria['exercise_type'] ?? null;
     }
 
-    /** The multiplication row a row-mastery badge belongs to (shown on top of a shared image). */
+    /**
+     * Whether this child can ever earn the badge: its exercise must be switched
+     * on for them, the speed badge needs the speed bonus of that exercise, and the
+     * all-rounder needs at least two exercises. Earned badges are shown regardless
+     * (see Child::attainableBadges()).
+     *
+     * @param  array{available: list<string>, speedBonus: array<string, bool>}|null  $context  from Child::badgeExerciseContext(), pass it when checking many badges
+     */
+    public function isAttainableBy(Child $child, ?array $context = null): bool
+    {
+        $context ??= $child->badgeExerciseContext();
+
+        $type = $this->criteria['type'] ?? null;
+        $exercise = $this->exerciseKey();
+
+        if ($type === 'all_exercises_same_day') {
+            return count($context['available']) >= ($this->criteria['min_exercises'] ?? 2);
+        }
+
+        if ($exercise !== null && ! in_array($exercise, $context['available'], true)) {
+            return false;
+        }
+
+        if ($type === 'blitz') {
+            return $exercise !== null ? ($context['speedBonus'][$exercise] ?? false) : $child->hasSpeedBonus();
+        }
+
+        return true;
+    }
+
+    /** The multiplication row a row-mastery badge belongs to. */
     public function rowNumber(): ?int
     {
         return ($this->criteria['type'] ?? null) === 'row_mastery' ? ($this->criteria['difficulty_group'] ?? null) : null;
+    }
+
+    /** The short mark shown on top of a shared image: the row, or the group's own mark. */
+    public function overlay(): ?string
+    {
+        $type = $this->criteria['type'] ?? null;
+
+        return match ($type) {
+            'row_mastery' => isset($this->criteria['difficulty_group']) ? (string) $this->criteria['difficulty_group'] : null,
+            'group_mastery' => $this->criteria['overlay'] ?? null,
+            default => null,
+        };
     }
 
     public function children(): BelongsToMany

@@ -36,18 +36,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <h3 class="text-lg font-medium text-gray-900">{{ __('Abzeichen') }}</h3>
                 <p class="text-sm text-gray-500 mb-4">{{ $earnedBadges->count() }} {{ __('von') }} {{ $badges->count() }} {{ __('verdient') }}</p>
-                <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4">
-                    @foreach ($badges as $badge)
-                        @php $earned = $earnedBadges->get($badge->id); @endphp
-                        <div class="flex flex-col items-center text-center">
-                            <x-badge-medal :badge="$badge" :earned="(bool) $earned" :size="56" />
-                            <div class="mt-2 text-xs font-medium {{ $earned ? 'text-gray-800' : 'text-gray-400' }}">{{ $badge->name }}</div>
-                            <div class="text-xs text-gray-400">
-                                {{ $earned ? \Illuminate\Support\Carbon::parse($earned->pivot->earned_at)->format('d.m.Y') : $badge->description }}
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
+                <x-badge-sections :badges="$badges" :earned="$earnedBadges" :size="56" grid-class="grid-cols-3 sm:grid-cols-4 lg:grid-cols-6" />
             </div>
 
             {{-- Weekly points --}}

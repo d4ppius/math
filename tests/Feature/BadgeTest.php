@@ -60,11 +60,11 @@ class BadgeTest extends TestCase
 
     public function test_the_catalogue_is_seeded_idempotently(): void
     {
-        $this->assertSame(12, Badge::count());
+        $this->assertSame(18, Badge::count());
 
         $this->seed(BadgeSeeder::class);
 
-        $this->assertSame(12, Badge::count());
+        $this->assertSame(18, Badge::count());
     }
 
     public function test_the_first_real_session_earns_the_first_session_badge_only_once(): void

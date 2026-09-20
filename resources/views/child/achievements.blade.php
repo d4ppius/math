@@ -17,14 +17,8 @@
                 @if ($earnedBadges->isEmpty())
                     <p class="text-sm text-gray-500 mt-2">{{ __('Noch keins. Übe los und hol dir dein erstes!') }}</p>
                 @else
-                    <div class="mt-4 grid grid-cols-3 gap-x-2 gap-y-5">
-                        @foreach ($earnedBadges as $badge)
-                            <div class="flex flex-col items-center">
-                                <x-badge-medal :badge="$badge" :size="64" />
-                                <div class="mt-2 text-xs font-semibold text-gray-800 leading-tight">{{ $badge->name }}</div>
-                                <div class="text-[11px] text-gray-400">{{ \Illuminate\Support\Carbon::parse($earned[$badge->id]->pivot->earned_at)->format('d.m.Y') }}</div>
-                            </div>
-                        @endforeach
+                    <div class="mt-4">
+                        <x-badge-sections :badges="$earnedBadges" :earned="$earned" />
                     </div>
                 @endif
             </section>
@@ -33,14 +27,8 @@
                 <section class="mt-8 border-t border-gray-100 pt-6">
                     <h2 class="font-bold text-gray-500">{{ __('Das kannst du noch schaffen') }}</h2>
 
-                    <div class="mt-4 grid grid-cols-3 gap-x-2 gap-y-5">
-                        @foreach ($lockedBadges as $badge)
-                            <div class="flex flex-col items-center">
-                                <x-badge-medal :badge="$badge" :earned="false" :size="64" />
-                                <div class="mt-2 text-xs font-semibold text-gray-500 leading-tight">{{ $badge->name }}</div>
-                                <div class="text-[11px] text-gray-400 leading-tight mt-0.5">{{ $badge->description }}</div>
-                            </div>
-                        @endforeach
+                    <div class="mt-4">
+                        <x-badge-sections :badges="$lockedBadges" :earned="$earned" />
                     </div>
                 </section>
             @elseif ($child->show_locked_badges && $earnedBadges->isNotEmpty())
