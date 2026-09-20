@@ -26,9 +26,11 @@ class Badge extends Model
      */
     public function imageUrl(): ?string
     {
+        $folder = trim(config('badges.images_path'), '/');
+
         foreach ([$this->key, $this->criteria['type'] ?? null] as $name) {
-            if ($name && is_file(public_path("images/badges/{$name}.png"))) {
-                return asset("images/badges/{$name}.png").'?v='.filemtime(public_path("images/badges/{$name}.png"));
+            if ($name && is_file(public_path("{$folder}/{$name}.png"))) {
+                return asset("{$folder}/{$name}.png").'?v='.filemtime(public_path("{$folder}/{$name}.png"));
             }
         }
 

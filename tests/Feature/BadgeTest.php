@@ -285,14 +285,16 @@ class BadgeTest extends TestCase
 
     public function test_shared_or_specific_artwork_replaces_the_emoji_without_code_changes(): void
     {
-        $shared = public_path('images/badges/row_mastery.png');
-        $specific = public_path('images/badges/blitz.png');
+        $folder = public_path(self::TEST_BADGE_IMAGES);
+        mkdir($folder, 0775, true);
+        $shared = $folder.'/row_mastery.png';
+        $specific = $folder.'/blitz.png';
         file_put_contents($shared, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='));
         file_put_contents($specific, file_get_contents($shared));
 
         try {
-            $this->assertStringContainsString('images/badges/row_mastery.png', Badge::where('key', 'row_mastery_5')->first()->imageUrl());
-            $this->assertStringContainsString('images/badges/blitz.png', Badge::where('key', 'blitz')->first()->imageUrl());
+            $this->assertStringContainsString(self::TEST_BADGE_IMAGES.'/row_mastery.png', Badge::where('key', 'row_mastery_5')->first()->imageUrl());
+            $this->assertStringContainsString(self::TEST_BADGE_IMAGES.'/blitz.png', Badge::where('key', 'blitz')->first()->imageUrl());
             $this->assertNull(Badge::where('key', 'first_session')->first()->imageUrl());
             $this->assertSame(5, Badge::where('key', 'row_mastery_5')->first()->rowNumber());
             $this->assertNull(Badge::where('key', 'blitz')->first()->rowNumber());
@@ -300,5 +302,13 @@ class BadgeTest extends TestCase
             @unlink($shared);
             @unlink($specific);
         }
+    }
+
+    public function test_tests_never_use_or_touch_the_real_badge_artwork(): void
+    {
+        // Real artwork lives in public/images/badges. If tests wrote or deleted files
+        // there they would destroy it, so the suite works in a throw-away folder.
+        $this->assertSame(self::TEST_BADGE_IMAGES, config('badges.images_path'));
+        $this->assertNull(Badge::where('key', 'first_session')->first()->imageUrl(), 'emoji fallback, whatever artwork exists in production');
     }
 }

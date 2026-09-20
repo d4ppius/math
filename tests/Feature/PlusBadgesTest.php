@@ -315,12 +315,14 @@ class PlusBadgesTest extends TestCase
 
     public function test_a_shared_group_mastery_image_is_used_for_all_plus_masters(): void
     {
-        $image = public_path('images/badges/group_mastery.png');
+        $folder = public_path(self::TEST_BADGE_IMAGES);
+        mkdir($folder, 0775, true);
+        $image = $folder.'/group_mastery.png';
         file_put_contents($image, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='));
 
         try {
             foreach (['addition_mastery_1', 'addition_mastery_2', 'addition_mastery_3'] as $key) {
-                $this->assertStringContainsString('images/badges/group_mastery.png', Badge::where('key', $key)->first()->imageUrl());
+                $this->assertStringContainsString(self::TEST_BADGE_IMAGES.'/group_mastery.png', Badge::where('key', $key)->first()->imageUrl());
             }
         } finally {
             @unlink($image);
