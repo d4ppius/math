@@ -86,7 +86,7 @@ php artisan migrate --force
 php artisan db:seed --force
 ```
 
-Der Seed-Schritt ist **nicht optional**: er legt die Aufgabentypen (z.B. "Einmaleins") und alle Fakten (1×1 bis 9×10) an. Ohne ihn bleiben Übungseinstellungen und Statistik für jedes Kind leer, ohne dass ein Fehler auftritt. Der Befehl ist gefahrlos mehrfach ausführbar (`updateOrCreate`, keine Duplikate).
+Der Seed-Schritt ist **nicht optional**: er legt die Aufgabentypen ("Einmaleins" mit 1×1 bis 9×10, "Plus bis 20" mit 100 Aufgaben) samt allen Aufgaben und den Abzeichen an. Ohne ihn bleiben Übungseinstellungen und Statistik für jedes Kind leer, ohne dass ein Fehler auftritt. Der Befehl ist gefahrlos mehrfach ausführbar (`updateOrCreate`, keine Duplikate).
 
 ## 7. Admin-Zugang einrichten
 

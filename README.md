@@ -4,7 +4,7 @@
 
 # Rechenfuchs
 
-Eine kleine Webapp, mit der Kinder spielerisch und regelmässig das kleine Einmaleins üben – als installierbare PWA auf dem iPad, mit persönlichem Homescreen-Icon pro Kind.
+Eine kleine Webapp, mit der Kinder spielerisch und regelmässig Einmaleins und Plus bis 20 üben – als installierbare PWA auf dem iPad, mit persönlichem Homescreen-Icon pro Kind.
 
 > Dies ist ein privates Familienprojekt. Das Repository ist öffentlich, weil der Code jemandem nützen könnte – es enthält aber **keine echten Namen, Zugangsdaten oder sonstigen persönlichen Daten** einer echten Familie. Alle `.env`-Dateien, Datenbank-Inhalte und Zugangsdaten bleiben ausschliesslich auf dem jeweiligen Server.
 

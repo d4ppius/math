@@ -32,7 +32,7 @@ class DailyGoalAchieved extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject("🎉 {$this->child->name} hat heute geübt!")
             ->greeting("Hallo {$notifiable->name}!")
-            ->line("{$this->child->name} hat die heutige Einmaleins-Übung geschafft.")
+            ->line("{$this->child->name} hat die heutige Übung geschafft.")
             ->line("Ergebnis: {$this->session->total_points} Punkte, {$accuracy}% richtig beantwortet.")
             ->action('Statistik ansehen', route('parent.children.statistics', $this->child))
             ->line('Weiter so!')

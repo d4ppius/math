@@ -1,6 +1,6 @@
 <x-public-layout
-    title="Einmaleins üben für Kinder"
-    description="Rechenfuchs trainiert das kleine Einmaleins: adaptiv, in kurzen Sessions, mit Punkten, Abzeichen und einem Fuchs, der mitfiebert. Ohne Passwort für Kinder, ohne Werbung, ohne Tracking."
+    title="Einmaleins und Plus üben für Kinder"
+    description="Rechenfuchs trainiert Einmaleins und Plus bis 20: adaptiv, in kurzen Sessions, mit Punkten, Abzeichen und einem Fuchs, der mitfiebert. Ohne Passwort für Kinder, ohne Werbung, ohne Tracking."
 >
     @php
         $steps = [
@@ -10,7 +10,7 @@
             ],
             [
                 'title' => 'Kind hinzufügen und einstellen',
-                'text' => 'Name, Avatar und Farbe wählen, auf Wunsch einen vierstelligen Code festlegen. Dann bestimmst du, mit welchen Reihen dein Kind startet, wie lange eine Übung dauert und ob Timer, Tempo-Bonus und Töne dabei sind.',
+                'text' => 'Name, Avatar und Farbe wählen, auf Wunsch einen vierstelligen Code festlegen. Dann bestimmst du, welche Übungen es gibt (Einmaleins, Plus bis 20), womit dein Kind startet, wie lange eine Übung dauert und ob Timer, Tempo-Bonus und Töne dabei sind. Sind mehrere Übungen freigeschaltet, wählt dein Kind selbst.',
             ],
             [
                 'title' => 'Das Icon aufs Tablet holen',
@@ -23,16 +23,16 @@
         ];
 
         $features = [
-            ['🎯', 'Übt, was noch nicht sitzt', 'Jede der 90 Aufgaben wird für jedes Kind einzeln erfasst. Was noch wackelt oder länger nicht dran war, kommt öfter. Was sitzt, seltener.'],
+            ['🎯', 'Übt, was noch nicht sitzt', 'Jede Aufgabe (90 im Einmaleins, 100 bei Plus bis 20) wird für jedes Kind einzeln erfasst. Was noch wackelt oder länger nicht dran war, kommt öfter. Was sitzt, seltener.'],
             ['⏱️', 'Kurze Sessions', 'Eine Übung dauert 3 bis 20 Minuten, ganz wie du es einstellst. Die Zeit wird auf dem Server überwacht, ein Mogeln durch Neuladen gibt es nicht.'],
-            ['🏆', 'Motivation mit Fuchs', 'Punkte, zehn Level, Abzeichen für Serien und Reihen-Meister, Konfetti am Ende und kleine Töne. Der Rechenfuchs feiert mit.'],
+            ['🏆', 'Motivation mit Fuchs', 'Punkte, zehn Level, Abzeichen für Serien, Reihen und Aufgabenarten, Konfetti am Ende und kleine Töne. Der Rechenfuchs feiert mit.'],
             ['🌿', 'Stressfrei einstellbar', 'Manche Kinder mag der Countdown nicht. Du kannst den Timer ausblenden, den Tempo-Bonus abschalten und die Töne ausstellen, pro Kind.'],
-            ['📊', 'Klare Statistik', 'Eine Farbtabelle zeigt alle Aufgaben von 1×1 bis 9×10: sicher, wackelig oder noch nicht geübt. Dazu Wochenpunkte und Tagesziel.'],
+            ['📊', 'Klare Statistik', 'Pro Übung zeigt eine Farbtabelle alle Aufgaben: sicher, wackelig oder noch nicht geübt. Dazu Wochenpunkte und Tagesziel.'],
             ['👨‍👩‍👧‍👦', 'Für die ganze Familie', 'Beliebig viele Kinder, mehrere Elternteile. Jedes Kind hat sein eigenes Icon mit Anfangsbuchstaben, damit auf einem Tablet nichts durcheinanderkommt.'],
         ];
 
         $faq = [
-            ['Für welche Kinder ist Rechenfuchs gedacht?', 'Für Kinder, die das kleine Einmaleins (1×1 bis 9×10) lernen und festigen. Du wählst, mit welchen Reihen dein Kind beginnt, am besten zuerst mit ein bis zwei, und schaltest später weitere dazu.'],
+            ['Für welche Kinder ist Rechenfuchs gedacht?', 'Für Kinder, die das kleine Einmaleins (1×1 bis 9×10) oder das Plusrechnen bis 20 lernen und festigen. Du schaltest pro Kind frei, welche Übung es gibt, und wählst, womit es beginnt: beim Einmaleins mit ein bis zwei Reihen, bei Plus mit «Plus bis 10». Später schaltest du weitere dazu.'],
             ['Braucht mein Kind ein Konto oder eine E-Mail-Adresse?', 'Nein. Nur Eltern haben ein Konto. Ein Kind meldet sich über seinen persönlichen Link an, den du auf dem Gerät als Icon speicherst. Wenn mehrere Kinder dasselbe Gerät nutzen, kannst du zusätzlich einen vierstelligen Code festlegen.'],
             ['Auf welchen Geräten funktioniert es?', 'Auf iPad, iPhone, Android-Geräten und am Computer, direkt im Browser. Am schönsten ist es als Icon auf dem Home-Bildschirm: Dann startet Rechenfuchs wie eine richtige App, ohne Adressleiste.'],
             ['Wie bekomme ich das Icon auf das iPad?', 'Öffne den persönlichen Link des Kindes in Safari, tippe auf das Teilen-Symbol und wähle «Zum Home-Bildschirm». Den Link bekommst du direkt nach dem Anlegen des Kindes im Eltern-Bereich.'],
@@ -47,9 +47,9 @@
     <section class="overflow-hidden bg-gradient-to-b from-orange-50 via-amber-50/40 to-white">
         <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 pt-10 sm:px-6 md:grid-cols-2 md:gap-6 md:pb-20 md:pt-16">
             <div class="text-center md:text-start">
-                <p class="inline-block rounded-full bg-orange-100 px-4 py-1 text-sm font-semibold text-orange-700">Das kleine Einmaleins üben</p>
+                <p class="inline-block rounded-full bg-orange-100 px-4 py-1 text-sm font-semibold text-orange-700">Einmaleins und Plus bis 20 üben</p>
                 <h1 class="mt-4 font-display text-4xl font-bold leading-tight text-gray-900 sm:text-5xl">
-                    Einmaleins üben, das Kindern <span class="text-orange-500">Spass</span> macht
+                    Rechnen üben, das Kindern <span class="text-orange-500">Spass</span> macht
                 </h1>
                 <p class="mx-auto mt-5 max-w-xl text-lg text-gray-600 md:mx-0">
                     Rechenfuchs übt genau die Aufgaben, die noch nicht sitzen, in kurzen Sessions, mit Punkten, Abzeichen und einem Fuchs, der mitfiebert.

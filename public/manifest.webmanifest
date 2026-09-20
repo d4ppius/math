@@ -1,7 +1,7 @@
 {
     "name": "Rechenfuchs",
     "short_name": "Rechenfuchs",
-    "description": "Spielerisch das kleine Einmaleins üben",
+    "description": "Spielerisch Einmaleins und Plus bis 20 üben",
     "start_url": "/eltern/dashboard",
     "scope": "/eltern/",
     "display": "standalone",

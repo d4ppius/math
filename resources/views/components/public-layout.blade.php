@@ -1,4 +1,4 @@
-@props(['title' => null, 'description' => 'Rechenfuchs trainiert das kleine Einmaleins: adaptiv, in kurzen Sessions, mit Punkten, Abzeichen und einem Fuchs, der mitfiebert.', 'noindex' => false])
+@props(['title' => null, 'description' => 'Rechenfuchs trainiert Einmaleins und Plus bis 20: adaptiv, in kurzen Sessions, mit Punkten, Abzeichen und einem Fuchs, der mitfiebert.', 'noindex' => false])
 
 @php
     $pageTitle = ($title ? $title.' · ' : '').config('app.name');
@@ -84,7 +84,7 @@
             <div class="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-3">
                 <div>
                     <x-brand :size="32" />
-                    <p class="mt-3 max-w-xs text-sm text-gray-500">Das kleine Einmaleins üben, mit einem Fuchs, der mitfiebert.</p>
+                    <p class="mt-3 max-w-xs text-sm text-gray-500">Einmaleins und Plus üben, mit einem Fuchs, der mitfiebert.</p>
                 </div>
                 <div>
                     <h2 class="text-sm font-semibold text-gray-900">Rechenfuchs</h2>

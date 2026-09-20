@@ -14,7 +14,8 @@ class LandingPageTest extends TestCase
     {
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('Einmaleins üben, das Kindern', false)
+            ->assertSee('Rechnen üben, das Kindern', false)
+            ->assertSee('Einmaleins und Plus bis 20')
             ->assertSee('So funktioniert', false)
             ->assertSee('id="so-gehts"', false)
             ->assertSee('id="funktionen"', false)
@@ -42,7 +43,7 @@ class LandingPageTest extends TestCase
     {
         $this->get(route('home'))
             ->assertDontSee('name="robots"', false)
-            ->assertSee('<title>Einmaleins üben für Kinder · Rechenfuchs</title>', false)
+            ->assertSee('<title>Einmaleins und Plus üben für Kinder · Rechenfuchs</title>', false)
             ->assertSee('name="description"', false)
             ->assertSee('property="og:image"', false)
             ->assertSee('images/logo.png', false);
