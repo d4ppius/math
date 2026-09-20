@@ -111,14 +111,33 @@ Eltern schalten das pro Kind ein und aus: Kind bearbeiten → **«Abzeichen zeig
 
 **Konfetti und Töne:** Am Ende einer Session mit mindestens einer richtigen Antwort regnet es Konfetti, bei einem neuen Abzeichen zusätzlich von beiden Seiten. Es läuft nur auf der Zusammenfassung, nie während des Übens, und entfällt bei aktivierter Systemeinstellung «Bewegung reduzieren». Die Töne werden im Browser erzeugt (keine Audio-Dateien); auf iOS starten sie nach dem ersten Tipp auf eine Zifferntaste.
 
-### Eigene Bilder für Abzeichen
+### Bilder für Abzeichen und Maskottchen
 
-Solange kein Bild vorhanden ist, zeigt ein Abzeichen sein Emoji. Bilder legt man als PNG in `public/images/badges/` ab, ganz ohne Code-Änderung (quadratisch, transparenter Hintergrund, 512 × 512 Pixel empfohlen). Die Anzeige sucht in dieser Reihenfolge:
+Solange für ein Abzeichen kein Bild vorhanden ist, zeigt es sein Emoji. Bilder legt man als PNG in `public/images/badges/` ab, ganz ohne Code-Änderung. Die Anzeige sucht in dieser Reihenfolge:
 
 1. `public/images/badges/{key}.png` für ein einzelnes Abzeichen: `first_session.png`, `streak_7.png`, `blitz.png`, `row_mastery_1.png` bis `row_mastery_9.png`, `addition_first_session.png`, `addition_mastery_1.png` bis `addition_mastery_3.png`, `addition_blitz.png`, `allrounder.png`
-2. `public/images/badges/{typ}.png` als gemeinsames Bild einer ganzen Gruppe. Für die Reihen-Meister genügt **ein** Bild `row_mastery.png` (die Reihen-Nummer wird als kleines Schild darübergelegt), für die drei Plus-Meister **ein** Bild `group_mastery.png` (Schild mit der Marke der Gruppe: «10», «+10», «20»).
+2. `public/images/badges/{typ}.png` als gemeinsames Bild einer ganzen Gruppe. Für die Reihen-Meister genügt **ein** Bild `row_mastery.png` (die Reihen-Nummer wird als kleines Schild darübergelegt), für die drei Plus-Meister **ein** Bild `group_mastery.png` (Schild mit der Marke der Gruppe: «10», «+10», «20»). Achtung: `addition_first_session` fällt ohne eigenes Bild auf `first_session.png` zurück, `addition_blitz` auf `blitz.png`.
 
 Nicht verdiente Abzeichen zeigt die Eltern-Statistik automatisch ausgegraut, es braucht dafür kein zweites Bild.
+
+**Wo die Bilder liegen**
+
+| Ordner | Inhalt |
+| --- | --- |
+| `resources/mascot/originals/` | Die **unbearbeiteten Originale** der Fuchs-Posen (transparente PNGs, rund 1,9 MB): `winkt` (der stehende, winkende Fuchs), `jubelt`, `flamme`, `blitz`, `krone`. Sie werden nicht ausgeliefert und dienen als Quelle für alles Weitere. |
+| `public/images/mascot/` | Web-taugliche Fassungen der ganzen Pose (lange Seite 720 px), bereit, um den Fuchs an weiteren Stellen zu zeigen. |
+| `public/images/badges/` | Die Abzeichen-Bilder: 512 × 512 Pixel, ein Ausschnitt bis zum Oberkörper, damit der Fuchs auch in der kleinen Medaille erkennbar ist. |
+| `public/images/mascot.png` | Der stehende, winkende Fuchs auf den Kinder-Seiten und der Startseite (400 px breit, aus `winkt` abgeleitet). |
+
+**Neue Pose einbinden:** Original als PNG nach `resources/mascot/originals/{name}.png` legen und ausführen:
+
+```bash
+php scripts/process-mascot-image.php {name} --badge={key} --crop=x,y,breite,höhe --fade=110
+```
+
+`--badge` schreibt zusätzlich das Abzeichen-Bild, `--crop` wählt den Ausschnitt des Originals (empfohlen: Kopf bis Oberkörper), `--fade` blendet einen harten Schnitt durch den Körper unten weich aus, `--fadeleft` dasselbe am linken Rand (z.B. durch einen Schwanz). Ein quer laufender Ausschnitt wird in der Medaille mittig ausgerichtet. Beispiel Blitz: `--badge=blitz --crop=430,10,1070,900 --fade=110 --fadeleft=150`. Das Skript entfernt auch die unsichtbaren Pixel mit Fremdfarben, die sonst beim Verkleinern dunkle Ränder erzeugen.
+
+Die Tests arbeiten in einem eigenen, wieder gelöschten Ordner (`config/badges.php`) und rühren die echten Bilder nie an.
 
 ## Tech-Stack
 
