@@ -180,6 +180,15 @@ npm run dev   # oder: npm run build
 php artisan serve
 ```
 
+## Continuous Integration
+
+Bei jedem Push und jedem Pull Request gegen `main` läuft eine GitHub-Actions-Pipeline (`.github/workflows/ci.yml`):
+
+- **Tests & Codestil:** `composer install`, `npm ci` und `npm run build` (der Frontend-Build ist Pflicht, ohne ihn schlagen alle Seiten mit `@vite(...)` fehl, siehe unten), `composer validate`, ein Syntax-Check aller PHP-Dateien, `vendor/bin/pint --test` und die ganze Testsuite (`php artisan test`). Danach probeweise `php artisan optimize`/`optimize:clear`, wie im Deployment. `composer audit`/`npm audit` laufen informativ mit (blockieren nichts).
+- **Migrationen gegen MySQL:** Die Tests laufen gegen sqlite im Speicher, das Deployment aber gegen MySQL. Dieser Job führt alle Migrationen einmal gegen eine echte MySQL-Datenbank aus (inkl. Rollback und erneutem Migrieren), weil sqlite MySQL-spezifisches Verhalten nicht immer nachbildet — genau das war schon einmal die Ursache eines echten Bugs in diesem Projekt (`2026_09_17_225010_fix_practice_sessions_started_at_column.php`).
+
+`public/build` ist bewusst nicht eingecheckt (`.gitignore`); die Pipeline baut das Frontend deshalb selbst, bevor die Tests laufen.
+
 ## Öffentliche Seiten
 
 | Adresse | Inhalt |

@@ -1,0 +1,168 @@
+name: CI
+
+# Runs on every push to main and on every pull request targeting main, so
+# broken changes show up before they are merged, not after. workflow_dispatch
+# allows a manual run from the GitHub Actions tab.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# A new push to the same branch/PR cancels the still-running previous check,
+# instead of wasting minutes on an outdated commit.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Tests & Codestil
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      # PHP 8.5 matches production (siehe README/INSTALL); composer.json
+      # erlaubt ab ^8.3. Bei Bedarf liesse sich das hier zu einer Matrix
+      # ["8.3", "8.5"] erweitern.
+      - name: PHP einrichten
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.5"
+          extensions: mbstring, dom, fileinfo, pdo_sqlite, gd, zip, bcmath, intl
+          coverage: none
+          tools: composer:v2
+
+      - name: Composer-Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer/files
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: PHP-Abhängigkeiten installieren
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: composer.json/composer.lock prüfen
+        run: composer validate --strict --no-check-publish
+
+      # Reine Insicherung: fängt Syntaxfehler auch in Dateien ab, die von
+      # keinem Test ausgeführt werden (z.B. scripts/*.php, Konsolenbefehle,
+      # die kein Test aufruft).
+      - name: PHP-Dateien auf Syntaxfehler prüfen
+        run: find app bootstrap config database routes scripts tests -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
+
+      - name: Node einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Node-Abhängigkeiten installieren
+        run: npm ci
+
+      # public/build ist bewusst nicht eingecheckt (.gitignore). Ohne diesen
+      # Schritt schlagen alle Seiten mit @vite(...) mit einer
+      # ViteManifestNotFoundException fehl - das betrifft rund ein Drittel
+      # der Tests.
+      - name: Frontend bauen
+        run: npm run build
+
+      # phpunit.xml setzt DB/Cache/Session bereits auf sqlite/array; ohne
+      # APP_KEY schlagen aber alle Tests fehl, die verschlüsseln oder
+      # Sitzungen/CSRF nutzen ("No application encryption key has been
+      # specified.").
+      - name: .env einrichten
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Codestil prüfen (Pint)
+        run: vendor/bin/pint --test
+
+      - name: Tests ausführen
+        run: php artisan test
+
+      # Simuliert den Cache-Schritt aus deploy.sh, damit ein uncachebarer
+      # Zustand (z.B. eine Closure-Route oder ein kaputter Config-Wert)
+      # schon hier auffällt statt erst beim echten Deployment.
+      - name: Artisan-Caches probeweise aufbauen
+        run: |
+          php artisan optimize
+          php artisan optimize:clear
+
+      - name: Sicherheitsbekannte Schwachstellen prüfen (informativ)
+        continue-on-error: true
+        run: |
+          composer audit
+          npm audit --audit-level=high
+
+  mysql-migrations:
+    name: Migrationen gegen MySQL
+    runs-on: ubuntu-latest
+    # sqlite (in den Tests) verhält sich nicht immer wie MySQL: Ein Beispiel
+    # aus der echten Historie dieses Projekts ist die Migration
+    # 2026_09_17_225010_fix_practice_sessions_started_at_column, die einen
+    # MySQL-spezifischen ON-UPDATE-Bug behebt, den sqlite gar nicht hatte.
+    # Dieser Job stellt sicher, dass alle Migrationen auch gegen eine echte
+    # MySQL-Datenbank sauber durchlaufen, so wie es im Deployment passiert.
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+          MYSQL_DATABASE: math_ci
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: PHP einrichten
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.5"
+          extensions: mbstring, dom, fileinfo, pdo_mysql, gd, zip, bcmath, intl
+          coverage: none
+          tools: composer:v2
+
+      - name: Composer-Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer/files
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: PHP-Abhängigkeiten installieren
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      # .env.example steht bereits auf DB_CONNECTION=mysql; Host/Datenbank/Zugangsdaten
+      # kommen als echte Prozess-Umgebungsvariablen im nächsten Schritt und haben
+      # Vorrang vor den (dort leeren) Werten aus der .env-Datei.
+      - name: .env einrichten
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Migrationen ausführen und wieder zurückrollen
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: math_ci
+          DB_USERNAME: root
+          DB_PASSWORD: ""
+        run: |
+          php artisan migrate --force
+          php artisan migrate:rollback --force
+          php artisan migrate --force
