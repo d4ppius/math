@@ -15,10 +15,18 @@
  * --fade=PX       soften the bottom PX pixels (of the original) of the badge crop into
  *                 transparency, so a cut through the body does not show a hard edge
  * --fadeleft=PX   the same for the left edge (a cut through a tail or an arm)
+ * --minarea=N     after removing a baked-in background, also drop loose specks smaller
+ *                 than N pixels (e.g. stray speed lines that still carry checker noise)
  *
  * The originals carry invisible pixels with stray colours (and a faint glow). When such
  * an image is scaled down, those colours bleed into the edge as a dark rim. So almost
  * transparent pixels are cleared and given a neutral orange before anything is resized.
+ *
+ * Some generators export a "transparent" image with a fake white/grey checkerboard baked
+ * into fully opaque pixels. If all four corners are opaque, the script treats the image
+ * that way and removes the background first: starting from the border it clears every
+ * connected pixel that is neutral (grey/white) and bright. Fox fur and cream are warmer,
+ * and eyes or the bandana's sign are enclosed by outlines, so the flood cannot reach them.
  * Needs the PHP GD extension.
  */
 $root = dirname(__DIR__);
@@ -53,6 +61,223 @@ imagealphablending($image, false);
 imagesavealpha($image, true);
 $width = imagesx($image);
 $height = imagesy($image);
+
+/** Bright and neutral: the two tones of a fake checkerboard (values ~230-255, no colour). */
+function isBackgroundPixel(int $rgba): bool
+{
+    $r = ($rgba >> 16) & 255;
+    $g = ($rgba >> 8) & 255;
+    $b = $rgba & 255;
+
+    return min($r, $g, $b) >= 215 && (max($r, $g, $b) - min($r, $g, $b)) <= 5;
+}
+
+/**
+ * Clears a baked-in background: flood fill from the border through bright, neutral pixels.
+ * Optionally drops remaining islands smaller than $minArea pixels.
+ *
+ * @return int number of pixels cleared
+ */
+function removeBackground($image, int $minArea): int
+{
+    $w = imagesx($image);
+    $h = imagesy($image);
+    $clear = imagecolorallocatealpha($image, 0xD2, 0x60, 0x1A, 127);
+    $gone = str_repeat("\0", $w * $h);
+    $stack = [];
+
+    $seed = function (int $x, int $y) use (&$gone, &$stack, $image, $w): void {
+        $i = $y * $w + $x;
+        if ($gone[$i] === "\0" && isBackgroundPixel(imagecolorat($image, $x, $y))) {
+            $gone[$i] = "\1";
+            $stack[] = $i;
+        }
+    };
+
+    for ($x = 0; $x < $w; $x++) {
+        $seed($x, 0);
+        $seed($x, $h - 1);
+    }
+    for ($y = 0; $y < $h; $y++) {
+        $seed(0, $y);
+        $seed($w - 1, $y);
+    }
+
+    while ($stack) {
+        $i = array_pop($stack);
+        $x = $i % $w;
+        $y = intdiv($i, $w);
+        if ($x > 0) {
+            $seed($x - 1, $y);
+        }
+        if ($x < $w - 1) {
+            $seed($x + 1, $y);
+        }
+        if ($y > 0) {
+            $seed($x, $y - 1);
+        }
+        if ($y < $h - 1) {
+            $seed($x, $y + 1);
+        }
+    }
+
+    // Enclosed pockets the border flood cannot reach (between an arm and the body, say).
+    // A pocket of checkerboard has plenty of light-grey squares (tones 225-243); the white of an
+    // eye or of a sign is almost only bright white.
+    $seenPocket = $gone;
+    for ($start = 0; $start < $w * $h; $start++) {
+        if ($seenPocket[$start] !== "\0" || ! isBackgroundPixel(imagecolorat($image, $start % $w, intdiv($start, $w)))) {
+            continue;
+        }
+
+        $pocket = [$start];
+        $seenPocket[$start] = "\1";
+        $grey = 0;
+        for ($k = 0; $k < count($pocket); $k++) {
+            $x = $pocket[$k] % $w;
+            $y = intdiv($pocket[$k], $w);
+            $tone = imagecolorat($image, $x, $y) & 255;
+            if ($tone >= 225 && $tone <= 243) {
+                $grey++;
+            }
+            foreach ([[$x - 1, $y], [$x + 1, $y], [$x, $y - 1], [$x, $y + 1]] as [$nx, $ny]) {
+                $ni = $ny * $w + $nx;
+                if ($nx >= 0 && $nx < $w && $ny >= 0 && $ny < $h && $seenPocket[$ni] === "\0" && isBackgroundPixel(imagecolorat($image, $nx, $ny))) {
+                    $seenPocket[$ni] = "\1";
+                    $pocket[] = $ni;
+                }
+            }
+        }
+
+        // Measured: checker pockets have 28-48 % light-grey squares, eye whites 8-12 %.
+        if (count($pocket) >= 20 && $grey / count($pocket) >= 0.20) {
+            foreach ($pocket as $i) {
+                $gone[$i] = "\1";
+            }
+        }
+    }
+
+    // Light halo: edge pixels that are still mostly checkerboard (bright, barely coloured).
+    for ($pass = 0; $pass < 2; $pass++) {
+        $halo = [];
+        for ($i = 0, $n = $w * $h; $i < $n; $i++) {
+            if ($gone[$i] !== "\0") {
+                continue;
+            }
+            $x = $i % $w;
+            $y = intdiv($i, $w);
+            $touches = false;
+            foreach ([[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [1, -1], [-1, 1], [1, 1]] as [$dx, $dy]) {
+                $nx = $x + $dx;
+                $ny = $y + $dy;
+                if ($nx >= 0 && $nx < $w && $ny >= 0 && $ny < $h && $gone[$ny * $w + $nx] === "\1") {
+                    $touches = true;
+                    break;
+                }
+            }
+            if (! $touches) {
+                continue;
+            }
+            $rgba = imagecolorat($image, $x, $y);
+            $r = ($rgba >> 16) & 255;
+            $g = ($rgba >> 8) & 255;
+            $b = $rgba & 255;
+            if (min($r, $g, $b) >= 205 && (max($r, $g, $b) - min($r, $g, $b)) <= 14) {
+                $halo[] = $i;
+            }
+        }
+        foreach ($halo as $i) {
+            $gone[$i] = "\1";
+        }
+    }
+
+    // Light-blue speed lines and glows that sit on the checkerboard carry its pattern. Fur, cream
+    // and white signs are warm (blue below red), the bandana is saturated, so light and cool
+    // pixels are peeled off from the outside in, one layer at a time.
+    $isCool = function (int $rgba): bool {
+        $r = ($rgba >> 16) & 255;
+        $g = ($rgba >> 8) & 255;
+        $b = $rgba & 255;
+
+        return min($r, $g, $b) >= 150 && ($b - $r) >= 12;
+    };
+    $queue = [];
+    for ($i = 0, $n = $w * $h; $i < $n; $i++) {
+        if ($gone[$i] !== "\1") {
+            continue;
+        }
+        $x = $i % $w;
+        $y = intdiv($i, $w);
+        foreach ([[$x - 1, $y], [$x + 1, $y], [$x, $y - 1], [$x, $y + 1]] as [$nx, $ny]) {
+            $ni = $ny * $w + $nx;
+            if ($nx >= 0 && $nx < $w && $ny >= 0 && $ny < $h && $gone[$ni] === "\0" && $isCool(imagecolorat($image, $nx, $ny))) {
+                $gone[$ni] = "\1";
+                $queue[] = $ni;
+            }
+        }
+    }
+    while ($queue) {
+        $i = array_pop($queue);
+        $x = $i % $w;
+        $y = intdiv($i, $w);
+        foreach ([[$x - 1, $y], [$x + 1, $y], [$x, $y - 1], [$x, $y + 1]] as [$nx, $ny]) {
+            $ni = $ny * $w + $nx;
+            if ($nx >= 0 && $nx < $w && $ny >= 0 && $ny < $h && $gone[$ni] === "\0" && $isCool(imagecolorat($image, $nx, $ny))) {
+                $gone[$ni] = "\1";
+                $queue[] = $ni;
+            }
+        }
+    }
+
+    // Loose specks that are not part of the figure.
+    if ($minArea > 0) {
+        $seen = $gone;   // the background already counts as seen
+        for ($start = 0; $start < $w * $h; $start++) {
+            if ($seen[$start] !== "\0") {
+                continue;
+            }
+
+            $island = [$start];
+            $seen[$start] = "\1";
+            for ($k = 0; $k < count($island); $k++) {
+                $x = $island[$k] % $w;
+                $y = intdiv($island[$k], $w);
+                foreach ([[$x - 1, $y], [$x + 1, $y], [$x, $y - 1], [$x, $y + 1]] as [$nx, $ny]) {
+                    if ($nx >= 0 && $nx < $w && $ny >= 0 && $ny < $h && $seen[$ny * $w + $nx] === "\0") {
+                        $seen[$ny * $w + $nx] = "\1";
+                        $island[] = $ny * $w + $nx;
+                    }
+                }
+            }
+
+            if (count($island) < $minArea) {
+                foreach ($island as $i) {
+                    $gone[$i] = "\1";
+                }
+            }
+        }
+    }
+
+    $removed = 0;
+    for ($i = 0, $n = $w * $h; $i < $n; $i++) {
+        if ($gone[$i] === "\1") {
+            imagesetpixel($image, $i % $w, intdiv($i, $w), $clear);
+            $removed++;
+        }
+    }
+
+    return $removed;
+}
+
+// 0) A fake checkerboard "transparency" is opaque in all four corners: remove it first.
+$opaqueCorners = 0;
+foreach ([[0, 0], [$width - 1, 0], [0, $height - 1], [$width - 1, $height - 1]] as [$cornerX, $cornerY]) {
+    $opaqueCorners += (((imagecolorat($image, $cornerX, $cornerY) >> 24) & 127) === 0) ? 1 : 0;
+}
+if ($opaqueCorners === 4) {
+    $removedPixels = removeBackground($image, (int) ($options['minarea'] ?? 0));
+    printf("baked-in background removed (%.0f%% of the pixels)\n", 100 * $removedPixels / ($width * $height));
+}
 
 // 1) Clear almost-transparent pixels and give them a neutral edge colour.
 $clear = imagecolorallocatealpha($image, 0xD2, 0x60, 0x1A, 127);

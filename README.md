@@ -124,7 +124,7 @@ Nicht verdiente Abzeichen zeigt die Eltern-Statistik automatisch ausgegraut, es 
 
 | Ordner | Inhalt |
 | --- | --- |
-| `resources/mascot/originals/` | Die **unbearbeiteten Originale** der Fuchs-Posen (transparente PNGs, rund 1,9 MB): `winkt` (der stehende, winkende Fuchs), `jubelt`, `flamme`, `blitz`, `krone`. Sie werden nicht ausgeliefert und dienen als Quelle für alles Weitere. |
+| `resources/mascot/originals/` | Die **unbearbeiteten Originale** der Fuchs-Posen (transparente PNGs, rund 1,9 MB): `winkt` (der stehende, winkende Fuchs), `jubelt`, `flamme`, `blitz`, `krone`, `plus`, `medaille`, `sprung`. Sie werden nicht ausgeliefert und dienen als Quelle für alles Weitere. |
 | `public/images/mascot/` | Web-taugliche Fassungen der ganzen Pose (lange Seite 720 px), bereit, um den Fuchs an weiteren Stellen zu zeigen. |
 | `public/images/badges/` | Die Abzeichen-Bilder: 512 × 512 Pixel, ein Ausschnitt bis zum Oberkörper, damit der Fuchs auch in der kleinen Medaille erkennbar ist. |
 | `public/images/mascot.png` | Der stehende, winkende Fuchs auf den Kinder-Seiten und der Startseite (400 px breit, aus `winkt` abgeleitet). |
@@ -136,6 +136,23 @@ php scripts/process-mascot-image.php {name} --badge={key} --crop=x,y,breite,höh
 ```
 
 `--badge` schreibt zusätzlich das Abzeichen-Bild, `--crop` wählt den Ausschnitt des Originals (empfohlen: Kopf bis Oberkörper), `--fade` blendet einen harten Schnitt durch den Körper unten weich aus, `--fadeleft` dasselbe am linken Rand (z.B. durch einen Schwanz). Ein quer laufender Ausschnitt wird in der Medaille mittig ausgerichtet. Beispiel Blitz: `--badge=blitz --crop=430,10,1070,900 --fade=110 --fadeleft=150`. Das Skript entfernt auch die unsichtbaren Pixel mit Fremdfarben, die sonst beim Verkleinern dunkle Ränder erzeugen.
+
+**Bilder mit «falscher Transparenz»:** Manche Bilder (`plus`, `medaille`, `sprung`) kamen mit einem ins Bild eingebrannten weiss-grauen Schachbrett statt echter Transparenz. Das Skript erkennt das an den deckenden Ecken und stellt den Fuchs frei: Vom Rand aus wird alles Neutral-Helle entfernt (Fell und Creme sind wärmer, Augen und das Zeichen auf dem Halstuch sind umschlossen), dazu eingeschlossene Schachbrett-Flecken, ein heller Saum und hellblaue Tempolinien. Mit `--minarea=N` werden zusätzlich lose Splitter unter N Pixeln verworfen.
+
+Die bisher verwendeten Aufrufe (Originale in `resources/mascot/originals/`):
+
+| Original | Aufruf |
+| --- | --- |
+| `jubelt` | `--badge=first_session --crop=0,40,1024,1100 --fade=160` |
+| `flamme` | `--badge=streak_7 --crop=0,40,1024,1160 --fade=110` |
+| `krone` | `--badge=row_mastery --crop=0,90,1024,1110 --fade=110` |
+| `blitz` | `--badge=blitz --crop=430,10,1070,900 --fade=110 --fadeleft=150` |
+| `plus` | `--badge=addition_first_session --crop=0,10,1024,1200 --fade=100` |
+| `medaille` | `--badge=group_mastery --crop=0,10,1024,1170 --fade=120` |
+| `sprung` | `--badge=addition_blitz --crop=40,10,1470,970 --minarea=8000` |
+| `winkt` | nur die Web-Fassung, kein Abzeichen |
+
+Noch ausstehend: `allrounder.png` (jongliert × und +).
 
 Die Tests arbeiten in einem eigenen, wieder gelöschten Ordner (`config/badges.php`) und rühren die echten Bilder nie an.
 
