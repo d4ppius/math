@@ -52,4 +52,16 @@ class ChildIconTest extends TestCase
 
         $this->assertStringNotContainsString('/icons/', parse_url($url, PHP_URL_PATH));
     }
+
+    /**
+     * Regression guard: without this file, builtinFontPath() falls through to
+     * system font paths that a locked-down host's open_basedir restriction
+     * forbids even *checking* — which used to crash icon generation entirely
+     * in production (confirmed there, and reproduced locally by narrowing
+     * open_basedir to mirror the same restriction).
+     */
+    public function test_the_bundled_font_used_for_the_icon_initial_exists(): void
+    {
+        $this->assertFileExists(resource_path('fonts/Figtree-Bold.ttf'));
+    }
 }

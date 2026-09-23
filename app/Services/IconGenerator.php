@@ -83,6 +83,11 @@ class IconGenerator
     private function builtinFontPath(): ?string
     {
         $candidates = [
+            // Bundled (OFL-licensed, resources/fonts/OFL.txt): the same
+            // Figtree already used across the app's own UI, and — unlike the
+            // system paths below — always present and within any host's
+            // open_basedir, so this is what actually renders in production.
+            resource_path('fonts/Figtree-Bold.ttf'),
             '/System/Library/Fonts/Supplemental/Arial Bold.ttf',
             '/System/Library/Fonts/Supplemental/Arial.ttf',
             '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
@@ -90,7 +95,12 @@ class IconGenerator
         ];
 
         foreach ($candidates as $path) {
-            if (is_readable($path)) {
+            // @-suppressed: a locked-down host's open_basedir restriction turns
+            // even just checking a disallowed path into a fatal warning
+            // (confirmed in production: "is_readable(): open_basedir
+            // restriction in effect ... is not within the allowed path(s)"),
+            // rather than the false a missing/inaccessible file would give.
+            if (@is_readable($path)) {
                 return $path;
             }
         }
