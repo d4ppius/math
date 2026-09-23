@@ -124,7 +124,7 @@ Nicht verdiente Abzeichen zeigt die Eltern-Statistik automatisch ausgegraut, es 
 
 | Ordner | Inhalt |
 | --- | --- |
-| `resources/mascot/originals/` | Die **unbearbeiteten Originale** der Fuchs-Posen (transparente PNGs, rund 1,9 MB): `winkt` (der stehende, winkende Fuchs), `jubelt`, `flamme`, `blitz`, `krone`, `plus`, `medaille`, `sprung`. Sie werden nicht ausgeliefert und dienen als Quelle für alles Weitere. |
+| `resources/mascot/originals/` | Die **unbearbeiteten Originale** der Fuchs-Posen (transparente PNGs, rund 1,9 MB): `winkt` (der stehende, winkende Fuchs), `jubelt`, `flamme`, `blitz`, `krone`, `plus`, `medaille`, `sprung`, `jongliert`. Sie werden nicht ausgeliefert und dienen als Quelle für alles Weitere. |
 | `public/images/mascot/` | Web-taugliche Fassungen der ganzen Pose (lange Seite 720 px), bereit, um den Fuchs an weiteren Stellen zu zeigen. |
 | `public/images/badges/` | Die Abzeichen-Bilder: 512 × 512 Pixel, ein Ausschnitt bis zum Oberkörper, damit der Fuchs auch in der kleinen Medaille erkennbar ist. |
 | `public/images/mascot.png` | Der stehende, winkende Fuchs auf den Kinder-Seiten und der Startseite (400 px breit, aus `winkt` abgeleitet). |
@@ -150,9 +150,10 @@ Die bisher verwendeten Aufrufe (Originale in `resources/mascot/originals/`):
 | `plus` | `--badge=addition_first_session --crop=0,10,1024,1200 --fade=100` |
 | `medaille` | `--badge=group_mastery --crop=0,10,1024,1170 --fade=120` |
 | `sprung` | `--badge=addition_blitz --crop=40,10,1470,970 --minarea=8000` |
+| `jongliert` | `--badge=allrounder --crop=0,40,1024,910 --fade=100` |
 | `winkt` | nur die Web-Fassung, kein Abzeichen |
 
-Noch ausstehend: `allrounder.png` (jongliert × und +).
+Damit haben alle 18 Abzeichen ein eigenes oder ein geteiltes Bild.
 
 Die Tests arbeiten in einem eigenen, wieder gelöschten Ordner (`config/badges.php`) und rühren die echten Bilder nie an.
 
