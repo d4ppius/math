@@ -6,5 +6,5 @@ Disallow: /k/
 Disallow: /kind
 Disallow: /eltern/
 Disallow: /admin
-Disallow: /icons/
+Disallow: /child-icon/
 Disallow: /manifest/

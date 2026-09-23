@@ -15,7 +15,7 @@ class SearchEngineTest extends TestCase
     {
         $robots = file_get_contents(public_path('robots.txt'));
 
-        foreach (['/k/', '/kind', '/eltern/', '/admin', '/icons/', '/manifest/'] as $path) {
+        foreach (['/k/', '/kind', '/eltern/', '/admin', '/child-icon/', '/manifest/'] as $path) {
             $this->assertStringContainsString("Disallow: {$path}", $robots);
         }
 

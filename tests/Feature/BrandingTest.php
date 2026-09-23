@@ -133,7 +133,7 @@ class BrandingTest extends TestCase
         $version = 'v='.IconGenerator::VERSION;
 
         $this->get(route('child.magic-link', ['token' => $token]))
-            ->assertSee("icons/child/{$child->id}/180.png?{$version}", false);
+            ->assertSee("child-icon/{$child->id}/180.png?{$version}", false);
 
         $icons = $this->getJson(route('child.manifest', ['token' => $token]))->json('icons');
         foreach ($icons as $icon) {
