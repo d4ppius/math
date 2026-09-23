@@ -9,7 +9,6 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <link rel="manifest" href="/manifest.webmanifest">
         @include('layouts._head-icons')
 
 

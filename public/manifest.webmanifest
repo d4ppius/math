@@ -3,7 +3,7 @@
     "short_name": "Rechenfuchs",
     "description": "Spielerisch Einmaleins und Plus bis 20 üben",
     "start_url": "/eltern/dashboard",
-    "scope": "/eltern/",
+    "scope": "/",
     "display": "standalone",
     "background_color": "#fff7ed",
     "theme_color": "#fb923c",
