@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Code auschecken
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # PHP 8.5 matches production (siehe README/INSTALL); composer.json
       # erlaubt ab ^8.3. Bei Bedarf liesse sich das hier zu einer Matrix
@@ -39,7 +39,7 @@ jobs:
           tools: composer:v2
 
       - name: Composer-Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/composer/files
           key: composer-${{ hashFiles('composer.lock') }}
@@ -58,7 +58,7 @@ jobs:
         run: find app bootstrap config database routes scripts tests -name '*.php' -print0 | xargs -0 -n1 -P4 php -l
 
       - name: Node einrichten
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -133,7 +133,7 @@ jobs:
           --health-retries=10
     steps:
       - name: Code auschecken
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: PHP einrichten
         uses: shivammathur/setup-php@v2
@@ -144,7 +144,7 @@ jobs:
           tools: composer:v2
 
       - name: Composer-Cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/composer/files
           key: composer-${{ hashFiles('composer.lock') }}
