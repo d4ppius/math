@@ -90,8 +90,15 @@ jobs:
 
       # Simuliert den Cache-Schritt aus deploy.sh, damit ein uncachebarer
       # Zustand (z.B. eine Closure-Route oder ein kaputter Config-Wert)
-      # schon hier auffällt statt erst beim echten Deployment.
+      # schon hier auffällt statt erst beim echten Deployment. CACHE_STORE
+      # wird auf array umgestellt: .env.example steht auf CACHE_STORE=database,
+      # und "optimize:clear" räumt auch den Cache-Store auf - ohne eine
+      # laufende Datenbank (die es in diesem Job bewusst nicht gibt, dafür
+      # gibt es den separaten mysql-migrations-Job) schlägt das mit
+      # "Connection refused" fehl.
       - name: Artisan-Caches probeweise aufbauen
+        env:
+          CACHE_STORE: array
         run: |
           php artisan optimize
           php artisan optimize:clear
