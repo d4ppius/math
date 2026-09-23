@@ -120,6 +120,8 @@ Solange für ein Abzeichen kein Bild vorhanden ist, zeigt es sein Emoji. Bilder 
 
 Nicht verdiente Abzeichen zeigt die Eltern-Statistik automatisch ausgegraut, es braucht dafür kein zweites Bild.
 
+**Kinder-Icons** (`ChildIconController` / `IconGenerator`, der Fuchs mit farbigem Kreis und Anfangsbuchstabe fürs Home-Bildschirm-Icon) zeichnet den Buchstaben mit `resources/fonts/Figtree-Bold.ttf` (OFL-1.1, aus dem Quell-Repo der ohnehin schon verwendeten Schrift Figtree). Die Datei liegt bewusst im Projekt statt sich auf Systemschriften zu verlassen: Auf einem Server mit `open_basedir`-Beschränkung (bei den meisten Hosting-Anbietern der Fall) liegen Systemschriften ausserhalb des erlaubten Pfads, und selbst nur zu *prüfen*, ob so eine Datei existiert, bricht die Bildgenerierung dort sonst mit einem 500er ab.
+
 **Wo die Bilder liegen**
 
 | Ordner | Inhalt |
