@@ -1,6 +1,6 @@
 # Plan: Level pro Übung statt ein gemeinsames Level
 
-**Stand:** 24. September 2026 · **Status:** Genehmigt, wird umgesetzt.
+**Stand:** 24. September 2026 · **Status:** umgesetzt (Schritte 1 bis 6).
 
 ## Ausgangslage
 

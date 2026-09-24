@@ -146,6 +146,8 @@ PHP=/opt/plesk/php/8.5/bin/php COMPOSER=/usr/local/bin/composer ./deploy.sh
 
 Für die Erstinstallation ist das Skript nicht gedacht, dort gelten die Schritte 1 bis 8 dieser Anleitung.
 
+**Migration vom 24. September 2026 (Level pro Übung):** `migrate --force` (Schritt 5) führt dabei einmalig auch eine Datenmigration aus, die bestehende Punkte pro Kind und Übung aus der Session-Historie zurückrechnet (siehe [Level und Abzeichen](README.md#level-und-abzeichen) in der README). Das passiert automatisch beim nächsten `./deploy.sh`, es ist kein manueller Schritt nötig.
+
 ## Hinweise
 
 - `QUEUE_CONNECTION=sync` ist für dieses Projekt bewusst gewählt (kein Warteschlangen-Daemon nötig auf Shared Hosting). Sollte das Versenden von Benachrichtigungen später asynchron laufen müssen, kann auf `database` umgestellt werden – dann braucht es zusätzlich einen per Cron angestossenen `php artisan queue:work --stop-when-empty`.
