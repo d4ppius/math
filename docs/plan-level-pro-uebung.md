@@ -1,6 +1,6 @@
 # Plan: Level pro Übung statt ein gemeinsames Level
 
-**Stand:** 24. September 2026 · **Status:** Entwurf, wartet auf Freigabe. Nichts davon ist umgesetzt.
+**Stand:** 24. September 2026 · **Status:** Genehmigt, wird umgesetzt.
 
 ## Ausgangslage
 
@@ -102,9 +102,9 @@ Das ist eine Schätzung auf Basis der Simulation oben, keine gemessene Grösse a
 - **Migration hängt an der Historie:** Sie setzt voraus, dass `practice_sessions.exercise_type_id` immer gesetzt war. Das ist hier der Fall (die Spalte gibt es seit der allerersten Migration dieses Projekts), also kein echtes Risiko.
 - **UI-Aufwand ist real, aber begrenzt:** Drei Seiten sind betroffen (Kinder-Startseite, Erfolge-Seite, Eltern-Statistik). Das entspricht in etwa dem Aufwand, den wir schon für die Abzeichen-Abschnitte pro Übung betrieben haben — also ein bekanntes, kein neues Muster.
 
-## Offene Entscheidungen (brauchen dein Ja, bevor ich beginne)
+## Entscheidungen (mit Marius abgestimmt, 24. September 2026)
 
-1. **Schwellen-Vorschlag oben:** so übernehmen, oder anders gewichten (z. B. schneller/langsamer zum Top-Level)?
-2. **Erfolge-Seite:** Übungsname auch zeigen, wenn nur eine Übung aktiv ist (Konsistenz), oder nur bei mehreren (wie heute ohne Titel, wenn nur eine Übung existiert)?
-3. **Eltern-Statistik:** Level wirklich in die Übungs-Reiter verschieben (Vorschlag oben), oder lieber eine separate Karte pro Übung oberhalb der Reiter behalten?
-4. **`children.total_points`:** Bleibt wie vorgeschlagen als reine Anzeige-Summe ohne Funktion für das Level — richtig so?
+1. **Schwellen-Vorschlag:** übernommen wie oben in der Tabelle.
+2. **Erfolge-Seite:** Der Übungsname wird **weggelassen, solange nur eine Übung existiert** (keine sichtbare Änderung für den heutigen Normalfall). Sobald ein Kind zwei oder mehr Übungen hat, bekommt jeder Level-Block den Namen seiner Übung als Überschrift.
+3. **Eltern-Statistik:** Das Level wandert wie vorgeschlagen in die bestehenden Übungs-Reiter, direkt über der jeweiligen Heatmap. Keine separate Level-Karte mehr oberhalb der Reiter.
+4. **`children.total_points`:** Bleibt als reine Anzeige-Summe ohne Einfluss auf das Level.
