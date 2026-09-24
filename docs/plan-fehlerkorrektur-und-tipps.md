@@ -1,6 +1,6 @@
 # Plan: Fehlerkorrektur zum Nachtippen und Rechentipps
 
-**Stand:** 25. September 2026 · **Status:** Entwurf, wartet auf Freigabe.
+**Stand:** 25. September 2026 · **Status:** Genehmigt, wird umgesetzt.
 
 Konkretisiert und ersetzt Paket B ("Fehlerkorrektur und Nachholen") und Paket C1 ("Tipps nach Fehlern") aus `docs/lernkonzept-plan.md`, jetzt mit zusätzlichen Quellen und für beide Übungen (nicht nur Einmaleins).
 
@@ -72,7 +72,7 @@ Heute zeigt `resources/views/child/practice.blade.php` nach jeder Antwort 1,4 Se
 
 Die Zehnerübergang-Regel zerlegt den kleineren Summanden in „Rest bis 10" + „übrig": bei 8 + 5 ist 8 der grössere, 10 − 8 = 2, also 5 = 2 + 3, Ergebnis 10 + 3 = 13.
 
-- Schalter `show_hints` (Standard an) pro Kind und Übung, analog zu `sound_enabled`/`show_timer`/`speed_bonus_enabled`: Migration für eine neue Spalte in `child_exercise_settings`, Auswahlfeld im Eltern-Formular. Hinweis im Formular: „Wenn die Schule einen anderen Rechenweg lehrt, hier ausschalten."
+- Schalter `show_hints` (**Standard aus**) pro Kind und Übung, analog zu `sound_enabled`/`show_timer`/`speed_bonus_enabled`: Migration für eine neue Spalte in `child_exercise_settings`, Auswahlfeld im Eltern-Formular. Hinweistext im Formular: „Prüfe, ob dein Kind einen anderen Rechenweg aus der Schule kennt — passt der Tipp nicht dazu, kann er hier verwirren."
 
 ## Schritte
 
@@ -95,7 +95,7 @@ Die Zehnerübergang-Regel zerlegt den kleineren Summanden in „Rest bis 10" + �
 
 - `PracticeSessionController::attempt()` liefert bei einer falschen Antwort zusätzlich `hint`.
 - `practice.blade.php` zeigt „💡 Tipp: …" im Feedback-Block, nur wenn `show_hints` an ist.
-- Migration: neue Spalte `show_hints` (boolean, Standard `true`) in `child_exercise_settings`. Auswahlfeld im Eltern-Formular.
+- Migration: neue Spalte `show_hints` (boolean, Standard `false`) in `child_exercise_settings`. Auswahlfeld im Eltern-Formular mit dem Hinweistext oben.
 - **Tests:** Tipp erscheint bei falscher Antwort und aktivem Schalter, bleibt weg wenn ausgeschaltet oder die Antwort richtig war.
 
 ### 5. Dokumentation (S)
@@ -110,11 +110,11 @@ Die Zehnerübergang-Regel zerlegt den kleineren Summanden in „Rest bis 10" + �
 ## Risiken
 
 - **Kein Nachholen falsch beantworteter Aufgaben** (das war Paket B's zweiter Teil): Eine falsch beantwortete Aufgabe kann in derselben Session direkt danach nochmal drankommen (Zufall), aber es gibt keine gezielte Wiederholung nach 3–4 Fragen. Separates, späteres Paket, falls gewünscht.
-- **Tipp-Formulierungen** sind Standard-Rechenwege, aber nicht mit einem konkreten Lehrmittel abgeglichen (siehe offene Entscheidung 1) — falsche/fremde Begriffe könnten mehr verwirren als helfen.
+- **Tipp-Formulierungen** sind pädagogisch gängige Standard-Rechenwege, aber nicht mit einem konkreten Lehrmittel abgeglichen — falsche/fremde Begriffe könnten mehr verwirren als helfen. Deshalb Schalter standardmässig aus (siehe Entscheidung 3).
 - **JS-lastige Änderung** in Schritt 1 lässt sich nur eingeschränkt automatisiert testen, Browser-Check bleibt nötig (wie schon bei den früheren Timer- und Sound-Änderungen in diesem Projekt).
 
-## Offene Entscheidungen
+## Entscheidungen (mit Marius abgestimmt, 25. September 2026)
 
-1. **Rechenwege Plus:** Passen „Verdoppeln", „Ergänzen zur 10" und „Mit der 10 dranhängen" zur Schule von Liv/Elly, oder werden dort andere Begriffe/Wege verwendet?
-2. **Anzahl Fehlversuche beim Nachtippen** bis der „Weiter"-Knopf erscheint: Vorschlag 2 — passt das?
-3. **`show_hints`-Schalter:** Standard an (wie vorgeschlagen) oder aus?
+1. **Rechenwege Plus:** Nicht mit der Schule abgeglichen, sondern vorerst nach pädagogisch sinnvollen Standard-Strategien umgesetzt (Tabelle oben) — genau deshalb Schalter 3 standardmässig aus.
+2. **Fehlversuche beim Nachtippen:** 2, wie vorgeschlagen.
+3. **`show_hints`-Schalter:** Standard **aus**. Hinweistext im Eltern-Formular bittet die Eltern zu prüfen, ob der Tipp ihr Kind eher verwirrt (siehe Design-Abschnitt oben).
