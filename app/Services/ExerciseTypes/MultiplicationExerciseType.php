@@ -92,4 +92,34 @@ class MultiplicationExerciseType implements ExerciseTypeContract
     {
         return [1, 2];
     }
+
+    /**
+     * One rule per row (Reihe), the usual Einmaleins tricks: ×1 stays the
+     * same, ×10 just appends a zero (checked first, it applies in every row),
+     * ×2/×4 double (twice for ×4), ×5 is half of the ×10 fact, and ×3/×6/×9
+     * build on a smaller or bigger known fact. ×7 and ×8 are derived from a
+     * neighbouring row rather than counted directly.
+     */
+    public function hint(Fact $fact): array
+    {
+        $a = $fact->operand_a;
+        $b = $fact->operand_b;
+
+        if ($b === 10) {
+            return ["{$a} × 10 = ".($a * 10)];
+        }
+
+        return match ($a) {
+            1 => ["1 × {$b} = {$b}"],
+            2 => ["{$b} + {$b} = ".($b * 2)],
+            4 => ["{$b} + {$b} = ".($b * 2), ($b * 2).' + '.($b * 2).' = '.($b * 4)],
+            5 => ["{$b} × 10 = ".($b * 10), ($b * 10).' ÷ 2 = '.($b * 5)],
+            3 => ["2 × {$b} = ".($b * 2), ($b * 2)." + {$b} = ".($b * 3)],
+            6 => ["5 × {$b} = ".($b * 5), ($b * 5)." + {$b} = ".($b * 6)],
+            9 => ["10 × {$b} = ".($b * 10), ($b * 10)." − {$b} = ".($b * 9)],
+            7 => ["6 × {$b} = ".($b * 6), ($b * 6)." + {$b} = ".($b * 7)],
+            8 => ["4 × {$b} = ".($b * 4), ($b * 4).' + '.($b * 4).' = '.($b * 8)],
+            default => ["{$a} × {$b} = ".($a * $b)],
+        };
+    }
 }

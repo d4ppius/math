@@ -113,4 +113,44 @@ class AdditionExerciseType implements ExerciseTypeContract
             default => self::GROUP_OVER_TEN,
         };
     }
+
+    /**
+     * Doubles first (checked before anything else, since a double is the
+     * simplest known fact even when it also crosses the ten), then "plus 10"
+     * facts (just append the other number), then bridging over the ten via
+     * 10, and otherwise counting on in ones from the bigger summand.
+     */
+    public function hint(Fact $fact): array
+    {
+        $a = $fact->operand_a;
+        $b = $fact->operand_b;
+
+        if ($a === $b) {
+            return ["{$a} + {$a} = ".($a + $b)];
+        }
+
+        if ($a === 10 || $b === 10) {
+            [$ten, $other] = $a === 10 ? [$a, $b] : [$b, $a];
+
+            return ["{$ten} + {$other} = ".($ten + $other)];
+        }
+
+        $big = max($a, $b);
+        $small = min($a, $b);
+
+        if ($big + $small > 10) {
+            $complement = 10 - $big;
+            $rest = $small - $complement;
+
+            return ["{$big} + {$complement} = 10", "10 + {$rest} = ".($big + $small)];
+        }
+
+        // Counting on from the bigger summand, one step at a time.
+        $steps = [];
+        for ($i = 1; $i <= $small; $i++) {
+            $steps[] = ($big + $i - 1).' + 1 = '.($big + $i);
+        }
+
+        return $steps;
+    }
 }

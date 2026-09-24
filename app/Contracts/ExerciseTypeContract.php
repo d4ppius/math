@@ -58,4 +58,15 @@ interface ExerciseTypeContract
      * @return int[] difficulty groups a brand-new child should start with.
      */
     public function defaultActiveGroups(): array;
+
+    /**
+     * A worked-example style strategy hint for a fact, shown after a wrong
+     * answer. Each entry is one binary step "A op B = C" (op one of
+     * × + − ÷), and the last step's result must equal the fact's
+     * correct_answer — structured as numbers rather than free text so it can
+     * be checked mechanically for every fact instead of by spot check.
+     *
+     * @return list<string>
+     */
+    public function hint(Fact $fact): array;
 }
