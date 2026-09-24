@@ -1,6 +1,6 @@
 # Plan: Fehlerkorrektur zum Nachtippen und Rechentipps
 
-**Stand:** 25. September 2026 · **Status:** Genehmigt, wird umgesetzt.
+**Stand:** 25. September 2026 · **Status:** umgesetzt (Schritte 1 bis 5). Abweichung zum Entwurf: Schritte 2 und 3 (`hint()` für Einmaleins und für Plus) wurden in einem gemeinsamen Commit umgesetzt, da die neue Vertragsmethode sonst beide Übungstypen gleichzeitig hätte betreffen müssen und die App zwischen den beiden Schritten sonst kurzzeitig nicht mehr geladen hätte.
 
 Konkretisiert und ersetzt Paket B ("Fehlerkorrektur und Nachholen") und Paket C1 ("Tipps nach Fehlern") aus `docs/lernkonzept-plan.md`, jetzt mit zusätzlichen Quellen und für beide Übungen (nicht nur Einmaleins).
 

@@ -71,6 +71,33 @@ Punkte = (10 + Tempo-Bonus) × Serien-Multiplikator     (gerundet)
 
 Ergebnis: 0 bis 30 Punkte pro Antwort. Beispiel für eine 3er-Aufgabe (Zielzeit 3,5 s): in 1,75 s richtig ergibt 15 Punkte, in 3,5 s oder langsamer 10 Punkte, in 3,5 s als 5. richtige Antwort in Folge 12 Punkte. Die Punkte zählen für die Session, für das Punktekonto der jeweiligen Übung (siehe Level unten) und zusätzlich für das Gesamtkonto des Kindes.
 
+## Fehlerkorrektur und Rechentipps
+
+Bei einer **richtigen** Antwort bleibt es wie gewohnt: 1,4 Sekunden Feedback, dann automatisch weiter. Bei einer **falschen** Antwort springt die App nicht mehr automatisch weiter: Das Kind sieht die richtige Lösung und tippt sie selbst auf derselben Zifferntastatur ein, bevor es zur nächsten Aufgabe geht ([Cover-Copy-Compare](https://perrjournal.com/index.php/perrjournal/article/view/204), eine gut belegte Methode für Rechenfakten). Nach 2 falschen Nachtipp-Versuchen erscheint ein „Weiter"-Knopf, damit niemand hängen bleibt. Das Nachtippen wird nicht an den Server geschickt oder gespeichert — der Server hat die Lösung mit der ersten (falschen) Antwort schon geliefert. Der Session-Timer läuft während der Korrektur normal weiter.
+
+Zusätzlich kann bei einer falschen Antwort ein Rechentipp erscheinen, ein kurzer vorgerechneter Lösungsweg statt nur der Lösung ([Worked-Example-Effect](https://en.wikipedia.org/wiki/Worked-example_effect)). Jeder Übungstyp hat eigene Regeln (`ExerciseTypeContract::hint()`), für jede der 90 Einmaleins- und 100 Plus-Aufgaben einzeln geprüft, nicht nur stichprobenweise:
+
+| Einmaleins | Strategie |
+| --- | --- |
+| ×1 | bleibt gleich |
+| ×2 | verdoppeln |
+| ×10 | Null anhängen (gilt in jeder Reihe) |
+| ×5 | Hälfte der 10er-Aufgabe |
+| ×4 | zweimal verdoppeln |
+| ×3 | 2er-Aufgabe + 1er-Aufgabe |
+| ×6 | 5er-Aufgabe + 1er-Aufgabe |
+| ×9 | 10er-Aufgabe − 1er-Aufgabe |
+| ×7, ×8 | aus der 6er- bzw. 4er-Reihe abgeleitet |
+
+| Plus bis 20 | Strategie |
+| --- | --- |
+| Verdoppeln (z. B. 6 + 6) | „Verdoppeln", geprüft vor allen anderen Regeln |
+| Mit der 10 (z. B. 10 + 6) | die andere Zahl einfach dranhängen |
+| Zehnerübergang (z. B. 8 + 5) | zuerst zur 10 ergänzen, dann den Rest dazuzählen |
+| Plus bis 10, sonst (z. B. 3 + 4) | vom grösseren Summanden aus weiterzählen |
+
+Die Rechenwege sind pädagogisch gängige Standardstrategien, aber nicht mit einem bestimmten Lehrmittel abgeglichen. Deshalb ist der Tipp pro Kind und Übung **standardmässig aus** (Eltern-Einstellung „Rechentipp bei falschen Antworten"), mit dem Hinweis, zu prüfen, ob er zum Rechenweg der Schule passt oder eher verwirrt.
+
 ## Level und Abzeichen
 
 **Level:** Jede Übung hat ihr eigenes Punktekonto und ihr eigenes Level 1 bis 10, unabhängig davon, wie weit das Kind in einer anderen Übung schon ist (Spalte `child_exercise_settings.points`, Ableitung in `app/Services/Gamification/LevelCalculator.php` über `ChildExerciseSetting::level()`). Damit bleibt jede Übung ein eigener, motivierender Fortschritt statt vom Level der anderen "erledigt" zu wirken. Solange ein Kind nur eine Übung hat (der Normalfall, Plus ist standardmässig aus), ist davon nichts zu sehen: Kinder-Startseite und Eltern-Statistik zeigen weiterhin nur einen Balken. Sobald zwei oder mehr Übungen aktiv sind, bekommt jede ihr eigenes Level: auf der Kinder-Startseite auf der jeweiligen Übungs-Karte, auf der Erfolgsseite (`/kind/erfolge`) als eigener Block mit dem Namen der Übung, in der Eltern-Statistik im jeweiligen Übungs-Reiter direkt über der Heatmap. `children.total_points` bleibt daneben als reine Anzeige-Summe über alle Übungen bestehen ("X Punkte insgesamt"), beeinflusst aber kein Level mehr.

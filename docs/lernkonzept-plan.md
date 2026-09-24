@@ -89,6 +89,8 @@ Aufwand grob: **S** = bis 1 Tag, **M** = 2 bis 3 Tage, **L** = mehr, jeweils ink
 
 ## Paket B: Fehlerkorrektur und Nachholen
 
+**Status: Oberfläche umgesetzt, siehe `docs/plan-fehlerkorrektur-und-tipps.md`.** Das Nachholen im Selektor (unten) ist dabei bewusst zurückgestellt.
+
 **Oberfläche** (`resources/views/child/practice.blade.php`):
 - Nach einer falschen Antwort geht die Seite nicht mehr nach 1,4 Sekunden weiter.
 - Das Kind sieht „Richtig wäre 56“ und tippt die Lösung selbst ein. Nach zwei falschen Versuchen erscheint „Weiter“.
@@ -104,6 +106,8 @@ Aufwand grob: **S** = bis 1 Tag, **M** = 2 bis 3 Tage, **L** = mehr, jeweils ink
 **Tests:** Selektor-Test für das Nachholen. Die Oberfläche wird im Browser geprüft.
 
 ## Paket C: Strategie-Tipps
+
+**Status: C1 umgesetzt (für beide Übungen, nicht nur Einmaleins), siehe `docs/plan-fehlerkorrektur-und-tipps.md`. C2 und C3 offen.**
 
 **C1, Tipps nach Fehlern**
 - Neue Methode `hint(Fact)` im `ExerciseTypeContract`. Sie liefert strukturierte Schritte, zum Beispiel für 6 × 7: „5 × 7 + 1 × 7 = 35 + 7“.
