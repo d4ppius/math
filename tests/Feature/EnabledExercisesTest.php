@@ -54,6 +54,7 @@ class EnabledExercisesTest extends TestCase
                 'show_timer' => 1,
                 'speed_bonus_enabled' => 1,
                 'sound_enabled' => 1,
+                'show_hints' => 0,
             ];
         }
 

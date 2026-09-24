@@ -108,6 +108,16 @@
                         </div>
 
                         <div class="mt-4">
+                            <label class="inline-flex items-center">
+                                <input type="hidden" name="settings[{{ $index }}][show_hints]" value="0">
+                                <input type="checkbox" name="settings[{{ $index }}][show_hints]" value="1" class="rounded border-gray-300"
+                                       {{ $setting->show_hints ? 'checked' : '' }}>
+                                <span class="ms-2 text-sm text-gray-700">{{ __('Rechentipp bei falschen Antworten') }}</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-1">{{ __('Zeigt bei einer falschen Antwort einen Rechenweg, z. B. „5 × 7 = 35, 35 + 7 = 42“. Prüfe, ob dein Kind einen anderen Rechenweg aus der Schule kennt — passt der Tipp nicht dazu, kann er hier verwirren.') }}</p>
+                        </div>
+
+                        <div class="mt-4">
                             <x-input-label for="frequency-{{ $index }}" :value="__('Ziel-Häufigkeit')" />
                             <select id="frequency-{{ $index }}" name="settings[{{ $index }}][target_frequency]" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                                 <option value="daily" {{ $setting->target_frequency === 'daily' ? 'selected' : '' }}>{{ __('Täglich') }}</option>

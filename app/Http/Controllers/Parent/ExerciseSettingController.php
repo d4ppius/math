@@ -50,6 +50,7 @@ class ExerciseSettingController extends Controller
             'settings.*.show_timer' => ['required', 'boolean'],
             'settings.*.speed_bonus_enabled' => ['required', 'boolean'],
             'settings.*.sound_enabled' => ['required', 'boolean'],
+            'settings.*.show_hints' => ['required', 'boolean'],
         ]);
 
         $settings = $child->exerciseSettings()->with('exerciseType')->get()->keyBy('id');
@@ -86,6 +87,7 @@ class ExerciseSettingController extends Controller
                 'show_timer' => (bool) $settingInput['show_timer'],
                 'speed_bonus_enabled' => (bool) $settingInput['speed_bonus_enabled'],
                 'sound_enabled' => (bool) $settingInput['sound_enabled'],
+                'show_hints' => (bool) $settingInput['show_hints'],
             ]);
         }
 

@@ -86,6 +86,7 @@ class AttemptRecorder
             'correct_answer' => $fact->correct_answer,
             'points_awarded' => $points,
             'session_total_points' => $session->total_points,
+            'hint' => $isCorrect ? null : $implementation->hint($fact),
         ];
     }
 

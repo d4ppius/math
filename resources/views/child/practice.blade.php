@@ -156,6 +156,12 @@
                         {{ __('Antwort war') }}: <span class="font-semibold" x-text="feedback.correct_answer"></span>
                     </div>
 
+                    @if ($showHints)
+                        <div class="text-sm text-indigo-700 bg-indigo-50 rounded-xl px-3 py-2 mb-4" x-show="feedback.hint && feedback.hint.length">
+                            💡 {{ __('Tipp') }}: <span x-text="feedback.hint ? feedback.hint.join(', ') : ''"></span>
+                        </div>
+                    @endif
+
                     <p class="text-sm font-semibold text-orange-700 mb-2">{{ __('Jetzt du: Tippe die Lösung ein.') }}</p>
                     <div class="text-4xl font-mono tracking-widest mb-6 h-12 flex items-center justify-center border-b-4 border-orange-200" x-text="retype || '?'"></div>
 

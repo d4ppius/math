@@ -68,6 +68,7 @@ class ExerciseSettingsProvisioningTest extends TestCase
             'show_timer' => $showTimer,
             'speed_bonus_enabled' => 1,
             'sound_enabled' => 1,
+            'show_hints' => 0,
         ]]];
 
         $this->actingAs($user)
@@ -104,6 +105,7 @@ class ExerciseSettingsProvisioningTest extends TestCase
                 'show_timer' => 1,
                 'speed_bonus_enabled' => 0,
                 'sound_enabled' => 1,
+                'show_hints' => 0,
             ]]])
             ->assertRedirect();
 
@@ -133,9 +135,40 @@ class ExerciseSettingsProvisioningTest extends TestCase
                 'show_timer' => 1,
                 'speed_bonus_enabled' => 1,
                 'sound_enabled' => 0,
+                'show_hints' => 0,
             ]]])
             ->assertRedirect();
 
         $this->assertFalse($setting->refresh()->sound_enabled);
+    }
+
+    public function test_hints_are_off_by_default_and_parents_can_switch_them_on_per_exercise(): void
+    {
+        ExerciseType::create(['key' => 'multiplication', 'name' => 'Einmaleins']);
+
+        $family = Family::factory()->create();
+        $user = User::factory()->for($family)->create();
+        $child = Child::factory()->for($family)->create();
+
+        $this->actingAs($user)->get(route('parent.children.exercise-settings.edit', $child));
+        $setting = $child->exerciseSettings()->first();
+
+        $this->assertFalse($setting->show_hints, 'Hints are off by default.');
+
+        $this->actingAs($user)
+            ->put(route('parent.children.exercise-settings.update', $child), ['settings' => [[
+                'id' => $setting->id,
+                'active_groups' => [1],
+                'session_duration_minutes' => 10,
+                'target_frequency' => 'daily',
+                'enabled' => 1,
+                'show_timer' => 1,
+                'speed_bonus_enabled' => 1,
+                'sound_enabled' => 1,
+                'show_hints' => 1,
+            ]]])
+            ->assertRedirect();
+
+        $this->assertTrue($setting->refresh()->show_hints);
     }
 }

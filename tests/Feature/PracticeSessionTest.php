@@ -205,6 +205,49 @@ class PracticeSessionTest extends TestCase
         $this->assertSame(0, $child->refresh()->total_points);
     }
 
+    public function test_a_wrong_answer_comes_with_a_hint_but_a_correct_one_does_not(): void
+    {
+        $child = $this->makeReadyChild();
+        $this->actingAs($child, 'child')->post(route('child.sessions.start'));
+        $session = PracticeSession::first();
+
+        $this->actingAs($child, 'child')->getJson(route('child.sessions.next-question', $session));
+        $fact = $session->refresh()->currentFact;
+
+        $wrong = $this->actingAs($child, 'child')->postJson(route('child.sessions.attempts', $session), [
+            'answer' => $fact->correct_answer + 1,
+        ]);
+        $this->assertIsArray($wrong->json('hint'));
+        $this->assertNotEmpty($wrong->json('hint'));
+
+        $this->actingAs($child, 'child')->getJson(route('child.sessions.next-question', $session));
+        $fact = $session->refresh()->currentFact;
+
+        $correct = $this->actingAs($child, 'child')->postJson(route('child.sessions.attempts', $session), [
+            'answer' => $fact->correct_answer,
+        ]);
+        $this->assertNull($correct->json('hint'));
+    }
+
+    public function test_the_hint_is_only_shown_on_the_practice_page_when_switched_on(): void
+    {
+        $child = $this->makeReadyChild();
+        $this->actingAs($child, 'child')->post(route('child.sessions.start'));
+        $session = PracticeSession::first();
+
+        $this->actingAs($child, 'child')
+            ->get(route('child.sessions.show', $session))
+            ->assertOk()
+            ->assertDontSee('💡');
+
+        $child->exerciseSettings()->update(['show_hints' => true]);
+
+        $this->actingAs($child, 'child')
+            ->get(route('child.sessions.show', $session))
+            ->assertOk()
+            ->assertSee('💡');
+    }
+
     public function test_the_session_ends_once_its_time_budget_is_used_up(): void
     {
         Carbon::setTestNow(now());
