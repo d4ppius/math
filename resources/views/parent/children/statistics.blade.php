@@ -25,12 +25,7 @@
                 </a>
             </div>
 
-            {{-- Level --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Level') }}</h3>
-                <x-level-progress :level="$child->level()" />
-                <p class="text-sm text-gray-500 mt-3">{{ __(':points Punkte insgesamt', ['points' => $child->total_points]) }}</p>
-            </div>
+            <p class="text-sm text-gray-500">⭐ {{ __(':points Punkte insgesamt', ['points' => $child->total_points]) }}</p>
 
             {{-- Badges --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
@@ -92,6 +87,9 @@
                     @foreach ($heatmaps as $heatmap)
                         <div x-show="tab === '{{ $heatmap['key'] }}'" @unless ($loop->first) x-cloak @endunless>
                             <h3 class="text-lg font-medium text-gray-900 mb-1">{{ $heatmap['label'] }}</h3>
+
+                            <x-level-progress :level="$heatmap['level']" class="mb-4" />
+
                             <p class="text-sm text-gray-500 mb-4">
                                 {{ __('Prozentzahl = Anteil richtig beantworteter Versuche.') }}
                                 @unless ($heatmap['enabled'])

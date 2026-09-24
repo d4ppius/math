@@ -7,6 +7,7 @@ use App\Models\Child;
 use App\Models\ExerciseType;
 use App\Models\Fact;
 use App\Services\ExerciseTypes\ExerciseTypeRegistry;
+use App\Services\Gamification\LevelCalculator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -14,11 +15,11 @@ use Illuminate\View\View;
 
 class StatisticsController extends Controller
 {
-    public function show(Request $request, Child $child, ExerciseTypeRegistry $registry): View
+    public function show(Request $request, Child $child, ExerciseTypeRegistry $registry, LevelCalculator $levelCalculator): View
     {
         $this->authorize('view', $child);
 
-        $heatmaps = $this->heatmaps($child, $registry);
+        $heatmaps = $this->heatmaps($child, $registry, $levelCalculator);
 
         $weeklyPoints = $this->weeklyPoints($child);
         $goalStreak = $this->goalStreak($child);
@@ -40,12 +41,12 @@ class StatisticsController extends Controller
      *
      * @return Collection<int, array<string, mixed>>
      */
-    private function heatmaps(Child $child, ExerciseTypeRegistry $registry): Collection
+    private function heatmaps(Child $child, ExerciseTypeRegistry $registry, LevelCalculator $levelCalculator): Collection
     {
         $settings = $child->exerciseSettings()->get()->keyBy('exercise_type_id');
 
         return ExerciseType::whereIn('key', array_keys(config('exercise_types', [])))->orderBy('id')->get()
-            ->map(function (ExerciseType $type) use ($child, $registry, $settings) {
+            ->map(function (ExerciseType $type) use ($child, $registry, $settings, $levelCalculator) {
                 $setting = $settings->get($type->id);
 
                 $stats = $child->factStats()
@@ -66,6 +67,7 @@ class StatisticsController extends Controller
                     'label' => $implementation->label(),
                     // No settings row at all (legacy data): don't claim the exercise is off.
                     'enabled' => $setting?->enabled ?? true,
+                    'level' => $setting?->level() ?? $levelCalculator->forPoints(0),
                     'operator' => $implementation->operator(),
                     'rows' => $grid['rows'],
                     'cols' => $grid['cols'],

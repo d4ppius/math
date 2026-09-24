@@ -32,11 +32,11 @@ class ExerciseStatisticsTest extends TestCase
         $this->child = Child::factory()->for($family)->create(['name' => 'Mia']);
     }
 
-    private function setting(string $key, bool $enabled): void
+    private function setting(string $key, bool $enabled, int $points = 0): void
     {
         ChildExerciseSetting::create([
             'child_id' => $this->child->id, 'exercise_type_id' => ExerciseType::where('key', $key)->value('id'), 'enabled' => $enabled,
-            'active_groups' => [1], 'session_duration_minutes' => 10, 'target_frequency' => 'daily',
+            'active_groups' => [1], 'session_duration_minutes' => 10, 'target_frequency' => 'daily', 'points' => $points,
         ]);
     }
 
@@ -106,5 +106,15 @@ class ExerciseStatisticsTest extends TestCase
     public function test_a_child_without_any_exercise_setting_gets_the_empty_note(): void
     {
         $this->page()->assertOk()->assertSee('Noch keine Übungsdaten vorhanden.');
+    }
+
+    public function test_each_exercise_tab_shows_its_own_level_instead_of_a_shared_one(): void
+    {
+        $this->setting('multiplication', true, points: 1000); // Level 2
+        $this->setting('addition', true, points: 5000); // Level 4
+
+        $this->page()->assertOk()->assertSeeInOrder([
+            'Einmaleins', 'Level 2', 'Zahlen-Entdecker', 'Plus bis 20', 'Level 4', 'Zahlen-Flitzer',
+        ]);
     }
 }

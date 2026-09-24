@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Services\ExerciseTypes\ExerciseTypeRegistry;
-use App\Services\Gamification\LevelCalculator;
 use App\Services\IconGenerator;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -102,12 +101,6 @@ class Child extends Model implements AuthenticatableContract
     public function iconUrl(int $size): string
     {
         return route('child.icon', ['child' => $this, 'size' => $size, 'v' => IconGenerator::VERSION]);
-    }
-
-    /** @return array<string, mixed> See LevelCalculator::forPoints(). */
-    public function level(): array
-    {
-        return app(LevelCalculator::class)->forPoints($this->total_points);
     }
 
     /**

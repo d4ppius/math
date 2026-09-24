@@ -79,6 +79,7 @@ class ChildLevelTest extends TestCase
         $family = Family::factory()->create();
         $user = User::factory()->for($family)->create();
         $child = Child::factory()->for($family)->create(['total_points' => 2000]);
+        $this->setting($child, 'multiplication', 2000);
 
         $this->actingAs($user)
             ->get(route('parent.children.statistics', $child))
