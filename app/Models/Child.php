@@ -194,6 +194,27 @@ class Child extends Model implements AuthenticatableContract
             ->values();
     }
 
+    /**
+     * One entry per exercise this child has a level in: currently available
+     * ones, plus any switched off since that still hold points, so earned
+     * progress never simply disappears (mirrors how earned badges stay visible
+     * after an exercise is turned off — see attainableBadges()).
+     *
+     * @return \Illuminate\Support\Collection<int, ChildExerciseSetting>
+     */
+    public function exercisesWithLevel(): \Illuminate\Support\Collection
+    {
+        $registered = array_keys(config('exercise_types', []));
+
+        return $this->exerciseSettings()
+            ->with('exerciseType')
+            ->get()
+            ->filter(fn (ChildExerciseSetting $setting) => $setting->exerciseType && in_array($setting->exerciseType->key, $registered, true))
+            ->filter(fn (ChildExerciseSetting $setting) => ($setting->enabled && $setting->exerciseType->is_active) || $setting->points > 0)
+            ->sortBy(fn (ChildExerciseSetting $setting) => array_search($setting->exerciseType->key, $registered, true))
+            ->values();
+    }
+
     /** A running session of this exercise with time left, if the child paused one. */
     public function resumableSessionFor(int $exerciseTypeId): ?PracticeSession
     {

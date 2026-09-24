@@ -36,6 +36,12 @@ class ChildAchievementsTest extends TestCase
     public function test_it_shows_level_points_and_the_earned_badges_with_their_date(): void
     {
         $child = Child::factory()->create(['total_points' => 800]);
+        ChildExerciseSetting::create([
+            'child_id' => $child->id,
+            'exercise_type_id' => ExerciseType::create(['key' => 'multiplication', 'name' => 'Einmaleins'])->id,
+            'active_groups' => [1], 'session_duration_minutes' => 10, 'target_frequency' => 'daily',
+            'points' => 800,
+        ]);
         $this->earn($child, 'first_session', '2026-09-01 10:00:00');
 
         $this->actingAs($child, 'child')
@@ -48,6 +54,62 @@ class ChildAchievementsTest extends TestCase
             ->assertSee('(1 von 12)')
             ->assertSee('Erste Übung')
             ->assertSee('01.09.2026');
+    }
+
+    public function test_with_a_single_exercise_the_level_has_no_heading(): void
+    {
+        $child = Child::factory()->create();
+        ChildExerciseSetting::create([
+            'child_id' => $child->id,
+            'exercise_type_id' => ExerciseType::create(['key' => 'multiplication', 'name' => 'Einmaleins'])->id,
+            'active_groups' => [1], 'session_duration_minutes' => 10, 'target_frequency' => 'daily',
+            'points' => 1000,
+        ]);
+
+        $this->actingAs($child, 'child')->get(route('child.achievements'))
+            ->assertSee('Level 2')
+            ->assertDontSee('<h3 class="mb-1 text-sm font-semibold uppercase tracking-wide text-gray-400">Einmaleins</h3>', false);
+    }
+
+    public function test_with_several_exercises_each_level_gets_its_own_heading(): void
+    {
+        $child = Child::factory()->create();
+        ChildExerciseSetting::create([
+            'child_id' => $child->id,
+            'exercise_type_id' => ExerciseType::create(['key' => 'multiplication', 'name' => 'Einmaleins'])->id,
+            'active_groups' => [1], 'session_duration_minutes' => 10, 'target_frequency' => 'daily',
+            'points' => 1000,
+        ]);
+        ChildExerciseSetting::create([
+            'child_id' => $child->id,
+            'exercise_type_id' => ExerciseType::create(['key' => 'addition', 'name' => 'Plus bis 20'])->id,
+            'active_groups' => [1], 'session_duration_minutes' => 10, 'target_frequency' => 'daily',
+            'points' => 5000,
+        ]);
+
+        $this->actingAs($child, 'child')->get(route('child.achievements'))
+            ->assertSeeInOrder(['Einmaleins', 'Level 2', 'Plus bis 20', 'Level 4']);
+    }
+
+    public function test_an_exercise_switched_off_still_shows_its_level_if_it_has_points(): void
+    {
+        $child = Child::factory()->create();
+        ChildExerciseSetting::create([
+            'child_id' => $child->id,
+            'exercise_type_id' => ExerciseType::create(['key' => 'multiplication', 'name' => 'Einmaleins'])->id,
+            'active_groups' => [1], 'session_duration_minutes' => 10, 'target_frequency' => 'daily',
+            'points' => 1000,
+        ]);
+        ChildExerciseSetting::create([
+            'child_id' => $child->id, 'enabled' => false,
+            'exercise_type_id' => ExerciseType::create(['key' => 'addition', 'name' => 'Plus bis 20'])->id,
+            'active_groups' => [1], 'session_duration_minutes' => 10, 'target_frequency' => 'daily',
+            'points' => 5000,
+        ]);
+
+        $this->actingAs($child, 'child')->get(route('child.achievements'))
+            ->assertSee('Plus bis 20')
+            ->assertSee('Level 4');
     }
 
     public function test_locked_badges_are_shown_greyed_with_how_to_get_them(): void

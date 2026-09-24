@@ -6,7 +6,18 @@
             <h1 class="text-2xl font-bold mb-1">🏅 {{ __('Meine Erfolge') }}</h1>
             <p class="text-orange-600 font-semibold mb-4">⭐ {{ $child->total_points }} {{ __('Punkte') }}</p>
 
-            <x-level-progress :level="$level" class="mb-6" />
+            @if ($exerciseLevels->isNotEmpty())
+                <div class="mb-6 space-y-4">
+                    @foreach ($exerciseLevels as $exercise)
+                        <div>
+                            @if ($exerciseLevels->count() > 1)
+                                <h3 class="mb-1 text-sm font-semibold uppercase tracking-wide text-gray-400">{{ $exercise->exerciseType->name }}</h3>
+                            @endif
+                            <x-level-progress :level="$exercise->level()" />
+                        </div>
+                    @endforeach
+                </div>
+            @endif
 
             <section>
                 <h2 class="font-bold text-amber-700">

@@ -21,7 +21,7 @@ class AchievementsController extends Controller
 
         return view('child.achievements', [
             'child' => $child,
-            'level' => $child->level(),
+            'exerciseLevels' => $child->exercisesWithLevel(),
             'earned' => $earned,
             'earnedBadges' => $badges->filter(fn ($badge) => $earned->has($badge->id)),
             // Only when the parents allow it: what is still out there to earn.
