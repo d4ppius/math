@@ -87,6 +87,21 @@ class PracticeSessionTest extends TestCase
             ->assertSee('timeRemaining');
     }
 
+    public function test_the_practice_page_offers_to_retype_a_wrong_answer_instead_of_auto_advancing(): void
+    {
+        $child = $this->makeReadyChild();
+        $this->actingAs($child, 'child')->post(route('child.sessions.start'));
+        $session = PracticeSession::first();
+
+        $this->actingAs($child, 'child')
+            ->get(route('child.sessions.show', $session))
+            ->assertOk()
+            ->assertSee('Jetzt du: Tippe die Lösung ein.')
+            // A correct answer keeps advancing on its own; only a wrong one waits for a retype.
+            ->assertSee('data.is_correct', false)
+            ->assertSee('correcting = true', false);
+    }
+
     public function test_a_correct_answer_awards_points_and_updates_fact_stats(): void
     {
         $child = $this->makeReadyChild();
@@ -182,7 +197,8 @@ class PracticeSessionTest extends TestCase
             'answer' => $fact->correct_answer + 1,
         ]);
 
-        $response->assertOk()->assertJson(['is_correct' => false, 'points_awarded' => 0]);
+        // correct_answer lets the child retype the right answer client-side afterwards.
+        $response->assertOk()->assertJson(['is_correct' => false, 'points_awarded' => 0, 'correct_answer' => $fact->correct_answer]);
 
         $stat = $child->factStats()->where('fact_id', $fact->id)->first();
         $this->assertSame(0, $stat->current_streak);
