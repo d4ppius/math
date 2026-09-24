@@ -1,4 +1,4 @@
-{{-- Level title plus a progress bar to the next level. $level comes from Child::level(). --}}
+{{-- Level title plus a progress bar to the next level. $level comes from LevelCalculator::forPoints(), usually via ChildExerciseSetting::level(). --}}
 @props(['level'])
 
 <div {{ $attributes }}>

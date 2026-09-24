@@ -11,16 +11,19 @@
             <h1 class="text-3xl font-bold mb-1">{{ __('Hallo :name!', ['name' => $child->name]) }}</h1>
             <p class="text-orange-600 font-semibold mb-3">⭐ {{ $child->total_points }} {{ __('Punkte') }}</p>
 
-            <x-level-progress :level="$child->level()" class="mb-6" />
+            @php
+                $exercises = $child->availableExercises();
+                $cardColors = ['bg-orange-500 hover:bg-orange-600', 'bg-sky-500 hover:bg-sky-600', 'bg-emerald-500 hover:bg-emerald-600', 'bg-purple-500 hover:bg-purple-600'];
+            @endphp
+
+            @if ($exercises->count() === 1)
+                <x-level-progress :level="$exercises->first()->level()" class="mb-6" />
+            @endif
 
             @if ($errors->any())
                 <p class="text-red-600 text-sm mb-4">{{ $errors->first('exercise') }}</p>
             @endif
 
-            @php
-                $exercises = $child->availableExercises();
-                $cardColors = ['bg-orange-500 hover:bg-orange-600', 'bg-sky-500 hover:bg-sky-600', 'bg-emerald-500 hover:bg-emerald-600', 'bg-purple-500 hover:bg-purple-600'];
-            @endphp
             <form method="POST" action="{{ route('child.sessions.start') }}" class="{{ $exercises->count() > 1 ? 'space-y-3' : '' }}">
                 @csrf
 
@@ -30,6 +33,9 @@
                     @foreach ($exercises as $exercise)
                         <button type="submit" name="exercise" value="{{ $exercise->exerciseType->key }}" class="w-full {{ $cardColors[$loop->index % count($cardColors)] }} text-white text-2xl font-bold rounded-2xl py-4 shadow-lg active:scale-95 transition">
                             {{ $exercise->implementation->emoji() }} {{ $exercise->exerciseType->name }}
+                            <span class="block text-sm font-semibold opacity-90">
+                                {{ __('Level :n', ['n' => $exercise->level()['level']]) }} · {{ $exercise->level()['title'] }}
+                            </span>
                             @if ($child->resumableSessionFor($exercise->exercise_type_id))
                                 <span class="block text-sm font-semibold opacity-90">{{ __('Weiter üben') }}</span>
                             @endif
