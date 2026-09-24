@@ -31,13 +31,11 @@
                     <p class="text-sm font-semibold text-orange-700">{{ __('Was möchtest du üben?') }}</p>
 
                     @foreach ($exercises as $exercise)
-                        <button type="submit" name="exercise" value="{{ $exercise->exerciseType->key }}" class="w-full {{ $cardColors[$loop->index % count($cardColors)] }} text-white text-2xl font-bold rounded-2xl py-4 shadow-lg active:scale-95 transition">
+                        <button type="submit" name="exercise" value="{{ $exercise->exerciseType->key }}" class="w-full {{ $cardColors[$loop->index % count($cardColors)] }} text-white text-2xl font-bold rounded-2xl py-4 px-5 shadow-lg active:scale-95 transition">
                             {{ $exercise->implementation->emoji() }} {{ $exercise->exerciseType->name }}
-                            <span class="block text-sm font-semibold opacity-90">
-                                {{ __('Level :n', ['n' => $exercise->level()['level']]) }} · {{ $exercise->level()['title'] }}
-                            </span>
+                            <x-level-progress :level="$exercise->level()" :on-color="true" :show-remaining="false" class="mt-2 text-base" />
                             @if ($child->resumableSessionFor($exercise->exercise_type_id))
-                                <span class="block text-sm font-semibold opacity-90">{{ __('Weiter üben') }}</span>
+                                <span class="block text-sm font-semibold opacity-90 mt-1">{{ __('Weiter üben') }}</span>
                             @endif
                         </button>
                     @endforeach

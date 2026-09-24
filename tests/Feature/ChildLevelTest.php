@@ -61,17 +61,18 @@ class ChildLevelTest extends TestCase
             ->assertDontSee('Punkte bis Level');
     }
 
-    public function test_with_several_exercises_each_card_shows_its_own_level_and_the_shared_bar_is_gone(): void
+    public function test_with_several_exercises_each_card_shows_its_own_level_and_progress_bar(): void
     {
         $child = Child::factory()->create();
         $this->setting($child, 'multiplication', 1000); // Level 2
         $this->setting($child, 'addition', 5000); // Level 4
 
-        $response = $this->actingAs($child, 'child')->get(route('child.home'))->assertOk();
+        $html = $this->actingAs($child, 'child')->get(route('child.home'))->assertOk()->getContent();
 
-        $response->assertSee('Level 2 · Zahlen-Entdecker')
-            ->assertSee('Level 4 · Zahlen-Flitzer')
-            ->assertDontSee('role="progressbar"', false);
+        $this->assertStringContainsString('Level 2 · Zahlen-Entdecker', $html);
+        $this->assertStringContainsString('Level 4 · Zahlen-Flitzer', $html);
+        // One progress bar per card, no single shared bar above the choice.
+        $this->assertSame(2, substr_count($html, 'role="progressbar"'));
     }
 
     public function test_parents_see_the_level_on_the_statistics_page(): void
