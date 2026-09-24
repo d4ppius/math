@@ -21,33 +21,33 @@ class LevelCalculatorTest extends TestCase
         $this->assertSame(1, $level['level']);
         $this->assertSame('Rechen-Anfänger', $level['title']);
         $this->assertSame(0.0, $level['progress']);
-        $this->assertSame(400, $level['points_to_next']);
+        $this->assertSame(500, $level['points_to_next']);
         $this->assertSame(2, $level['next_level']);
         $this->assertFalse($level['is_max']);
     }
 
     public function test_the_level_changes_exactly_at_the_threshold(): void
     {
-        $this->assertSame(1, $this->calculator->forPoints(399)['level']);
-        $this->assertSame(2, $this->calculator->forPoints(400)['level']);
-        $this->assertSame(2, $this->calculator->forPoints(1199)['level']);
-        $this->assertSame(3, $this->calculator->forPoints(1200)['level']);
+        $this->assertSame(1, $this->calculator->forPoints(499)['level']);
+        $this->assertSame(2, $this->calculator->forPoints(500)['level']);
+        $this->assertSame(2, $this->calculator->forPoints(1499)['level']);
+        $this->assertSame(3, $this->calculator->forPoints(1500)['level']);
     }
 
     public function test_progress_and_remaining_points_within_a_level(): void
     {
-        // Level 2 spans 400..1200 (800 points); 800 points is halfway.
-        $level = $this->calculator->forPoints(800);
+        // Level 2 spans 500..1500 (1000 points); 1000 points is halfway.
+        $level = $this->calculator->forPoints(1000);
 
         $this->assertSame(2, $level['level']);
         $this->assertSame(0.5, $level['progress']);
-        $this->assertSame(400, $level['points_to_next']);
+        $this->assertSame(500, $level['points_to_next']);
         $this->assertSame(3, $level['next_level']);
     }
 
     public function test_the_top_level_is_capped_and_has_no_next_level(): void
     {
-        foreach ([30000, 99999] as $points) {
+        foreach ([55000, 999999] as $points) {
             $level = $this->calculator->forPoints($points);
 
             $this->assertSame(10, $level['level']);

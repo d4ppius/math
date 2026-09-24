@@ -52,11 +52,11 @@ class AttemptRecorder
         $stat->save();
 
         $sessionStreakAfter = $this->currentSessionStreak($session, $isCorrect);
-        $speedBonusEnabled = $session->child->exerciseSettings()
+        $setting = $session->child->exerciseSettings()
             ->where('exercise_type_id', $session->exercise_type_id)
-            ->first()?->speed_bonus_enabled ?? true;
+            ->first();
 
-        $points = $this->pointsCalculator->forAnswer($isCorrect, $responseTimeMs, $targetMs, $sessionStreakAfter, $speedBonusEnabled);
+        $points = $this->pointsCalculator->forAnswer($isCorrect, $responseTimeMs, $targetMs, $sessionStreakAfter, $setting?->speed_bonus_enabled ?? true);
 
         SessionAttempt::create([
             'practice_session_id' => $session->id,
@@ -77,6 +77,9 @@ class AttemptRecorder
         $session->save();
 
         $session->child()->increment('total_points', $points);
+        // total_points is now a display-only lifetime sum; the per-exercise
+        // points below are what levels and progress bars are based on.
+        $setting?->increment('points', $points);
 
         return [
             'is_correct' => $isCorrect,

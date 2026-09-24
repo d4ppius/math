@@ -14,20 +14,20 @@ class ChildLevelTest extends TestCase
 
     public function test_the_child_home_shows_level_title_and_progress(): void
     {
-        $child = Child::factory()->create(['total_points' => 800]);
+        $child = Child::factory()->create(['total_points' => 1000]);
 
         $this->actingAs($child, 'child')
             ->get(route('child.home'))
             ->assertOk()
             ->assertSee('Level 2')
             ->assertSee('Zahlen-Entdecker')
-            ->assertSee('Noch 400 Punkte bis Level 3')
+            ->assertSee('Noch 500 Punkte bis Level 3')
             ->assertSee('width: 50%', false);
     }
 
     public function test_the_top_level_shows_a_congratulation_instead_of_a_next_level(): void
     {
-        $child = Child::factory()->create(['total_points' => 31000]);
+        $child = Child::factory()->create(['total_points' => 60000]);
 
         $this->actingAs($child, 'child')
             ->get(route('child.home'))
@@ -40,13 +40,13 @@ class ChildLevelTest extends TestCase
     {
         $family = Family::factory()->create();
         $user = User::factory()->for($family)->create();
-        $child = Child::factory()->for($family)->create(['total_points' => 1300]);
+        $child = Child::factory()->for($family)->create(['total_points' => 2000]);
 
         $this->actingAs($user)
             ->get(route('parent.children.statistics', $child))
             ->assertOk()
             ->assertSee('Level 3')
             ->assertSee('Rechen-Lehrling')
-            ->assertSee('1300 Punkte insgesamt');
+            ->assertSee('2000 Punkte insgesamt');
     }
 }

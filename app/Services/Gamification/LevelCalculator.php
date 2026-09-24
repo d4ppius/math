@@ -3,17 +3,22 @@
 namespace App\Services\Gamification;
 
 /**
- * Translates a child's total points into one of ten levels. Purely derived
- * from the points, so there is nothing to store or migrate.
+ * Translates points into one of ten levels — since 2026-09, one level per
+ * exercise (see ChildExerciseSetting::level()), not one shared level for a
+ * child overall. Purely derived from the points, so there is nothing to
+ * store or migrate.
  *
- * A practice session is worth very roughly 300-650 points, so the steps grow:
- * the first level-up comes after about one session, the last one after a few
- * months of regular practice. Tune THRESHOLDS if that feels off.
+ * Calibrated from three simulated practice paces on a single exercise
+ * (see docs/plan-level-pro-uebung.md): a typical pace reaches the top level
+ * after roughly 10 weeks of regular practice (~54,500 points), a fast pace
+ * on easy content after about a month (~144,650 points would be reached,
+ * but the curve below tops out at 55,000 so it arrives sooner), a slow pace
+ * after several months. Tune THRESHOLDS if real usage suggests otherwise.
  */
 class LevelCalculator
 {
-    /** Minimum total points needed for each level (index 0 = level 1). */
-    private const THRESHOLDS = [0, 400, 1200, 2500, 4500, 7500, 11500, 16500, 22500, 30000];
+    /** Minimum points needed for each level (index 0 = level 1). */
+    private const THRESHOLDS = [0, 500, 1500, 3500, 7000, 13000, 21000, 31000, 42000, 55000];
 
     /** @var list<array{string, string}> Title and emoji per level. */
     private const TITLES = [
