@@ -34,22 +34,30 @@ class AttemptRecorder
         $implementation = $this->registry->get($session->exerciseType->key);
         $targetMs = $implementation->targetResponseMs($fact->difficulty_group);
 
-        $stat = ChildFactStat::firstOrNew([
-            'child_id' => $session->child_id,
-            'fact_id' => $fact->id,
-        ]);
+        // A preview (ChildPreviewController) never touches real progress: no
+        // learning-stat update, no attempt log, no points anywhere but the
+        // preview session's own row. One side effect of skipping the attempt
+        // log: currentSessionStreak() below never finds history to build on
+        // during a preview, so the speed-streak multiplier never kicks in
+        // there — a minor, deliberate simplification, not a bug.
+        if (! $session->is_preview) {
+            $stat = ChildFactStat::firstOrNew([
+                'child_id' => $session->child_id,
+                'fact_id' => $fact->id,
+            ]);
 
-        $stat->attempts_total = ($stat->attempts_total ?? 0) + 1;
-        $stat->attempts_correct = ($stat->attempts_correct ?? 0) + ($isCorrect ? 1 : 0);
-        $stat->avg_response_ms = $stat->avg_response_ms
-            ? (int) round($stat->avg_response_ms * 0.7 + $responseTimeMs * 0.3)
-            : $responseTimeMs;
-        $stat->last_response_ms = $responseTimeMs;
-        $stat->current_streak = $isCorrect ? ($stat->current_streak ?? 0) + 1 : 0;
-        $stat->last_practiced_at = $now;
-        $stat->last_result = $isCorrect;
-        $stat->priority_score = $this->priorityCalculator->calculate($stat, $targetMs);
-        $stat->save();
+            $stat->attempts_total = ($stat->attempts_total ?? 0) + 1;
+            $stat->attempts_correct = ($stat->attempts_correct ?? 0) + ($isCorrect ? 1 : 0);
+            $stat->avg_response_ms = $stat->avg_response_ms
+                ? (int) round($stat->avg_response_ms * 0.7 + $responseTimeMs * 0.3)
+                : $responseTimeMs;
+            $stat->last_response_ms = $responseTimeMs;
+            $stat->current_streak = $isCorrect ? ($stat->current_streak ?? 0) + 1 : 0;
+            $stat->last_practiced_at = $now;
+            $stat->last_result = $isCorrect;
+            $stat->priority_score = $this->priorityCalculator->calculate($stat, $targetMs);
+            $stat->save();
+        }
 
         $sessionStreakAfter = $this->currentSessionStreak($session, $isCorrect);
         $setting = $session->child->exerciseSettings()
@@ -58,16 +66,18 @@ class AttemptRecorder
 
         $points = $this->pointsCalculator->forAnswer($isCorrect, $responseTimeMs, $targetMs, $sessionStreakAfter, $setting?->speed_bonus_enabled ?? true);
 
-        SessionAttempt::create([
-            'practice_session_id' => $session->id,
-            'fact_id' => $fact->id,
-            'given_answer' => $givenAnswer,
-            'is_correct' => $isCorrect,
-            'response_time_ms' => $responseTimeMs,
-            'points_awarded' => $points,
-            'question_issued_at' => $issuedAt,
-            'answered_at' => $now,
-        ]);
+        if (! $session->is_preview) {
+            SessionAttempt::create([
+                'practice_session_id' => $session->id,
+                'fact_id' => $fact->id,
+                'given_answer' => $givenAnswer,
+                'is_correct' => $isCorrect,
+                'response_time_ms' => $responseTimeMs,
+                'points_awarded' => $points,
+                'question_issued_at' => $issuedAt,
+                'answered_at' => $now,
+            ]);
+        }
 
         $session->questions_answered++;
         $session->questions_correct += $isCorrect ? 1 : 0;
@@ -76,10 +86,12 @@ class AttemptRecorder
         $session->current_question_issued_at = null;
         $session->save();
 
-        $session->child()->increment('total_points', $points);
-        // total_points is now a display-only lifetime sum; the per-exercise
-        // points below are what levels and progress bars are based on.
-        $setting?->increment('points', $points);
+        if (! $session->is_preview) {
+            $session->child()->increment('total_points', $points);
+            // total_points is now a display-only lifetime sum; the per-exercise
+            // points below are what levels and progress bars are based on.
+            $setting?->increment('points', $points);
+        }
 
         return [
             'is_correct' => $isCorrect,

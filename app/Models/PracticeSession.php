@@ -12,7 +12,7 @@ use Illuminate\Support\Carbon;
 #[Fillable([
     'child_id', 'exercise_type_id', 'started_at', 'ended_at', 'planned_duration_seconds',
     'status', 'total_points', 'questions_answered', 'questions_correct',
-    'current_fact_id', 'current_question_issued_at',
+    'current_fact_id', 'current_question_issued_at', 'is_preview',
 ])]
 class PracticeSession extends Model
 {
@@ -24,6 +24,7 @@ class PracticeSession extends Model
             'started_at' => 'datetime',
             'ended_at' => 'datetime',
             'current_question_issued_at' => 'datetime',
+            'is_preview' => 'boolean',
         ];
     }
 

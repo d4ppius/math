@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Child;
 
 use App\Events\PracticeSessionCompleted;
+use App\Http\Controllers\ChildPreviewController;
 use App\Http\Controllers\Controller;
 use App\Models\PracticeSession;
 use App\Services\AdaptiveSelection\AttemptRecorder;
@@ -45,7 +46,11 @@ class PracticeSessionController extends Controller
             return $this->backHome('Diese Übung ist gerade nicht verfügbar.');
         }
 
-        if ($existing = $child->resumableSessionFor($chosen->exercise_type_id)) {
+        $isPreview = $request->session()->has(ChildPreviewController::SESSION_KEY);
+
+        // A preview never resumes a real session: that would let a "harmless"
+        // preview keep writing into the child's own, actually-in-progress one.
+        if (! $isPreview && $existing = $child->resumableSessionFor($chosen->exercise_type_id)) {
             return redirect()->route('child.sessions.show', $existing);
         }
 
@@ -55,6 +60,7 @@ class PracticeSessionController extends Controller
             'started_at' => now(),
             'planned_duration_seconds' => $chosen->session_duration_minutes * 60,
             'status' => 'active',
+            'is_preview' => $isPreview,
         ]);
 
         return redirect()->route('child.sessions.show', $session);
@@ -171,7 +177,13 @@ class PracticeSessionController extends Controller
             'current_question_issued_at' => null,
         ]);
 
-        PracticeSessionCompleted::dispatch($session);
+        // A preview's completion must stay invisible to badges and the daily
+        // goal (EvaluateBadges, EvaluateDailyGoal) — skipping the event they
+        // both listen for is simpler and more certain than teaching each of
+        // them about is_preview individually.
+        if (! $session->is_preview) {
+            PracticeSessionCompleted::dispatch($session);
+        }
     }
 
     private function timeRemainingSeconds(PracticeSession $session): int
