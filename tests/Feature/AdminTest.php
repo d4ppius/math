@@ -78,6 +78,27 @@ class AdminTest extends TestCase
         $admin->get(route('admin.facts.edit', $fact))->assertOk();
     }
 
+    public function test_the_dashboard_counts_exclude_preview_sessions_which_stay_visible_and_labelled_in_the_lists(): void
+    {
+        $exerciseType = ExerciseType::create(['key' => 'multiplication', 'name' => 'Einmaleins']);
+        $child = Child::factory()->create();
+
+        $session = PracticeSession::create([
+            'child_id' => $child->id, 'exercise_type_id' => $exerciseType->id, 'started_at' => now(),
+            'planned_duration_seconds' => 600, 'status' => 'completed', 'is_preview' => true,
+        ]);
+
+        $admin = $this->actingAs($this->admin());
+
+        $admin->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertViewHas('counts', fn ($counts) => $counts['sessions'] === 0 && $counts['practicedToday'] === 0)
+            ->assertSee('Vorschau');
+
+        $admin->get(route('admin.sessions.index'))->assertOk()->assertSee('Vorschau');
+        $admin->get(route('admin.sessions.show', $session))->assertOk()->assertSee('Vorschau');
+    }
+
     public function test_admin_can_edit_and_delete_families_but_not_their_own(): void
     {
         $admin = $this->admin();

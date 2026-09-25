@@ -20,8 +20,11 @@ class DashboardController extends Controller
                 'families' => Family::count(),
                 'parents' => User::count(),
                 'children' => Child::count(),
-                'sessions' => PracticeSession::count(),
-                'practicedToday' => PracticeSession::whereDate('started_at', today())->distinct()->count('child_id'),
+                // Both deliberately exclude previews (ChildPreviewController):
+                // an admin or parent trying one out shouldn't inflate either
+                // the lifetime session count or "how many kids practiced today".
+                'sessions' => PracticeSession::where('is_preview', false)->count(),
+                'practicedToday' => PracticeSession::whereDate('started_at', today())->where('is_preview', false)->distinct()->count('child_id'),
             ],
             'recentSessions' => PracticeSession::with(['child.family', 'exerciseType'])
                 ->latest('started_at')

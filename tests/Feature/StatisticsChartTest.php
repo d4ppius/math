@@ -38,4 +38,22 @@ class StatisticsChartTest extends TestCase
         $this->assertStringContainsString('h-full', $html);
         $this->assertStringNotContainsString('bg-orange-100 rounded-t-md flex items-end" style="height: 100%;"', $html);
     }
+
+    public function test_a_preview_sessions_points_do_not_count_towards_the_weekly_chart(): void
+    {
+        $family = Family::factory()->create();
+        $user = User::factory()->for($family)->create();
+        $child = Child::factory()->for($family)->create();
+        $type = ExerciseType::create(['key' => 'multiplication', 'name' => 'Einmaleins']);
+
+        PracticeSession::create([
+            'child_id' => $child->id, 'exercise_type_id' => $type->id, 'started_at' => now()->setTime(12, 0),
+            'planned_duration_seconds' => 600, 'status' => 'completed', 'total_points' => 500, 'is_preview' => true,
+        ]);
+
+        $html = $this->actingAs($user)->get(route('parent.children.statistics', $child))->assertOk()->getContent();
+
+        // Without any real points, every bar sits at the chart's floor (4%), never at 100%.
+        $this->assertStringNotContainsString('style="height: 100%;"', $html);
+    }
 }

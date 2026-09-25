@@ -11,7 +11,12 @@
                 <dl class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
                     <div><dt class="text-gray-500">{{ __('Kind') }}</dt><dd class="font-medium">{{ $session->child->name }}</dd></div>
                     <div><dt class="text-gray-500">{{ __('Familie') }}</dt><dd class="font-medium"><a href="{{ route('admin.families.show', $session->child->family_id) }}" class="text-indigo-600 hover:underline">{{ $session->child->family->name }}</a></dd></div>
-                    <div><dt class="text-gray-500">{{ __('Übung') }}</dt><dd class="font-medium">{{ $session->exerciseType->name }}</dd></div>
+                    <div><dt class="text-gray-500">{{ __('Übung') }}</dt><dd class="font-medium">
+                        {{ $session->exerciseType->name }}
+                        @if ($session->is_preview)
+                            <span class="ms-1 text-xs bg-amber-100 text-amber-800 rounded px-1.5 py-0.5">{{ __('Vorschau') }}</span>
+                        @endif
+                    </dd></div>
                     <div><dt class="text-gray-500">{{ __('Start') }}</dt><dd class="font-medium">{{ $session->started_at->format('d.m.Y H:i') }}</dd></div>
                     <div><dt class="text-gray-500">{{ __('Geplante Dauer') }}</dt><dd class="font-medium">{{ intdiv($session->planned_duration_seconds, 60) }} {{ __('Minuten') }}</dd></div>
                     <div><dt class="text-gray-500">{{ __('Status') }}</dt><dd class="font-medium">{{ $session->status }}</dd></div>

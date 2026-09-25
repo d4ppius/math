@@ -97,6 +97,20 @@ class ChildPreviewSessionTest extends TestCase
         $this->assertSame('active', $realSession->status, 'untouched by the preview');
     }
 
+    public function test_a_leftover_active_preview_never_offers_to_resume_on_the_childs_own_home_screen(): void
+    {
+        $child = $this->makeReadyChild();
+        $this->startPreview($child);
+        $this->post(route('child.sessions.start')); // left running, never finished
+
+        $this->assertTrue($child->fresh()->resumableSessionFor($child->exerciseSettings()->first()->exercise_type_id) === null);
+
+        $this->actingAs($child, 'child')
+            ->get(route('child.home'))
+            ->assertOk()
+            ->assertDontSee('Weiter üben');
+    }
+
     public function test_answering_in_a_preview_changes_nothing_but_still_looks_real(): void
     {
         $child = $this->makeReadyChild();

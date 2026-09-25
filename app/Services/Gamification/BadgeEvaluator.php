@@ -62,6 +62,11 @@ class BadgeEvaluator
             ->where('status', 'completed')
             ->whereDate('started_at', $session->started_at->toDateString())
             ->where('questions_answered', '>=', $criteria['min_questions'] ?? 5)
+            // A preview session of the child's own can never itself trigger
+            // this (PracticeSessionCompleted is never dispatched for one),
+            // but it would still silently count towards this check for a
+            // real session completed the same day without this exclusion.
+            ->where('is_preview', false)
             ->distinct()
             ->count('exercise_type_id');
 
