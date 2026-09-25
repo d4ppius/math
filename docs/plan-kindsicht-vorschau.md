@@ -1,6 +1,6 @@
 # Plan: Vorschau als Kind (aus Eltern- und Admin-Bereich)
 
-**Stand:** 26. September 2026 · **Status:** Entwurf, wartet auf Freigabe.
+**Stand:** 26. September 2026 · **Status:** umgesetzt (Schritte 1 bis 4), auf dem Branch `feature/kindsicht-vorschau`, wartet auf Test durch Marius vor dem Merge in `main`.
 
 ## Ausgangslage
 
@@ -93,8 +93,10 @@ Alle vier bekommen ein zusätzliches `where('is_preview', false)`. In der Admin-
 - **Geteiltes Gerät:** Meldet sich jemand auf demselben Gerät/Browser als Vorschau an, auf dem gerade das echte Kind eingeloggt ist, überschreibt das dessen Sitzung (`child`-Guard ist pro Browser, nicht pro Person) — unvermeidbar bei einem session-basierten Login, aber es sollte in der Doku erwähnt werden.
 - **Vergessene Abfrage-Stelle:** Der Katalog in Schritt 3 stammt aus einer Code-Suche nach `practiceSessions()`/`PracticeSession::` zum Zeitpunkt dieses Plans; eine künftige neue Auswertung über Sessions müsste denselben Ausschluss übernehmen. Kein Blocker, aber im README als Hinweis für spätere Änderungen wert.
 
-## Offene Entscheidungen
+## Entscheidungen
 
-1. **Zeitliches Limit für eine Vorschau:** Automatisch beenden (z. B. nach Verlassen der Kind-Seiten oder nach X Minuten) oder wie die bestehende Admin-Impersonation zeitlich unbegrenzt, bis explizit „Vorschau beenden" geklickt wird? Vorschlag: unbegrenzt, wie heute schon bei der Admin-Impersonation.
-2. **Admin-Sessionliste:** Reicht ein Label „Vorschau" pro Zeile, oder soll es einen Filter „nur echte Sessions" geben? Vorschlag: nur Label, ein Filter lässt sich bei Bedarf leicht nachrüsten.
-3. **Aufräumen alter Vorschau-Sessions:** Nichts löschen (harmlos, evtl. nützlich zur Fehlersuche) oder nach einer Weile automatisch entfernen? Vorschlag: nichts löschen.
+Bei der Umsetzung wie vorgeschlagen übernommen, ohne das vorher nochmal einzeln abzustimmen — beim Testen auf dem Branch gerne widersprechen, das lässt sich einzeln nachziehen:
+
+1. **Zeitliches Limit für eine Vorschau:** unbegrenzt, wie bei der bestehenden Admin-Impersonation — nur manuelles „Vorschau beenden".
+2. **Admin-Sessionliste:** nur ein Label „Vorschau" pro Zeile (Übersicht und Detailseite), kein zusätzlicher Filter.
+3. **Aufräumen alter Vorschau-Sessions:** nichts wird gelöscht.

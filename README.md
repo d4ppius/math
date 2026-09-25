@@ -264,6 +264,16 @@ Unter `/admin` (für alle anderen Benutzer ein 404):
 
 Schutzregeln: Der Admin kann weder sich selbst noch seine eigene Familie löschen. Andere Admins lassen sich weder löschen noch übernehmen; dafür zuerst die Admin-Rechte entziehen.
 
+## Vorschau als Kind
+
+Eltern (für ihre eigenen Kinder, Knopf auf der Seite «Kind bearbeiten») und Admins (für jedes Kind, Knopf in der Familienansicht) können in die Sicht eines Kindes wechseln, ohne dessen Magic-Link zu benutzen — praktisch für Support oder um eine neue Einstellung selbst auszuprobieren. Ein Banner oben («Vorschau als …») erinnert daran, «Vorschau beenden» führt zurück.
+
+Eine Übung lässt sich dabei ganz normal starten, mit echten, an den tatsächlichen Lernstand angepassten Fragen und normaler Rückmeldung (inklusive Tipp, falls eingeschaltet) — **verändert aber nichts**: keine Punkte, kein Level, kein Eintrag im Lernstand pro Aufgabe (`ChildFactStat`), keine Abzeichen, kein Tagesziel. Technisch markiert `practice_sessions.is_preview` eine solche Session; alles, was sie schreibt, bleibt auf ihrer eigenen Zeile. Eine Ausnahme: Der Serien-Bonus bei den Punkten (ab der 5. richtigen Antwort in Folge) greift während einer Vorschau nie, weil er die vorherigen Antworten derselben Session braucht, die hier absichtlich nicht gespeichert werden — eine bewusst in Kauf genommene, kleine Einschränkung.
+
+Eine Vorschau übernimmt niemals eine echte, laufende Session des Kindes (dafür gäbe es sonst ein «Weiter üben», das eigentlich dem Kind gehört) — es entsteht immer eine eigene, neue Session. In der Admin-Sessionliste bleiben Vorschau-Sessions sichtbar, aber mit «Vorschau» gekennzeichnet.
+
+Es lässt sich immer nur eine Vorschau oder Admin-Impersonation gleichzeitig fahren; ein zweiter Versuch wird abgewiesen, statt zwei verschiedene Wege zurück verwalten zu müssen.
+
 ## Deployment (Plesk)
 
 Eine ausführliche Schritt-für-Schritt-Anleitung für das Deployment auf einem Plesk-Server (Datenbank anlegen, `.env` einrichten, Admin-Zugang, Cronjob für den Laravel-Scheduler) befindet sich in [INSTALL.md](INSTALL.md). Updates spielt man mit `./deploy.sh` ein: Das Skript zieht den Code, installiert Abhängigkeiten, baut das Frontend, migriert die Datenbank und baut die Caches neu auf.
