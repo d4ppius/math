@@ -78,6 +78,10 @@
                                 <a href="{{ route('parent.children.exercise-settings.edit', $child) }}" class="text-indigo-600 hover:underline">{{ __('Übung') }}</a>
                                 <a href="{{ route('parent.children.statistics', $child) }}" class="text-indigo-600 hover:underline">{{ __('Statistik') }}</a>
                                 <a href="{{ route('admin.sessions.index', ['child' => $child->id]) }}" class="text-indigo-600 hover:underline">{{ __('Sessions') }}</a>
+                                <form method="POST" action="{{ route('child-preview.start', $child) }}">
+                                    @csrf
+                                    <button type="submit" class="text-indigo-600 hover:underline">{{ __('Als Kind ansehen') }}</button>
+                                </form>
                             </div>
                         </li>
                     @empty
