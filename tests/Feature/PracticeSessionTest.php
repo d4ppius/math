@@ -99,7 +99,10 @@ class PracticeSessionTest extends TestCase
             ->assertSee('Jetzt du: Tippe die Lösung ein.')
             // A correct answer keeps advancing on its own; only a wrong one waits for a retype.
             ->assertSee('data.is_correct', false)
-            ->assertSee('correcting = true', false);
+            ->assertSee('correcting = true', false)
+            // The task itself (e.g. "7 × 8") stays visible next to the correct
+            // answer during the retype, not just the bare number.
+            ->assertSee('<div class="text-3xl font-bold mt-2" x-text="prompt"></div>', false);
     }
 
     public function test_a_correct_answer_awards_points_and_updates_fact_stats(): void

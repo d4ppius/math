@@ -152,7 +152,8 @@
                 <div>
                     <div class="text-6xl mb-3">🤔</div>
                     <div class="text-2xl font-bold">{{ __('Fast!') }}</div>
-                    <div class="text-gray-500 mt-2 mb-4">
+                    <div class="text-3xl font-bold mt-2" x-text="prompt"></div>
+                    <div class="text-gray-500 mt-1 mb-4">
                         {{ __('Antwort war') }}: <span class="font-semibold" x-text="feedback.correct_answer"></span>
                     </div>
 
