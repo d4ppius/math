@@ -47,6 +47,8 @@ Eltern stellen diese Optionen pro Kind und pro Übung ein (Eltern-Bereich → Ki
 
 Timer, Tempo-Bonus und Töne sind standardmässig **an**, und alle Einstellungen gelten je Übung. Bestehende Kinder behalten ihr bisheriges Verhalten, bis Eltern etwas ändern.
 
+**Erinnerung ans Üben:** Zusätzlich zur «Ziel-Häufigkeit» oben (die nur festlegt, an welchen *Tagen* geübt werden soll) gibt es auf der Seite «Kind bearbeiten» eine eigene Einstellung «An die Übung erinnern» mit Uhrzeit — steuert **ob** überhaupt und **um wie viel Uhr** eine Push-Erinnerung kommt, für alle Übungen dieses Kindes gemeinsam. Standard: an, 17:00 Uhr. Voraussetzung bleibt in jedem Fall, dass das Kind selbst Push-Benachrichtigungen auf seinem Gerät aktiviert hat (Knopf auf der Kind-Startseite) — die Eltern-Einstellung entscheidet nur, ob und wann davon Gebrauch gemacht wird. Technisch prüft `reminders:send` (läuft alle 5 Minuten) für jedes Kind, ob die aktuelle Zeit in einem 5-Minuten-Fenster ab seiner eigenen `reminder_time` liegt.
+
 ## Punkte
 
 Punkte gibt es nur für richtige Antworten. Die Berechnung steht in `app/Services/Gamification/PointsCalculator.php`.
@@ -259,6 +261,9 @@ Unter `/admin` (für alle anderen Benutzer ein 404):
 | **Kinder** | Alle Kinder über alle Familien; Bearbeiten, Übungseinstellungen und Statistik öffnen die normalen Eltern-Seiten des jeweiligen Kindes |
 | **Sessions** | Alle Übungs-Sessions (filterbar pro Kind) mit jeder einzelnen Antwort, nur lesend |
 | **Übungen** | Übungstypen aktivieren/deaktivieren (deaktivierte Übungen können Kinder nicht mehr starten); einzelne Aufgaben ansehen und bearbeiten |
+| **Push** | Eine Push-Nachricht (Titel + Text) an alle Eltern, alle Kinder oder eine bestimmte Person schreiben und senden, nur an Empfänger mit aktiviertem Push. Zeigt vorher, wie viele Eltern/Kinder überhaupt Push aktiviert haben. |
+
+In der Familienansicht und der Kinder-Übersicht markiert 🔔 Eltern und Kinder, die Push-Benachrichtigungen aktiviert haben.
 
 **Als Elternteil ansehen:** In der Familienansicht kann der Admin ein Eltern-Konto «übernehmen» und die App so sehen, wie die Eltern sie sehen (z.B. zur Fehlersuche). Ein gelbes Banner oben erinnert daran, und «Zurück zum Admin» beendet die Ansicht.
 

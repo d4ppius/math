@@ -1,6 +1,6 @@
 # Plan: Push-Status reparieren, Admin-Versand und Übersicht
 
-**Stand:** 26./27. September 2026 · **Status:** Genehmigt, wird umgesetzt.
+**Stand:** 26./27. September 2026 · **Status:** umgesetzt (Schritte 1 bis 5).
 
 ## Ausgangslage
 
