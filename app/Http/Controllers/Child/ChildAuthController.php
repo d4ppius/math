@@ -30,7 +30,7 @@ class ChildAuthController extends Controller
 
         $this->login($request, $child);
 
-        return view('child.home', ['child' => $child, 'token' => $token]);
+        return view('child.home', ['child' => $child, 'token' => $token, 'pushSubscribed' => $child->pushSubscriptions()->exists()]);
     }
 
     public function verifyPin(Request $request, string $token): View
@@ -49,7 +49,7 @@ class ChildAuthController extends Controller
 
         $this->login($request, $child);
 
-        return view('child.home', ['child' => $child, 'token' => $token]);
+        return view('child.home', ['child' => $child, 'token' => $token, 'pushSubscribed' => $child->pushSubscriptions()->exists()]);
     }
 
     public function logout(Request $request): RedirectResponse

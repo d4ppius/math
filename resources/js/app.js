@@ -140,3 +140,33 @@ window.subscribeToPush = async function (vapidPublicKey, subscribeUrl, csrfToken
 
     return { ok: response.ok, reason: response.ok ? null : 'server_error' };
 };
+
+/**
+ * Cancels this browser's Web Push subscription (if it has one) and tells
+ * the server to forget it. If this browser never subscribed itself — the
+ * database can still say "subscribed" because of a different device — there
+ * is no local endpoint to report, so the server is told to remove every
+ * subscription of this user/child instead, matching what "Deaktivieren"
+ * visibly promises regardless of which device holds the record.
+ */
+window.unsubscribeFromPush = async function (unsubscribeUrl, csrfToken) {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        return { ok: false, reason: 'unsupported' };
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    const endpoint = subscription ? subscription.endpoint : null;
+
+    if (subscription) {
+        await subscription.unsubscribe();
+    }
+
+    const response = await fetch(unsubscribeUrl, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, Accept: 'application/json' },
+        body: JSON.stringify({ endpoint }),
+    });
+
+    return { ok: response.ok, reason: response.ok ? null : 'server_error' };
+};

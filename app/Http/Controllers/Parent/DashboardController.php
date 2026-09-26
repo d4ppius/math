@@ -16,6 +16,7 @@ class DashboardController extends Controller
             'family' => $family,
             'children' => $family->children()->orderBy('name')->get(),
             'inviteUrl' => route('register', ['invite' => $family->invite_token]),
+            'pushSubscribed' => $request->user()->pushSubscriptions()->exists(),
         ]);
     }
 }

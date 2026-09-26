@@ -36,6 +36,21 @@ class ChildPushSubscriptionTest extends TestCase
         $this->assertSame(0, $child->pushSubscriptions()->count());
     }
 
+    public function test_the_home_screen_shows_the_real_subscription_state_after_a_reload(): void
+    {
+        $child = Child::factory()->create();
+
+        $this->actingAs($child, 'child')->get(route('child.home'))
+            ->assertOk()
+            ->assertSee("status: 'idle'", false);
+
+        $child->updatePushSubscription('https://push.example.com/child-abc', 'fake-p256dh', 'fake-auth');
+
+        $this->actingAs($child, 'child')->get(route('child.home'))
+            ->assertOk()
+            ->assertSee("status: 'subscribed'", false);
+    }
+
     public function test_a_guest_child_cannot_store_a_push_subscription(): void
     {
         $this->postJson(route('child.push-subscriptions.store'), [

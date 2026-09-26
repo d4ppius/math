@@ -27,9 +27,16 @@ class PushSubscriptionController extends Controller
 
     public function destroy(Request $request): JsonResponse
     {
-        $request->validate(['endpoint' => ['required', 'string']]);
+        $request->validate(['endpoint' => ['nullable', 'string']]);
 
-        $request->user()->deletePushSubscription($request->input('endpoint'));
+        if ($endpoint = $request->input('endpoint')) {
+            $request->user()->deletePushSubscription($endpoint);
+        } else {
+            // This browser never subscribed itself (the database only says
+            // "subscribed" because of a different device) — "Deaktivieren"
+            // still has to mean deactivated, so every subscription goes.
+            $request->user()->pushSubscriptions()->delete();
+        }
 
         return response()->json(['status' => 'ok']);
     }

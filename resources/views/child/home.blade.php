@@ -71,7 +71,7 @@
 
             <div
                 x-data="{
-                    status: 'idle',
+                    status: '{{ $pushSubscribed ? 'subscribed' : 'idle' }}',
                     vapidPublicKey: '{{ config('webpush.vapid.public_key') }}',
                     subscribeUrl: '{{ route('child.push-subscriptions.store') }}',
                     csrfToken: document.querySelector('meta[name=csrf-token]').content,

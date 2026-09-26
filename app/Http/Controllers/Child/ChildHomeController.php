@@ -10,8 +10,11 @@ class ChildHomeController extends Controller
 {
     public function __invoke(Request $request): View
     {
+        $child = $request->user('child');
+
         return view('child.home', [
-            'child' => $request->user('child'),
+            'child' => $child,
+            'pushSubscribed' => $child->pushSubscriptions()->exists(),
         ]);
     }
 }

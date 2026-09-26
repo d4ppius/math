@@ -57,14 +57,20 @@
 
             <div
                 x-data="{
-                    status: 'idle',
+                    status: '{{ $pushSubscribed ? 'subscribed' : 'idle' }}',
                     vapidPublicKey: '{{ config('webpush.vapid.public_key') }}',
                     subscribeUrl: '{{ route('parent.push-subscriptions.store') }}',
+                    unsubscribeUrl: '{{ route('parent.push-subscriptions.destroy') }}',
                     csrfToken: document.querySelector('meta[name=csrf-token]').content,
                     async subscribe() {
                         this.status = 'loading';
                         const result = await window.subscribeToPush(this.vapidPublicKey, this.subscribeUrl, this.csrfToken);
                         this.status = result.ok ? 'subscribed' : (result.reason || 'error');
+                    },
+                    async unsubscribe() {
+                        this.status = 'loading';
+                        const result = await window.unsubscribeFromPush(this.unsubscribeUrl, this.csrfToken);
+                        this.status = result.ok ? 'idle' : (result.reason || 'error');
                     },
                 }"
                 class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6"
@@ -76,14 +82,18 @@
 
                 <button
                     type="button"
-                    @click="subscribe()"
-                    :disabled="status === 'loading' || status === 'subscribed'"
-                    class="mt-3 inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 disabled:opacity-50"
+                    @click="status === 'subscribed' ? unsubscribe() : subscribe()"
+                    :disabled="status === 'loading'"
+                    :class="status === 'subscribed' ? 'bg-gray-200 text-gray-700 hover:bg-gray-300' : 'bg-indigo-600 text-white hover:bg-indigo-700'"
+                    class="mt-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest disabled:opacity-50"
                 >
                     <span x-show="status !== 'subscribed'">{{ __('Benachrichtigungen aktivieren') }}</span>
-                    <span x-show="status === 'subscribed'">{{ __('Aktiviert ✓') }}</span>
+                    <span x-show="status === 'subscribed'">{{ __('Benachrichtigungen deaktivieren') }}</span>
                 </button>
 
+                <p class="text-sm text-green-600 mt-2" x-show="status === 'subscribed'">
+                    {{ __('Aktiv auf mindestens einem Gerät ✓') }}
+                </p>
                 <p class="text-sm text-red-600 mt-2" x-show="status === 'denied'">
                     {{ __('Berechtigung wurde abgelehnt. Du kannst sie in den Browser-Einstellungen wieder erlauben.') }}
                 </p>
