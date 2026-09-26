@@ -15,6 +15,7 @@ class ChildController extends Controller
 
         $children = Child::query()
             ->with('family')
+            ->withCount('pushSubscriptions')
             ->when($term, fn ($query) => $query
                 ->where('name', 'like', '%'.$term.'%')
                 ->orWhereHas('family', fn ($family) => $family->where('name', 'like', '%'.$term.'%')))

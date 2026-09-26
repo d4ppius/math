@@ -37,6 +37,9 @@
                                     @if ($user->is_admin)
                                         <span class="ms-2 text-xs bg-indigo-100 text-indigo-700 rounded px-2 py-0.5">{{ __('Admin') }}</span>
                                     @endif
+                                    @if ($user->push_subscriptions_count > 0)
+                                        <span class="ms-1" title="{{ __('Push aktiviert') }}">🔔</span>
+                                    @endif
                                 </div>
                                 <div class="text-sm text-gray-500">{{ $user->email }}</div>
                             </div>
@@ -70,6 +73,9 @@
                                     @unless ($child->active)
                                         <span class="ms-2 text-xs text-red-600">{{ __('Deaktiviert') }}</span>
                                     @endunless
+                                    @if ($child->push_subscriptions_count > 0)
+                                        <span class="ms-1" title="{{ __('Push aktiviert') }}">🔔</span>
+                                    @endif
                                 </div>
                                 <div class="text-sm text-gray-500">{{ $child->total_points }} {{ __('Punkte') }}</div>
                             </div>

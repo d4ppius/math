@@ -26,7 +26,12 @@
                         <tbody>
                             @forelse ($children as $child)
                                 <tr class="border-b last:border-0">
-                                    <td class="py-2 pe-4 font-medium text-gray-900">{{ $child->name }}</td>
+                                    <td class="py-2 pe-4 font-medium text-gray-900">
+                                        {{ $child->name }}
+                                        @if ($child->push_subscriptions_count > 0)
+                                            <span title="{{ __('Push aktiviert') }}">🔔</span>
+                                        @endif
+                                    </td>
                                     <td class="py-2 pe-4"><a href="{{ route('admin.families.show', $child->family_id) }}" class="text-indigo-600 hover:underline">{{ $child->family->name }}</a></td>
                                     <td class="py-2 pe-4">{{ $child->total_points }}</td>
                                     <td class="py-2 pe-4">{{ $child->active ? __('Aktiv') : __('Deaktiviert') }}</td>

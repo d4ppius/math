@@ -24,7 +24,7 @@ class FamilyController extends Controller
 
     public function show(Family $family): View
     {
-        $family->load(['users', 'children']);
+        $family->load(['users' => fn ($query) => $query->withCount('pushSubscriptions'), 'children' => fn ($query) => $query->withCount('pushSubscriptions')]);
 
         return view('admin.families.show', ['family' => $family]);
     }

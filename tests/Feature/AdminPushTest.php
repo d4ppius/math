@@ -113,6 +113,28 @@ class AdminPushTest extends TestCase
         Notification::assertNothingSent();
     }
 
+    public function test_a_bell_badge_marks_subscribed_parents_and_children_in_the_existing_admin_lists(): void
+    {
+        $family = Family::factory()->create();
+        $subscribedParent = User::factory()->for($family)->create();
+        $subscribedParent->updatePushSubscription('https://push.example.com/parent-a', 'a', 'a');
+        $unsubscribedParent = User::factory()->for($family)->create();
+
+        $subscribedChild = Child::factory()->for($family)->create(['name' => 'Liv']);
+        $subscribedChild->updatePushSubscription('https://push.example.com/child-a', 'a', 'a');
+        $unsubscribedChild = Child::factory()->for($family)->create(['name' => 'Elly']);
+
+        $admin = $this->actingAs($this->admin());
+
+        // One 🔔 for the subscribed parent, one for the subscribed child — none for the other two.
+        $familyPage = $admin->get(route('admin.families.show', $family))->assertOk()->getContent();
+        $this->assertSame(2, substr_count($familyPage, '🔔'));
+
+        // Only Liv is subscribed, so exactly one 🔔 shows up among the two children.
+        $childrenPage = $admin->get(route('admin.children.index'))->assertOk()->getContent();
+        $this->assertSame(1, substr_count($childrenPage, '🔔'));
+    }
+
     public function test_title_and_body_are_required(): void
     {
         $this->actingAs($this->admin())
