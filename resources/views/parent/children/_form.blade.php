@@ -70,6 +70,23 @@
         </label>
     </div>
 
+    <div x-data="{ enabled: {{ old('reminders_enabled', $child->reminders_enabled) ? 'true' : 'false' }} }">
+        <label class="inline-flex items-center">
+            <input type="hidden" name="reminders_enabled" value="0">
+            <input type="checkbox" name="reminders_enabled" value="1" class="rounded border-gray-300" x-model="enabled"
+                   {{ old('reminders_enabled', $child->reminders_enabled) ? 'checked' : '' }}>
+            <span class="ms-2 text-sm text-gray-600">{{ __('An die Übung erinnern') }}</span>
+        </label>
+        <p class="text-xs text-gray-500 mt-1">{{ __('Voraussetzung ist, dass :name selbst Benachrichtigungen auf seinem/ihrem Gerät aktiviert hat.', ['name' => $child->name]) }}</p>
+
+        <div class="mt-2" x-show="enabled" x-cloak>
+            <x-input-label for="reminder_time" :value="__('Um wie viel Uhr')" />
+            <input type="time" id="reminder_time" name="reminder_time" class="mt-1 block border-gray-300 rounded-md shadow-sm"
+                   value="{{ old('reminder_time', \Illuminate\Support\Str::substr($child->reminder_time, 0, 5)) }}">
+            <x-input-error :messages="$errors->get('reminder_time')" class="mt-2" />
+        </div>
+    </div>
+
     @if ($child->requiresPin())
         <div>
             <label class="inline-flex items-center">

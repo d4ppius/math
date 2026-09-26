@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use NotificationChannels\WebPush\HasPushSubscriptions;
 
-#[Fillable(['family_id', 'name', 'avatar', 'color_theme', 'active', 'show_locked_badges'])]
+#[Fillable(['family_id', 'name', 'avatar', 'color_theme', 'active', 'show_locked_badges', 'reminders_enabled', 'reminder_time', 'reminded_at'])]
 #[Hidden(['login_token_hash', 'pin_hash', 'remember_token'])]
 class Child extends Model implements AuthenticatableContract
 {
@@ -30,6 +30,8 @@ class Child extends Model implements AuthenticatableContract
         return [
             'active' => 'boolean',
             'show_locked_badges' => 'boolean',
+            'reminders_enabled' => 'boolean',
+            'reminded_at' => 'date',
             'last_seen_at' => 'datetime',
         ];
     }

@@ -78,6 +78,11 @@ class ChildController extends Controller
             'color_theme' => $validated['color_theme'],
             'active' => $request->boolean('active', true),
             'show_locked_badges' => $request->boolean('show_locked_badges', true),
+            'reminders_enabled' => $request->boolean('reminders_enabled', true),
+            // ':00' appended so the stored format is identical on every
+            // database driver (an unvalidated "H:i" round-trips unchanged on
+            // SQLite's untyped TIME column, but not on MySQL's real one).
+            'reminder_time' => isset($validated['reminder_time']) ? $validated['reminder_time'].':00' : $child->reminder_time,
         ]);
 
         if ($request->filled('pin')) {
@@ -117,6 +122,7 @@ class ChildController extends Controller
             'avatar' => ['required', 'string', 'in:'.implode(',', self::AVATARS)],
             'color_theme' => ['required', 'string', 'in:'.implode(',', self::COLOR_THEMES)],
             'pin' => ['nullable', 'digits:4'],
+            'reminder_time' => ['nullable', 'date_format:H:i'],
         ]);
     }
 }

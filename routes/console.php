@@ -8,6 +8,8 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('reminders:send')->dailyAt('17:00');
+// Every few minutes rather than once a day: each child now has their own
+// reminder_time (see SendPracticeReminders), not one fixed time for everyone.
+Schedule::command('reminders:send')->everyFiveMinutes();
 Schedule::command('contact:prune')->daily();
 Schedule::command('accounts:prune-unverified')->daily();

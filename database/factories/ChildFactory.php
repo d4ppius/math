@@ -24,6 +24,8 @@ class ChildFactory extends Factory
             'login_token_hash' => hash('sha256', Str::random(48)),
             'active' => true,
             'show_locked_badges' => true,
+            'reminders_enabled' => true,
+            'reminder_time' => '17:00:00',
             'total_points' => 0,
         ];
     }
