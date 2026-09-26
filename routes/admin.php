@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\FactController;
 use App\Http\Controllers\Admin\FamilyController;
 use App\Http\Controllers\Admin\ImpersonationController;
 use App\Http\Controllers\Admin\MessageController;
+use App\Http\Controllers\Admin\PushController;
 use App\Http\Controllers\Admin\SessionController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -50,6 +51,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin']
 
     Route::get('/aufgaben/{fact}/bearbeiten', [FactController::class, 'edit'])->name('facts.edit');
     Route::put('/aufgaben/{fact}', [FactController::class, 'update'])->name('facts.update');
+
+    Route::get('/push', [PushController::class, 'edit'])->name('push.edit');
+    Route::post('/push', [PushController::class, 'send'])->name('push.send');
 });
 
 // Outside the admin group on purpose: while impersonating, the current user

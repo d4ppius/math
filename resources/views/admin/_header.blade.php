@@ -6,6 +6,7 @@
         ['Sessions', route('admin.sessions.index'), request()->routeIs('admin.sessions.*')],
         ['Übungen', route('admin.exercises.index'), request()->routeIs('admin.exercises.*', 'admin.facts.*')],
         ['Nachrichten', route('admin.messages.index'), request()->routeIs('admin.messages.*')],
+        ['Push', route('admin.push.edit'), request()->routeIs('admin.push.*')],
     ];
     $openMessages = \App\Models\ContactMessage::whereNull('handled_at')->count();
 @endphp
