@@ -20,7 +20,12 @@
                     <td class="py-2 pe-4">
                         <a href="{{ route('admin.families.show', $session->child->family_id) }}" class="text-indigo-600 hover:underline">{{ $session->child->family->name }}</a>
                     </td>
-                    <td class="py-2 pe-4">{{ $session->exerciseType->name }}</td>
+                    <td class="py-2 pe-4">
+                        {{ $session->exerciseType->name }}
+                        @if ($session->is_preview)
+                            <span class="ms-1 text-xs bg-amber-100 text-amber-800 rounded px-1.5 py-0.5">{{ __('Vorschau') }}</span>
+                        @endif
+                    </td>
                     <td class="py-2 pe-4">{{ $session->status === 'completed' ? __('Abgeschlossen') : ($session->status === 'active' ? __('Läuft') : $session->status) }}</td>
                     <td class="py-2 pe-4">{{ $session->questions_correct }}/{{ $session->questions_answered }}</td>
                     <td class="py-2 pe-4">{{ $session->total_points }}</td>

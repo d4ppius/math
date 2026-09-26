@@ -214,6 +214,10 @@ class Child extends Model implements AuthenticatableContract
         $session = $this->practiceSessions()
             ->where('exercise_type_id', $exerciseTypeId)
             ->where('status', 'active')
+            // Never surfaces a leftover preview session: PracticeSessionController::start()
+            // already refuses to resume through one, but the child's own home
+            // screen ("Weiter üben") must not offer it either.
+            ->where('is_preview', false)
             ->latest('id')
             ->first();
 

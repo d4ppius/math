@@ -197,6 +197,19 @@ class PlusBadgesTest extends TestCase
         $this->assertContains('allrounder', $this->evaluate($child, $second));
     }
 
+    public function test_a_preview_session_does_not_count_towards_the_allrounder(): void
+    {
+        // A parent or admin trying out Plus in a preview (ChildPreviewController)
+        // must not hand the child an Allrounder badge for it once they later
+        // complete a real Einmaleins session the same day.
+        $child = $this->childWith();
+
+        $this->makeSession($child, 'addition', ['started_at' => now()->subHour(), 'is_preview' => true]);
+        $real = $this->makeSession($child, 'multiplication');
+
+        $this->assertNotContains('allrounder', $this->evaluate($child, $real));
+    }
+
     public function test_the_allrounder_ignores_yesterday_and_sessions_that_were_too_short(): void
     {
         $yesterday = $this->childWith();

@@ -42,6 +42,18 @@
         </style>
     </head>
     <body class="min-h-screen bg-gradient-to-br from-orange-100 via-amber-50 to-sky-100 text-gray-800">
+        @if (session()->has(\App\Http\Controllers\ChildPreviewController::SESSION_KEY))
+            <div class="bg-amber-100 border-b border-amber-300 text-amber-900 text-sm">
+                <div class="max-w-lg mx-auto px-4 py-2 flex items-center justify-between gap-4 flex-wrap">
+                    <span>{{ __('Vorschau als :name — nichts hier verändert echte Punkte, Level oder Abzeichen.', ['name' => $child?->name]) }}</span>
+                    <form method="POST" action="{{ route('child-preview.stop') }}">
+                        @csrf
+                        <button type="submit" class="underline font-semibold whitespace-nowrap">{{ __('Vorschau beenden') }}</button>
+                    </form>
+                </div>
+            </div>
+        @endif
+
         <div class="min-h-screen flex flex-col items-center justify-center px-4 py-8">
             {{ $slot }}
         </div>

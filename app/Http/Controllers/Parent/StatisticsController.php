@@ -88,6 +88,7 @@ class StatisticsController extends Controller
         $byDay = $child->practiceSessions()
             ->where('status', 'completed')
             ->where('started_at', '>=', $since)
+            ->where('is_preview', false)
             ->get()
             ->groupBy(fn ($session) => $session->started_at->toDateString());
 

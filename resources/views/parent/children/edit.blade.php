@@ -59,6 +59,17 @@
                 </a>
             </div>
 
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 flex items-center justify-between gap-4">
+                <div>
+                    <h3 class="font-medium text-gray-900">{{ __('Vorschau als :name', ['name' => $child->name]) }}</h3>
+                    <p class="text-sm text-gray-500">{{ __('Sieh genau, was :name auf dem eigenen Gerät sieht — ohne echte Punkte, Level oder Abzeichen zu verändern.', ['name' => $child->name]) }}</p>
+                </div>
+                <form method="POST" action="{{ route('child-preview.start', $child) }}">
+                    @csrf
+                    <x-secondary-button type="submit" class="whitespace-nowrap">{{ __('Vorschau starten') }}</x-secondary-button>
+                </form>
+            </div>
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <form method="POST" action="{{ route('parent.children.update', $child) }}" class="space-y-4">
                     @csrf
