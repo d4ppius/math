@@ -22,8 +22,21 @@ class PointsCalculatorTest extends TestCase
     public function test_the_speed_bonus_scales_with_how_far_the_target_time_is_beaten(): void
     {
         $this->assertSame(20, $this->calculator->forAnswer(true, 0, 3500, 1));
-        $this->assertSame(15, $this->calculator->forAnswer(true, 1750, 3500, 1));
+        // The first 1s is free, so of the 2.5s window that's actually judged
+        // (1s..3.5s), 1.75s is 750ms (30%) in, earning 70% of the bonus.
+        $this->assertSame(17, $this->calculator->forAnswer(true, 1750, 3500, 1));
         $this->assertSame(10, $this->calculator->forAnswer(true, 3500, 3500, 1));
+    }
+
+    public function test_the_first_second_is_free_no_matter_how_long_the_target_time_is(): void
+    {
+        // Reading the question and tapping a digit always takes some time,
+        // so literally 0ms was never actually reachable — the first second
+        // now earns the same full bonus 0ms used to.
+        $this->assertSame(20, $this->calculator->forAnswer(true, 500, 3500, 1));
+        $this->assertSame(20, $this->calculator->forAnswer(true, 1000, 3500, 1));
+        // Just past the free second, the bonus starts shrinking again.
+        $this->assertLessThan(20, $this->calculator->forAnswer(true, 1250, 3500, 1));
     }
 
     public function test_a_slow_correct_answer_never_earns_less_than_the_base_points(): void

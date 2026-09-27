@@ -10,15 +10,20 @@ namespace App\Services\Gamification;
  *
  * Calibrated from three simulated practice paces on a single exercise
  * (see docs/plan-level-pro-uebung.md): a typical pace reaches the top level
- * after roughly 10 weeks of regular practice (~54,500 points), a fast pace
- * on easy content after about a month (~144,650 points would be reached,
- * but the curve below tops out at 55,000 so it arrives sooner), a slow pace
- * after several months. Tune THRESHOLDS if real usage suggests otherwise.
+ * after roughly 10 weeks of regular practice, a fast pace on easy content
+ * after about a month, a slow pace after several months. Tune THRESHOLDS if
+ * real usage suggests otherwise.
+ *
+ * Re-simulated 2026-09-27 after PointsCalculator's "first second is free"
+ * change raised typical/fast session totals by roughly 11%/33% (slow is
+ * barely affected: its response time already exceeds the target either
+ * way) — thresholds scaled up by about that much to keep the same pacing
+ * goals, not just the raw numbers.
  */
 class LevelCalculator
 {
     /** Minimum points needed for each level (index 0 = level 1). */
-    private const THRESHOLDS = [0, 500, 1500, 3500, 7000, 13000, 21000, 31000, 42000, 55000];
+    private const THRESHOLDS = [0, 550, 1650, 3800, 7650, 14000, 23000, 34000, 46000, 60000];
 
     /** @var list<array{string, string}> Title and emoji per level. */
     private const TITLES = [

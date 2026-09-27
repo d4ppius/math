@@ -45,8 +45,8 @@ class ChildLevelTest extends TestCase
             ->assertOk()
             ->assertSee('Level 2')
             ->assertSee('Zahlen-Entdecker')
-            ->assertSee('Noch 500 Punkte bis Level 3')
-            ->assertSee('width: 50%', false);
+            ->assertSee('Noch 650 Punkte bis Level 3')
+            ->assertSee('width: 41%', false);
     }
 
     public function test_the_top_level_shows_a_congratulation_instead_of_a_next_level(): void

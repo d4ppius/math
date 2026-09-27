@@ -68,10 +68,10 @@ Punkte = (10 + Tempo-Bonus) × Serien-Multiplikator     (gerundet)
   | Plus: bis 10, mit der 10 | 2,0 s |
   | Plus: Zehnerübergang | 3,5 s |
 
-  Sofort beantwortet: +10. In der Zielzeit oder langsamer: +0. Dazwischen linear. Die Zeit misst der Server, von der Ausgabe der Frage bis zum Eingang der Antwort.
+  Die erste Sekunde ist immer geschenkt: Niemand braucht buchstäblich 0 Sekunden (Aufgabe lesen und tippen dauert immer etwas), darum zählt erst die Zeit nach dieser Sekunde für den Bonus. Innerhalb der ersten Sekunde beantwortet: +10. In der Zielzeit oder langsamer: +0. Dazwischen linear. Die Zeit misst der Server, von der Ausgabe der Frage bis zum Eingang der Antwort.
 - **Serien-Multiplikator:** Zählt die richtigen Antworten in Folge innerhalb der laufenden Session: ab der 5. gilt ×1,2, ab der 10. gilt ×1,5.
 
-Ergebnis: 0 bis 30 Punkte pro Antwort. Beispiel für eine 3er-Aufgabe (Zielzeit 3,5 s): in 1,75 s richtig ergibt 15 Punkte, in 3,5 s oder langsamer 10 Punkte, in 3,5 s als 5. richtige Antwort in Folge 12 Punkte. Die Punkte zählen für die Session, für das Punktekonto der jeweiligen Übung (siehe Level unten) und zusätzlich für das Gesamtkonto des Kindes.
+Ergebnis: 0 bis 30 Punkte pro Antwort. Beispiel für eine 3er-Aufgabe (Zielzeit 3,5 s): in 1 s oder schneller richtig ergibt die vollen 20 Punkte, in 1,75 s (0,75 s nach der geschenkten Sekunde, bei einem 2,5-Sekunden-Fenster) 17 Punkte, in 3,5 s oder langsamer 10 Punkte, in 3,5 s als 5. richtige Antwort in Folge 12 Punkte. Die Punkte zählen für die Session, für das Punktekonto der jeweiligen Übung (siehe Level unten) und zusätzlich für das Gesamtkonto des Kindes.
 
 ## Fehlerkorrektur und Rechentipps
 
@@ -104,20 +104,20 @@ Die Rechenwege sind pädagogisch gängige Standardstrategien, aber nicht mit ein
 
 **Level:** Jede Übung hat ihr eigenes Punktekonto und ihr eigenes Level 1 bis 10, unabhängig davon, wie weit das Kind in einer anderen Übung schon ist (Spalte `child_exercise_settings.points`, Ableitung in `app/Services/Gamification/LevelCalculator.php` über `ChildExerciseSetting::level()`). Damit bleibt jede Übung ein eigener, motivierender Fortschritt statt vom Level der anderen "erledigt" zu wirken. Solange ein Kind nur eine Übung hat (der Normalfall, Plus ist standardmässig aus), ist davon nichts zu sehen: Kinder-Startseite und Eltern-Statistik zeigen weiterhin nur einen Balken. Sobald zwei oder mehr Übungen aktiv sind, bekommt jede ihr eigenes Level: auf der Kinder-Startseite auf der jeweiligen Übungs-Karte, auf der Erfolgsseite (`/kind/erfolge`) als eigener Block mit dem Namen der Übung, in der Eltern-Statistik im jeweiligen Übungs-Reiter direkt über der Heatmap. `children.total_points` bleibt daneben als reine Anzeige-Summe über alle Übungen bestehen ("X Punkte insgesamt"), beeinflusst aber kein Level mehr.
 
-Die Schwellen sind mit dem echten `PointsCalculator` simuliert (schnelles/typisches/langsames Tempo auf einer einzelnen Übung): Das erste Level-Up kommt nach einer bis wenigen 10-Minuten-Sessions, das letzte Level nach schätzungsweise einem Monat (schnelles Tempo) bis einigen Monaten (langsames Tempo) regelmässigem Üben derselben Übung. Bestehende Punkte gingen bei der Umstellung nicht verloren: Eine einmalige Migration hat sie aus der Session-Historie pro Übung zurückgerechnet.
+Die Schwellen sind mit dem echten `PointsCalculator` simuliert (schnelles/typisches/langsames Tempo auf einer einzelnen Übung): Das erste Level-Up kommt nach einer bis wenigen 10-Minuten-Sessions, das letzte Level nach schätzungsweise einem Monat (schnelles Tempo) bis einigen Monaten (langsames Tempo) regelmässigem Üben derselben Übung. Bestehende Punkte gingen bei der Umstellung nicht verloren: Eine einmalige Migration hat sie aus der Session-Historie pro Übung zurückgerechnet. Als der Tempo-Bonus am 27. September 2026 die erste geschenkte Sekunde bekam (siehe oben), wurden die Schwellen um denselben Anteil neu simuliert und angehoben, damit sich am Tempo der Level-Ups nichts ändert.
 
 | Level | ab Punkten | Titel |
 | --- | --- | --- |
 | 1 | 0 | Rechen-Anfänger 🌱 |
-| 2 | 500 | Zahlen-Entdecker 🔍 |
-| 3 | 1500 | Rechen-Lehrling 📘 |
-| 4 | 3500 | Zahlen-Flitzer 🏃 |
-| 5 | 7000 | Rechen-Profi ⭐ |
-| 6 | 13000 | Knobel-Meister 🧩 |
-| 7 | 21000 | Zahlen-Zauberer 🪄 |
-| 8 | 31000 | Rechen-Ass 🎯 |
-| 9 | 42000 | Mathe-Held 🦸 |
-| 10 | 55000 | Rechenfuchs-Meister 🦊 |
+| 2 | 550 | Zahlen-Entdecker 🔍 |
+| 3 | 1650 | Rechen-Lehrling 📘 |
+| 4 | 3800 | Zahlen-Flitzer 🏃 |
+| 5 | 7650 | Rechen-Profi ⭐ |
+| 6 | 14000 | Knobel-Meister 🧩 |
+| 7 | 23000 | Zahlen-Zauberer 🪄 |
+| 8 | 34000 | Rechen-Ass 🎯 |
+| 9 | 46000 | Mathe-Held 🦸 |
+| 10 | 60000 | Rechenfuchs-Meister 🦊 |
 
 **Abzeichen:** Nach jeder abgeschlossenen Session prüft `BadgeEvaluator` alle noch nicht verdienten Abzeichen. Ein Abzeichen wird nie doppelt vergeben. Es gibt 18 Abzeichen. Den festen Katalog legt `BadgeSeeder` an (mehrfach ausführbar, läuft bei jedem Deployment mit `db:seed`).
 

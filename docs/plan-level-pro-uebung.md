@@ -2,6 +2,8 @@
 
 **Stand:** 24. September 2026 · **Status:** umgesetzt (Schritte 1 bis 6).
 
+**Nachtrag, 27. September 2026:** `PointsCalculator` schenkt seither die erste Sekunde jeder Antwort (siehe README, Abschnitt „Punkte") — das erhöht die simulierten Punkte pro Session um ca. 11 % (typisches Tempo) bis 33 % (schnelles Tempo), beim langsamen Tempo praktisch nichts (dessen Antwortzeit lag ohnehin schon über der Zielzeit). Die Schwellen unten wurden mit derselben Simulation wie ursprünglich, nur mit der neuen Formel, neu berechnet und um denselben Anteil angehoben, damit sich am beabsichtigten Tempo der Level-Ups nichts ändert. Die Tabelle in diesem Dokument zeigt die Werte von damals (zur Nachvollziehbarkeit der ursprünglichen Herleitung); aktuell gültig ist die Tabelle im README.
+
 ## Ausgangslage
 
 Aktuell haben alle Übungen eines Kindes zusammen **ein** gemeinsames Punktekonto (`children.total_points`) und **ein** gemeinsames Level. Zwei Probleme sind dabei aufgefallen:
