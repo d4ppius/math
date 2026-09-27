@@ -127,12 +127,13 @@ class PracticeSessionController extends Controller
             return response()->json(['error' => 'no_open_question'], 422);
         }
 
-        if (! $session->hasTimeRemaining()) {
-            $completer->complete($session);
-
-            return response()->json(['session_over' => true]);
-        }
-
+        // Deliberately no time-remaining check here: nextQuestion() already
+        // refuses to hand out a new question once time is up, so reaching
+        // this point at all means the current one was issued while time
+        // still remained. A child who needed a bit longer than the
+        // session's nominal end to answer it still gets it recorded in
+        // full — the session ends right below regardless, so this can only
+        // ever let through the one question already in flight, never more.
         $result = $recorder->record($session, (int) $request->input('answer'));
 
         $session->refresh();

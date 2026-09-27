@@ -269,6 +269,33 @@ class PracticeSessionTest extends TestCase
         Carbon::setTestNow();
     }
 
+    public function test_an_answer_to_a_question_issued_in_time_still_counts_if_it_arrives_late(): void
+    {
+        // A child who needed longer than the session's nominal end to answer
+        // the last question (already issued in time) still gets it recorded
+        // — the session simply ends right after, instead of the answer
+        // being discarded.
+        Carbon::setTestNow(now());
+
+        $child = $this->makeReadyChild();
+        $this->actingAs($child, 'child')->post(route('child.sessions.start'));
+        $session = PracticeSession::first();
+        $this->actingAs($child, 'child')->getJson(route('child.sessions.next-question', $session));
+        $fact = $session->refresh()->currentFact;
+
+        Carbon::setTestNow(now()->addMinutes(11)); // the 10-minute session's time is now up
+
+        $response = $this->actingAs($child, 'child')->postJson(route('child.sessions.attempts', $session), [
+            'answer' => $fact->correct_answer,
+        ]);
+
+        $response->assertOk()->assertJson(['is_correct' => true, 'session_over' => true]);
+        $this->assertGreaterThan(0, $response->json('points_awarded'));
+        $this->assertSame('completed', $session->refresh()->status);
+
+        Carbon::setTestNow();
+    }
+
     public function test_time_remaining_stays_sane_even_if_started_at_drifts_into_the_future(): void
     {
         // Regression test: a clock/timezone skew between the request that

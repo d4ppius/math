@@ -39,7 +39,7 @@ Eltern stellen diese Optionen pro Kind und pro Übung ein (Eltern-Bereich → Ki
 | --- | --- |
 | **Für [Kind] freischalten** | Schaltet die Übung für das Kind ein oder aus. Aus: Das Kind sieht sie nicht, die übrigen Einstellungen bleiben erhalten. Mindestens eine Übung muss aktiv bleiben. |
 | **Aktive Reihen / Aufgabenarten** | Nur die ausgewählten Gruppen werden abgefragt (bei Einmaleins «Reihen», bei Plus «Aufgabenarten»). Am besten mit wenigen starten. Eine aktive Übung braucht mindestens eine Gruppe. |
-| **Session-Dauer** | 3, 5, 10, 15 oder 20 Minuten. Die Zeit wird serverseitig überwacht. |
+| **Session-Dauer** | 3, 5, 10, 15 oder 20 Minuten. Die Zeit wird serverseitig überwacht. Eine Aufgabe, die noch rechtzeitig ausgegeben wurde, zählt auch, wenn die Antwort erst nach Ablauf der Zeit eintrifft — nur eine neue Aufgabe gibt es danach nicht mehr. |
 | **Timer anzeigen** | Aus: Der Countdown ist für das Kind unsichtbar, läuft aber im Hintergrund weiter. Kurz vor Schluss (letzte Minute) erscheint ein sanftes «Gleich geschafft!» ohne Zahlen. Gedacht für Kinder, die der Timer stresst. |
 | **Tempo-Bonus** | Aus: Jede richtige Antwort gibt gleich viele Punkte, egal wie schnell (siehe unten). |
 | **Töne** | Aus: Keine Töne bei richtigen und falschen Antworten. An: Ein heller Klang bei richtig, ein leiser tiefer Ton bei falsch (bewusst kein schrilles Signal). |
