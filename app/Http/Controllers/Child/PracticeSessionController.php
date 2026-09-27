@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Child;
 
-use App\Events\PracticeSessionCompleted;
 use App\Http\Controllers\ChildPreviewController;
 use App\Http\Controllers\Controller;
 use App\Models\PracticeSession;
 use App\Services\AdaptiveSelection\AttemptRecorder;
 use App\Services\AdaptiveSelection\WeightedFactSelector;
 use App\Services\ExerciseTypes\ExerciseTypeRegistry;
+use App\Services\PracticeSessionCompleter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -87,10 +87,10 @@ class PracticeSessionController extends Controller
         ]);
     }
 
-    public function nextQuestion(PracticeSession $session, WeightedFactSelector $selector, ExerciseTypeRegistry $registry): JsonResponse
+    public function nextQuestion(PracticeSession $session, WeightedFactSelector $selector, ExerciseTypeRegistry $registry, PracticeSessionCompleter $completer): JsonResponse
     {
         if (! $session->isActive() || ! $session->hasTimeRemaining()) {
-            $this->completeSession($session);
+            $completer->complete($session);
 
             return response()->json(['session_over' => true]);
         }
@@ -119,7 +119,7 @@ class PracticeSessionController extends Controller
         ]);
     }
 
-    public function attempt(Request $request, PracticeSession $session, AttemptRecorder $recorder): JsonResponse
+    public function attempt(Request $request, PracticeSession $session, AttemptRecorder $recorder, PracticeSessionCompleter $completer): JsonResponse
     {
         $request->validate(['answer' => ['required', 'integer']]);
 
@@ -128,7 +128,7 @@ class PracticeSessionController extends Controller
         }
 
         if (! $session->hasTimeRemaining()) {
-            $this->completeSession($session);
+            $completer->complete($session);
 
             return response()->json(['session_over' => true]);
         }
@@ -139,7 +139,7 @@ class PracticeSessionController extends Controller
         $sessionOver = ! $session->hasTimeRemaining();
 
         if ($sessionOver) {
-            $this->completeSession($session);
+            $completer->complete($session);
         }
 
         return response()->json(array_merge($result, [
@@ -148,9 +148,9 @@ class PracticeSessionController extends Controller
         ]));
     }
 
-    public function finish(PracticeSession $session): RedirectResponse
+    public function finish(PracticeSession $session, PracticeSessionCompleter $completer): RedirectResponse
     {
-        $this->completeSession($session);
+        $completer->complete($session);
 
         return redirect()->route('child.sessions.summary', $session);
     }
@@ -162,28 +162,6 @@ class PracticeSessionController extends Controller
             'child' => $session->child,
             'newBadges' => $session->child->badgesEarnedDuring($session),
         ]);
-    }
-
-    private function completeSession(PracticeSession $session): void
-    {
-        if ($session->status !== 'active') {
-            return;
-        }
-
-        $session->update([
-            'status' => 'completed',
-            'ended_at' => now(),
-            'current_fact_id' => null,
-            'current_question_issued_at' => null,
-        ]);
-
-        // A preview's completion must stay invisible to badges and the daily
-        // goal (EvaluateBadges, EvaluateDailyGoal) — skipping the event they
-        // both listen for is simpler and more certain than teaching each of
-        // them about is_preview individually.
-        if (! $session->is_preview) {
-            PracticeSessionCompleted::dispatch($session);
-        }
     }
 
     private function timeRemainingSeconds(PracticeSession $session): int

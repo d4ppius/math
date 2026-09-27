@@ -115,7 +115,7 @@ Im Plesk-Panel unter **Geplante Aufgaben** (Scheduled Tasks) einen neuen Cronjob
 * * * * * php /pfad/zum/projekt/artisan schedule:run >> /dev/null 2>&1
 ```
 
-Darüber laufen alle zeitgesteuerten Aufgaben der App: die Erinnerungen an die Kinder (täglich 17:00), das Löschen erledigter Kontakt-Nachrichten nach 12 Monaten (`contact:prune`) und das Löschen von Konten, die ihre E-Mail-Adresse nicht innerhalb von 7 Tagen bestätigt haben (`accounts:prune-unverified`).
+Darüber laufen alle zeitgesteuerten Aufgaben der App: die Erinnerungen an die Kinder alle 5 Minuten, jeweils zur individuellen Erinnerungszeit des Kindes (`reminders:send`, siehe [Übungseinstellungen](README.md#übungseinstellungen)), das Abschliessen von Übungs-Sessions, deren Zeit abgelaufen ist, aber niemand mehr zurückkam (`sessions:close-expired`, ebenfalls alle 5 Minuten), das Löschen erledigter Kontakt-Nachrichten nach 12 Monaten (`contact:prune`) und das Löschen von Konten, die ihre E-Mail-Adresse nicht innerhalb von 7 Tagen bestätigt haben (`accounts:prune-unverified`).
 
 ## 9. Redeploy bei Updates
 

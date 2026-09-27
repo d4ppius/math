@@ -33,7 +33,7 @@ class DailyGoalAchieved extends Notification implements ShouldQueue
             ->subject("🎉 {$this->child->name} hat heute geübt!")
             ->greeting("Hallo {$notifiable->name}!")
             ->line("{$this->child->name} hat die heutige Übung geschafft.")
-            ->line("Ergebnis: {$this->session->total_points} Punkte, {$accuracy}% richtig beantwortet.")
+            ->line("Ergebnis: {$this->session->questions_correct} von {$this->session->questions_answered} Aufgaben richtig ({$accuracy}%), {$this->session->total_points} Punkte.")
             ->action('Statistik ansehen', route('parent.children.statistics', $this->child))
             ->line('Weiter so!')
             ->salutation('Viele Grüsse, dein Rechenfuchs');
@@ -44,7 +44,7 @@ class DailyGoalAchieved extends Notification implements ShouldQueue
         return (new WebPushMessage)
             ->title("🎉 {$this->child->name} hat geübt!")
             ->icon('/images/icons/icon-192.png')
-            ->body("{$this->session->total_points} Punkte heute – weiter so!")
+            ->body("{$this->session->questions_correct} von {$this->session->questions_answered} Aufgaben richtig, {$this->session->total_points} Punkte – weiter so!")
             ->action('Ansehen', 'view')
             ->data(['url' => route('parent.children.statistics', $this->child)]);
     }

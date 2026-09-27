@@ -35,7 +35,18 @@ class ExerciseTextsTest extends TestCase
         $mail = (new DailyGoalAchieved($child, $session))->toMail($parent);
 
         $this->assertContains('Mia hat die heutige Übung geschafft.', $mail->introLines);
+        $this->assertContains('Ergebnis: 10 von 12 Aufgaben richtig (83%), 120 Punkte.', $mail->introLines);
         $this->assertStringNotContainsString('Einmaleins', implode(' ', $mail->introLines));
+    }
+
+    public function test_the_goal_push_mentions_how_many_tasks_were_solved(): void
+    {
+        $child = Child::factory()->create(['name' => 'Mia']);
+        $session = new PracticeSession(['questions_answered' => 12, 'questions_correct' => 10, 'total_points' => 120]);
+
+        $message = (new DailyGoalAchieved($child, $session))->toWebPush($child, new DailyGoalAchieved($child, $session))->toArray();
+
+        $this->assertStringContainsString('10 von 12 Aufgaben richtig, 120 Punkte', json_encode($message, JSON_UNESCAPED_UNICODE));
     }
 
     public function test_the_manifest_and_the_public_pages_mention_both_exercises(): void

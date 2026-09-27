@@ -49,6 +49,8 @@ Timer, Tempo-Bonus und Töne sind standardmässig **an**, und alle Einstellungen
 
 **Erinnerung ans Üben:** Zusätzlich zur «Ziel-Häufigkeit» oben (die nur festlegt, an welchen *Tagen* geübt werden soll) gibt es auf der Seite «Kind bearbeiten» eine eigene Einstellung «An die Übung erinnern» mit Uhrzeit — steuert **ob** überhaupt und **um wie viel Uhr** eine Push-Erinnerung kommt, für alle Übungen dieses Kindes gemeinsam. Standard: an, 17:00 Uhr. Voraussetzung bleibt in jedem Fall, dass das Kind selbst Push-Benachrichtigungen auf seinem Gerät aktiviert hat (Knopf auf der Kind-Startseite) — die Eltern-Einstellung entscheidet nur, ob und wann davon Gebrauch gemacht wird. Technisch prüft `reminders:send` (läuft alle 5 Minuten) für jedes Kind, ob die aktuelle Zeit in einem 5-Minuten-Fenster ab seiner eigenen `reminder_time` liegt.
 
+**Push an die Eltern, wenn das Tagesziel erreicht ist:** Sobald eine Session mindestens 10 beantwortete Aufgaben hat und abgeschlossen wird, bekommen alle Eltern der Familie eine Nachricht mit Ergebnis (X von Y Aufgaben richtig, Punkte) — höchstens einmal pro Tag, auch bei mehreren Sessions. „Abgeschlossen" heisst dabei nicht nur der explizite Tipp auf «Fertig für heute»: Schliesst ein Kind die App einfach, bevor die Zeit abgelaufen ist, und kommt nicht mehr zurück, bliebe die Session sonst für immer offen und die Meldung käme nie an. `sessions:close-expired` (läuft ebenfalls alle 5 Minuten) schliesst solche Sessions automatisch, sobald ihre Zeit abgelaufen ist.
+
 ## Punkte
 
 Punkte gibt es nur für richtige Antworten. Die Berechnung steht in `app/Services/Gamification/PointsCalculator.php`.
