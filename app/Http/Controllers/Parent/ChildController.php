@@ -11,7 +11,10 @@ use Illuminate\View\View;
 
 class ChildController extends Controller
 {
-    public const AVATARS = ['fox', 'owl', 'cat', 'bear', 'rabbit', 'panda'];
+    public const AVATARS = [
+        'fox', 'owl', 'cat', 'bear', 'rabbit', 'panda',
+        'dog', 'lion', 'tiger', 'koala', 'frog', 'unicorn', 'penguin', 'turtle', 'bee', 'wolf',
+    ];
 
     public const COLOR_THEMES = ['orange', 'blue', 'green', 'pink', 'purple'];
 

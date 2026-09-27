@@ -1,4 +1,8 @@
-@php $avatarEmoji = ['fox' => '🦊', 'owl' => '🦉', 'cat' => '🐱', 'bear' => '🐻', 'rabbit' => '🐰', 'panda' => '🐼']; @endphp
+@php $avatarEmoji = [
+    'fox' => '🦊', 'owl' => '🦉', 'cat' => '🐱', 'bear' => '🐻', 'rabbit' => '🐰', 'panda' => '🐼',
+    'dog' => '🐶', 'lion' => '🦁', 'tiger' => '🐯', 'koala' => '🐨', 'frog' => '🐸',
+    'unicorn' => '🦄', 'penguin' => '🐧', 'turtle' => '🐢', 'bee' => '🐝', 'wolf' => '🐺',
+]; @endphp
 
 <div>
     <x-input-label for="name" :value="__('Name')" />
