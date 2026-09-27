@@ -19,6 +19,14 @@ class User extends Authenticatable implements MustVerifyEmail
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasPushSubscriptions, Notifiable;
 
+    protected static function booted(): void
+    {
+        // Not covered by a foreign key: push_subscriptions is a polymorphic
+        // table from the webpush package, without a cascading constraint —
+        // left alone, a deleted user's subscription would linger forever.
+        static::deleting(fn (User $user) => $user->pushSubscriptions()->delete());
+    }
+
     /**
      * Get the attributes that should be cast.
      *

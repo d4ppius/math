@@ -18,6 +18,16 @@ class Family extends Model
         static::creating(function (Family $family) {
             $family->invite_token ??= Str::random(32);
         });
+
+        // Its children's and users' rows cascade away at the database level
+        // (foreign keys), which never fires their own model events — so a
+        // family delete would otherwise leave their push subscriptions
+        // behind as orphaned rows (see Child/User's own deleting event for
+        // the other half: deleting one of them directly, not via a family).
+        static::deleting(function (Family $family) {
+            $family->children->each(fn (Child $child) => $child->pushSubscriptions()->delete());
+            $family->users->each(fn (User $user) => $user->pushSubscriptions()->delete());
+        });
     }
 
     public function users(): HasMany

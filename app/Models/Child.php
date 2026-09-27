@@ -25,6 +25,14 @@ class Child extends Model implements AuthenticatableContract
 {
     use Authenticatable, HasFactory, HasPushSubscriptions, Notifiable;
 
+    protected static function booted(): void
+    {
+        // Not covered by a foreign key: push_subscriptions is a polymorphic
+        // table from the webpush package, without a cascading constraint —
+        // left alone, a deleted child's subscription would linger forever.
+        static::deleting(fn (Child $child) => $child->pushSubscriptions()->delete());
+    }
+
     protected function casts(): array
     {
         return [
