@@ -230,6 +230,7 @@ Bei jedem Push und jedem Pull Request gegen `main` läuft eine GitHub-Actions-Pi
 | Adresse | Inhalt |
 | --- | --- |
 | `/` | Startseite für Eltern: So funktioniert's, Funktionen, «Sicher für Kinder», FAQ, Weiter zu Registrierung und Anmeldung (angemeldete Eltern sehen «Zum Dashboard»). Responsiv von Handy bis Desktop. |
+| `/anleitung` | Erklärt Eltern in einfacher Sprache, wie Punkte, die zehn Level, die 18 Abzeichen und die Erinnerungen genau funktionieren — dieselben Mechanismen wie in den Abschnitten [Punkte](#punkte), [Level und Abzeichen](#level-und-abzeichen) weiter unten, nur ohne Entwickler-Jargon. Von der Startseite aus verlinkt (Navigation, Fusszeile, FAQ). |
 | `/impressum`, `/datenschutz` | Impressum und Datenschutzerklärung. Die Angaben stehen **nicht im Code**, sondern in der `.env` (`LEGAL_*`, siehe [INSTALL.md](INSTALL.md#rechtliches-und-kontaktformular)). Fehlt ein Pflichtwert, steht auf der Seite sichtbar «[LEGAL_NAME fehlt in der .env]». Die E-Mail-Adresse steht nicht als ein Text im Quelltext (Schutz vor Adress-Sammlern). |
 | `/kontakt` | Kontaktformular für Fragen und Support. |
 
@@ -243,7 +244,7 @@ Das Kontaktformular sendet **keine** automatische Bestätigung an den Absender, 
 
 **Registrierung:** Sie ist offen, aber die E-Mail-Adresse muss bestätigt werden, bevor der Eltern-Bereich nutzbar ist. Konten, die nicht innerhalb von 7 Tagen bestätigt werden, löscht ein täglicher Job samt der dadurch leeren Familie. Wer als letzte Elternperson das eigene Konto löscht, löscht auch die Familie, alle Kinder und ihre Übungsdaten.
 
-**Suchmaschinen:** Startseite, Impressum, Datenschutz und Kontakt sind indexierbar. Persönliche Login-Links der Kinder, Kinder-, Eltern- und Admin-Bereich sind per `robots.txt` und `noindex` ausgeschlossen. Alle Schriften werden lokal ausgeliefert, die Seiten laden nichts von Dritten.
+**Suchmaschinen:** Startseite, Anleitung, Impressum, Datenschutz und Kontakt sind indexierbar. Persönliche Login-Links der Kinder, Kinder-, Eltern- und Admin-Bereich sind per `robots.txt` und `noindex` ausgeschlossen. Alle Schriften werden lokal ausgeliefert, die Seiten laden nichts von Dritten.
 
 ## Admin-Bereich
 

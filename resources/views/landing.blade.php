@@ -178,7 +178,7 @@
             </div>
 
             <p class="mt-8 text-center text-gray-600">
-                Deine Frage ist nicht dabei? <a href="{{ route('contact.show') }}" class="font-semibold text-orange-600 hover:text-orange-700">Schreib uns über das Kontaktformular.</a>
+                Wie genau Punkte, Level und Abzeichen funktionieren, steht in der <a href="{{ route('guide') }}" class="font-semibold text-orange-600 hover:text-orange-700">Anleitung</a>. Deine Frage ist nicht dabei? <a href="{{ route('contact.show') }}" class="font-semibold text-orange-600 hover:text-orange-700">Schreib uns über das Kontaktformular.</a>
             </p>
         </div>
     </section>

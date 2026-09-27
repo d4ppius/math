@@ -37,6 +37,7 @@
                 <nav class="hidden items-center gap-6 text-sm font-medium text-gray-600 md:flex" aria-label="Hauptnavigation">
                     <a href="{{ $home }}#so-gehts" class="hover:text-gray-900">So funktioniert's</a>
                     <a href="{{ $home }}#funktionen" class="hover:text-gray-900">Funktionen</a>
+                    <a href="{{ route('guide') }}" class="hover:text-gray-900">Anleitung</a>
                     <a href="{{ $home }}#faq" class="hover:text-gray-900">Fragen</a>
                     <a href="{{ route('contact.show') }}" class="hover:text-gray-900">Kontakt</a>
                 </nav>
@@ -62,6 +63,7 @@
                 <nav class="flex flex-col text-base font-medium text-gray-700" aria-label="Mobile Navigation">
                     <a href="{{ $home }}#so-gehts" class="rounded-lg px-3 py-3 hover:bg-gray-50" @click="open = false">So funktioniert's</a>
                     <a href="{{ $home }}#funktionen" class="rounded-lg px-3 py-3 hover:bg-gray-50" @click="open = false">Funktionen</a>
+                    <a href="{{ route('guide') }}" class="rounded-lg px-3 py-3 hover:bg-gray-50">Anleitung</a>
                     <a href="{{ $home }}#faq" class="rounded-lg px-3 py-3 hover:bg-gray-50" @click="open = false">Fragen</a>
                     <a href="{{ route('contact.show') }}" class="rounded-lg px-3 py-3 hover:bg-gray-50">Kontakt</a>
                 </nav>
@@ -90,6 +92,7 @@
                     <h2 class="text-sm font-semibold text-gray-900">Rechenfuchs</h2>
                     <ul class="mt-3 space-y-2 text-sm text-gray-600">
                         <li><a href="{{ $home }}#so-gehts" class="hover:text-gray-900">So funktioniert's</a></li>
+                        <li><a href="{{ route('guide') }}" class="hover:text-gray-900">Anleitung</a></li>
                         @auth
                             <li><a href="{{ route('dashboard') }}" class="hover:text-gray-900">Zum Dashboard</a></li>
                         @else

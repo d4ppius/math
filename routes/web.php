@@ -8,6 +8,7 @@ use App\Http\Controllers\LegalController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'landing')->name('home');
+Route::view('/anleitung', 'guide')->name('guide');
 
 Route::get('/impressum', [LegalController::class, 'imprint'])->name('legal.imprint');
 Route::get('/datenschutz', [LegalController::class, 'privacy'])->name('legal.privacy');

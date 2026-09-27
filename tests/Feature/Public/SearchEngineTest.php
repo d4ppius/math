@@ -19,7 +19,7 @@ class SearchEngineTest extends TestCase
             $this->assertStringContainsString("Disallow: {$path}", $robots);
         }
 
-        foreach (['/', '/impressum', '/datenschutz', '/kontakt'] as $publicPath) {
+        foreach (['/', '/impressum', '/datenschutz', '/kontakt', '/anleitung'] as $publicPath) {
             $this->assertStringNotContainsString("Disallow: {$publicPath}\n", $robots);
         }
     }
@@ -37,7 +37,7 @@ class SearchEngineTest extends TestCase
 
     public function test_public_pages_stay_indexable(): void
     {
-        foreach ([route('home'), route('legal.imprint'), route('legal.privacy'), route('contact.show')] as $url) {
+        foreach ([route('home'), route('legal.imprint'), route('legal.privacy'), route('contact.show'), route('guide')] as $url) {
             $this->get($url)->assertOk()->assertDontSee('name="robots"', false);
         }
     }

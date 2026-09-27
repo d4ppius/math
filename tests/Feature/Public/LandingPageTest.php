@@ -25,6 +25,7 @@ class LandingPageTest extends TestCase
             ->assertSee('Häufige Fragen')
             ->assertSee(route('register'), false)
             ->assertSee(route('login'), false)
+            ->assertSee(route('guide'), false)
             ->assertSee(route('contact.show'), false)
             ->assertSee(route('legal.imprint'), false)
             ->assertSee(route('legal.privacy'), false);
