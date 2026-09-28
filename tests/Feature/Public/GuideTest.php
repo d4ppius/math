@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Public;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -38,5 +39,16 @@ class GuideTest extends TestCase
         $html = $this->get(route('home'))->assertOk()->getContent();
 
         $this->assertSame(4, substr_count($html, route('guide')), 'desktop nav, mobile nav, footer, and the FAQ link');
+    }
+
+    public function test_the_guide_is_reachable_from_the_signed_in_parent_navigation(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee(route('guide'), false);
+
+        // No login needed either way: it's a plain public page.
+        $this->get(route('guide'))->assertOk();
     }
 }
