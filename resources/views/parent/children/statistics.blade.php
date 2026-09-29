@@ -111,14 +111,14 @@
                                         <tr>
                                             <th class="w-10"></th>
                                             @foreach ($heatmap['cols'] as $col)
-                                                <th class="text-xs text-gray-400 font-normal w-12 pb-1">{{ $heatmap['operator'] }}{{ $col }}</th>
+                                                <th class="text-xs text-gray-400 font-normal w-12 pb-1">{{ $heatmap['implementation']->heatmapColumnLabel($col) }}</th>
                                             @endforeach
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($heatmap['rows'] as $row)
                                             <tr>
-                                                <th class="text-xs text-gray-400 font-normal pr-2 text-right">{{ $row }}{{ $heatmap['operator'] }}</th>
+                                                <th class="text-xs text-gray-400 font-normal pr-2 text-right">{{ $heatmap['implementation']->heatmapRowLabel($row) }}</th>
                                                 @foreach ($heatmap['cols'] as $col)
                                                     @php
                                                         $stat = $heatmap['cells']->get($row.'-'.$col);
@@ -129,10 +129,13 @@
                                                             : '–';
                                                     @endphp
                                                     <td class="p-0.5">
-                                                        <div class="w-12 h-10 rounded flex items-center justify-center text-xs font-semibold {{ $statusClasses[$status] }}"
-                                                             title="{{ $fact ? $heatmap['implementation']->formatPrompt($fact).' = '.$fact->correct_answer : '' }}">
-                                                            {{ $accuracyLabel }}
-                                                        </div>
+                                                        {{-- Only a real task gets a tile; blank cells mean the combination does not exist (e.g. a subtraction with a negative result, or halving an odd number). --}}
+                                                        @if ($fact)
+                                                            <div class="w-12 h-10 rounded flex items-center justify-center text-xs font-semibold {{ $statusClasses[$status] }}"
+                                                                 title="{{ $heatmap['implementation']->formatPrompt($fact).' = '.$fact->correct_answer }}">
+                                                                {{ $accuracyLabel }}
+                                                            </div>
+                                                        @endif
                                                     </td>
                                                 @endforeach
                                             </tr>

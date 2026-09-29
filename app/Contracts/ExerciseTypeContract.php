@@ -29,6 +29,16 @@ interface ExerciseTypeContract
     public function gridDefinition(): array;
 
     /**
+     * Header text for one heatmap column / row. Defaults (see DefaultGridLabels)
+     * build "×8" / "7×" from the operator; exercises whose grid is not a plain
+     * operand table (e.g. doubling/halving) override this. The parameter is the
+     * operand value from gridDefinition().
+     */
+    public function heatmapColumnLabel(int $col): string;
+
+    public function heatmapRowLabel(int $row): string;
+
+    /**
      * The difficulty groups parents can switch on, with the name shown to them.
      *
      * @return array<int, string> difficulty group => name

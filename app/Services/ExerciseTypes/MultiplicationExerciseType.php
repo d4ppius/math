@@ -4,12 +4,15 @@ namespace App\Services\ExerciseTypes;
 
 use App\Contracts\ExerciseTypeContract;
 use App\Models\Fact;
+use App\Services\ExerciseTypes\Concerns\DefaultGridLabels;
 
 /**
  * The small multiplication table, 1×1 through 9×10.
  */
 class MultiplicationExerciseType implements ExerciseTypeContract
 {
+    use DefaultGridLabels;
+
     public function key(): string
     {
         return 'multiplication';

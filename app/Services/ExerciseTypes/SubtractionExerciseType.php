@@ -4,6 +4,7 @@ namespace App\Services\ExerciseTypes;
 
 use App\Contracts\ExerciseTypeContract;
 use App\Models\Fact;
+use App\Services\ExerciseTypes\Concerns\DefaultGridLabels;
 
 /**
  * Subtraction within 20 ("Einsminuseins"), the cycle-1 counterpart to
@@ -15,6 +16,8 @@ use App\Models\Fact;
  */
 class SubtractionExerciseType implements ExerciseTypeContract
 {
+    use DefaultGridLabels;
+
     public const GROUP_UP_TO_TEN = 1;
 
     public const GROUP_WITH_TEN = 2;

@@ -140,6 +140,56 @@ class BadgeSeeder extends Seeder
             'criteria' => ['type' => 'blitz', 'exercise_type' => 'subtraction', 'min_correct_in_session' => 10, 'max_avg_response_ms' => 1500],
         ];
 
+        // Verdoppeln & Halbieren: a starter, one master per operation (each
+        // spanning both number-range groups of that operation), and a speed badge.
+        $badges[] = [
+            'key' => 'doubling_first_session',
+            'name' => 'Verdoppeln-Starter',
+            'description' => 'Schaffe deine erste Übung im Verdoppeln & Halbieren mit mindestens 5 Aufgaben.',
+            'icon' => '🔁',
+            'criteria' => ['type' => 'first_session', 'exercise_type' => 'doubling', 'min_questions' => 5],
+        ];
+
+        $badges[] = [
+            'key' => 'doubling_mastery',
+            'name' => 'Meister im Verdoppeln',
+            'description' => 'Verdopple sicher, auch bis 50, zu über 90 % richtig.',
+            'icon' => '🥇',
+            'criteria' => [
+                'type' => 'group_mastery',
+                'exercise_type' => 'doubling',
+                'difficulty_groups' => [1, 2],
+                'overlay' => '·2',
+                'min_accuracy' => 0.9,
+                'min_attempts' => 30,
+                'min_facts' => 18,
+            ],
+        ];
+
+        $badges[] = [
+            'key' => 'halving_mastery',
+            'name' => 'Meister im Halbieren',
+            'description' => 'Halbiere sicher, auch bis 50, zu über 90 % richtig.',
+            'icon' => '🥇',
+            'criteria' => [
+                'type' => 'group_mastery',
+                'exercise_type' => 'doubling',
+                'difficulty_groups' => [3, 4],
+                'overlay' => '½',
+                'min_accuracy' => 0.9,
+                'min_attempts' => 30,
+                'min_facts' => 18,
+            ],
+        ];
+
+        $badges[] = [
+            'key' => 'doubling_blitz',
+            'name' => 'Verdoppeln-Blitz',
+            'description' => 'Gib beim Verdoppeln & Halbieren mindestens 10 richtige Antworten, im Schnitt unter 1,5 Sekunden.',
+            'icon' => '⚡',
+            'criteria' => ['type' => 'blitz', 'exercise_type' => 'doubling', 'min_correct_in_session' => 10, 'max_avg_response_ms' => 1500],
+        ];
+
         $badges[] = [
             'key' => 'allrounder',
             'name' => 'Allrounder',

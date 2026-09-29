@@ -65,11 +65,12 @@ class EnabledExercisesTest extends TestCase
     {
         $this->actingAs($this->parent)->get(route('parent.children.exercise-settings.edit', $this->child))->assertOk();
 
-        $this->assertSame(3, $this->child->exerciseSettings()->count());
+        $this->assertSame(4, $this->child->exerciseSettings()->count());
         $this->assertTrue($this->settingFor('multiplication')->enabled);
         $this->assertFalse($this->settingFor('addition')->enabled);
         $this->assertSame([1], $this->settingFor('addition')->active_groups);
         $this->assertFalse($this->settingFor('subtraction')->enabled);
+        $this->assertFalse($this->settingFor('doubling')->enabled);
     }
 
     public function test_the_settings_page_shows_a_card_per_exercise_with_a_switch_and_its_own_group_names(): void

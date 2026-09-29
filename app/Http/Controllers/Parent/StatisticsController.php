@@ -68,7 +68,6 @@ class StatisticsController extends Controller
                     // No settings row at all (legacy data): don't claim the exercise is off.
                     'enabled' => $setting?->enabled ?? true,
                     'level' => $setting?->level() ?? $levelCalculator->forPoints(0),
-                    'operator' => $implementation->operator(),
                     'rows' => $grid['rows'],
                     'cols' => $grid['cols'],
                     'cells' => $stats,

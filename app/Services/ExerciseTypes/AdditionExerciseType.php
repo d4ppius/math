@@ -4,6 +4,7 @@ namespace App\Services\ExerciseTypes;
 
 use App\Contracts\ExerciseTypeContract;
 use App\Models\Fact;
+use App\Services\ExerciseTypes\Concerns\DefaultGridLabels;
 
 /**
  * Addition within 20 ("Einspluseins"): both summands from 1 to 10, so every
@@ -13,6 +14,8 @@ use App\Models\Fact;
  */
 class AdditionExerciseType implements ExerciseTypeContract
 {
+    use DefaultGridLabels;
+
     public const GROUP_UP_TO_TEN = 1;
 
     public const GROUP_WITH_TEN = 2;

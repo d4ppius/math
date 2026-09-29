@@ -127,10 +127,15 @@ class BadgeEvaluator
 
     private function masteredRow(Child $child, array $criteria): bool
     {
+        // One difficulty group (row/group mastery), or several at once — the
+        // doubling/halving master badges span both number-range groups of an
+        // operation. 'difficulty_group' stays valid for the single-group case.
+        $groups = $criteria['difficulty_groups'] ?? [$criteria['difficulty_group']];
+
         $stats = ChildFactStat::query()
             ->where('child_id', $child->id)
             ->whereHas('fact', fn ($fact) => $fact
-                ->where('difficulty_group', $criteria['difficulty_group'])
+                ->whereIn('difficulty_group', $groups)
                 ->whereHas('exerciseType', fn ($type) => $type->where('key', $criteria['exercise_type'])))
             ->get(['attempts_total', 'attempts_correct']);
 

@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\Fact;
 use App\Services\ExerciseTypes\AdditionExerciseType;
+use App\Services\ExerciseTypes\DoublingExerciseType;
 use App\Services\ExerciseTypes\MultiplicationExerciseType;
 use App\Services\ExerciseTypes\SubtractionExerciseType;
 use PHPUnit\Framework\TestCase;
@@ -81,6 +82,17 @@ class ExerciseTypeHintTest extends TestCase
             $fact = new Fact($data);
 
             $this->assertHintIsCorrect($type->hint($fact), $data['correct_answer'], "{$data['operand_a']} − {$data['operand_b']}");
+        }
+    }
+
+    public function test_every_doubling_facts_hint_is_correct(): void
+    {
+        $type = new DoublingExerciseType;
+
+        foreach ($type->generateFacts() as $data) {
+            $fact = new Fact($data);
+
+            $this->assertHintIsCorrect($type->hint($fact), $data['correct_answer'], $type->formatPrompt($fact));
         }
     }
 }
