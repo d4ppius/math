@@ -99,6 +99,47 @@ class BadgeSeeder extends Seeder
             'criteria' => ['type' => 'blitz', 'exercise_type' => 'addition', 'min_correct_in_session' => 10, 'max_avg_response_ms' => 1500],
         ];
 
+        // Minus bis 20: mirrors the Plus badges (starter, one master per group, speed).
+        $minusGroups = [
+            1 => ['name' => 'Meister von Minus bis 10', 'text' => '«Minus bis 10»', 'overlay' => '10', 'attempts' => 50, 'facts' => 34],
+            2 => ['name' => 'Meister von Minus mit der 10', 'text' => '«Minus mit der 10»', 'overlay' => '−10', 'attempts' => 32, 'facts' => 22],
+            3 => ['name' => 'Meister des Minus-Zehnerübergangs', 'text' => 'den «Zehnerübergang» beim Minus', 'overlay' => '20', 'attempts' => 40, 'facts' => 27],
+        ];
+
+        $badges[] = [
+            'key' => 'subtraction_first_session',
+            'name' => 'Minus-Starter',
+            'description' => 'Schaffe deine erste Minus-Übung mit mindestens 5 Aufgaben.',
+            'icon' => '➖',
+            'criteria' => ['type' => 'first_session', 'exercise_type' => 'subtraction', 'min_questions' => 5],
+        ];
+
+        foreach ($minusGroups as $group => $minus) {
+            $badges[] = [
+                'key' => "subtraction_mastery_{$group}",
+                'name' => $minus['name'],
+                'description' => "Löse {$minus['text']} zu über 90 % richtig.",
+                'icon' => '🥇',
+                'criteria' => [
+                    'type' => 'group_mastery',
+                    'exercise_type' => 'subtraction',
+                    'difficulty_group' => $group,
+                    'overlay' => $minus['overlay'],
+                    'min_accuracy' => 0.9,
+                    'min_attempts' => $minus['attempts'],
+                    'min_facts' => $minus['facts'],
+                ],
+            ];
+        }
+
+        $badges[] = [
+            'key' => 'subtraction_blitz',
+            'name' => 'Minus-Blitz',
+            'description' => 'Gib in einer Minus-Übung mindestens 10 richtige Antworten, im Schnitt unter 1,5 Sekunden.',
+            'icon' => '⚡',
+            'criteria' => ['type' => 'blitz', 'exercise_type' => 'subtraction', 'min_correct_in_session' => 10, 'max_avg_response_ms' => 1500],
+        ];
+
         $badges[] = [
             'key' => 'allrounder',
             'name' => 'Allrounder',
