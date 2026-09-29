@@ -51,7 +51,7 @@ class ChildAchievementsTest extends TestCase
             ->assertSee('800 Punkte')
             ->assertSee('Level 2')
             ->assertSee('Deine Abzeichen')
-            ->assertSee('(1 von 12)')
+            ->assertSee('(1 von 21)')
             ->assertSee('Erste Übung')
             ->assertSee('01.09.2026');
     }
@@ -154,7 +154,7 @@ class ChildAchievementsTest extends TestCase
         $this->actingAs($child, 'child')
             ->get(route('child.achievements'))
             ->assertDontSee('Blitzrechner')
-            ->assertSee('(0 von 11)');
+            ->assertSee('(0 von 20)');
 
         // An already earned speed badge stays visible.
         $this->earn($child, 'blitz');

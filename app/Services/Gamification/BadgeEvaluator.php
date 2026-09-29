@@ -45,8 +45,15 @@ class BadgeEvaluator
             'blitz' => $this->isOfBadgeExercise($session, $criteria) && $this->isBlitz($child, $session, $criteria),
             'row_mastery', 'group_mastery' => $this->masteredRow($child, $criteria),
             'all_exercises_same_day' => $this->practisedAllExercisesToday($child, $session, $criteria),
+            'level_reached' => $this->reachedLevel($child, $criteria['level']),
             default => false,
         };
+    }
+
+    /** True once any of the child's exercises has reached the given level. */
+    private function reachedLevel(Child $child, int $level): bool
+    {
+        return $child->exerciseSettings->contains(fn ($setting) => $setting->level()['level'] >= $level);
     }
 
     /** A badge tied to one exercise only counts sessions of that exercise. */

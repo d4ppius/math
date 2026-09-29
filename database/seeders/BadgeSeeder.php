@@ -41,6 +41,31 @@ class BadgeSeeder extends Seeder
             ],
         ];
 
+        // One badge per level 2..10 (title and emoji from LevelCalculator),
+        // earned once any exercise reaches that level — a steady stream of
+        // collectibles alongside the per-exercise level bars.
+        $levels = [
+            2 => ['Zahlen-Entdecker', '🔍'],
+            3 => ['Rechen-Lehrling', '📘'],
+            4 => ['Zahlen-Flitzer', '🏃'],
+            5 => ['Rechen-Profi', '⭐'],
+            6 => ['Knobel-Meister', '🧩'],
+            7 => ['Zahlen-Zauberer', '🪄'],
+            8 => ['Rechen-Ass', '🎯'],
+            9 => ['Mathe-Held', '🦸'],
+            10 => ['Rechenfuchs-Meister', '🦊'],
+        ];
+
+        foreach ($levels as $level => [$title, $emoji]) {
+            $badges[] = [
+                'key' => "level_{$level}",
+                'name' => $title,
+                'description' => "Erreiche Level {$level} in einer Übung.",
+                'icon' => $emoji,
+                'criteria' => ['type' => 'level_reached', 'level' => $level],
+            ];
+        }
+
         foreach (range(1, 9) as $row) {
             $badges[] = [
                 'key' => "row_mastery_{$row}",

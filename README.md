@@ -138,7 +138,7 @@ Die Schwellen sind mit dem echten `PointsCalculator` simuliert (schnelles/typisc
 | 9 | 46000 | Mathe-Held 🦸 |
 | 10 | 60000 | Rechenfuchs-Meister 🦊 |
 
-**Abzeichen:** Nach jeder abgeschlossenen Session prüft `BadgeEvaluator` alle noch nicht verdienten Abzeichen. Ein Abzeichen wird nie doppelt vergeben. Es gibt 27 Abzeichen. Den festen Katalog legt `BadgeSeeder` an (mehrfach ausführbar, läuft bei jedem Deployment mit `db:seed`).
+**Abzeichen:** Nach jeder abgeschlossenen Session prüft `BadgeEvaluator` alle noch nicht verdienten Abzeichen. Ein Abzeichen wird nie doppelt vergeben. Es gibt 36 Abzeichen. Den festen Katalog legt `BadgeSeeder` an (mehrfach ausführbar, läuft bei jedem Deployment mit `db:seed`).
 
 | Abzeichen | Bedingung |
 | --- | --- |
@@ -157,6 +157,7 @@ Die Schwellen sind mit dem echten `PointsCalculator` simuliert (schnelles/typisc
 | **Verdoppeln-Starter** 🔁 | Erste Übung im Verdoppeln & Halbieren mit mindestens 5 beantworteten Aufgaben |
 | **Meister im Verdoppeln / Halbieren** 🥇 | Verdoppeln bzw. Halbieren (über beide Zahlenräume) zu mindestens 90 % richtig |
 | **Verdoppeln-Blitz** ⚡ | Im Verdoppeln & Halbieren mindestens 10 richtige Antworten, im Schnitt unter 1,5 Sekunden (nur bei aktivem Tempo-Bonus) |
+| **Level 2 bis 10** 🔍…🦊 (9 Stück) | Das jeweilige Level in irgendeiner Übung erreicht. Trägt das Emoji des Levels. |
 | **Allrounder** 🌟 | Am selben Tag mindestens zwei Übungen mit je mindestens 5 beantworteten Aufgaben geübt |
 
 Ein Abzeichen ist nur erreichbar (und wird dem Kind nur als Ziel gezeigt), wenn seine Übung für das Kind freigeschaltet ist. Der Allrounder braucht mindestens zwei aktive Übungen, ein Speed-Abzeichen zusätzlich den Tempo-Bonus der jeweiligen Übung. Schon verdiente Abzeichen bleiben immer sichtbar. Auf der Erfolgsseite und in der Eltern-Statistik sind die Abzeichen in «Allgemein» und einen Abschnitt je Übung gegliedert.
@@ -211,7 +212,7 @@ Die bisher verwendeten Aufrufe (Originale in `resources/mascot/originals/`):
 | `jongliert` | `--badge=allrounder --crop=0,40,1024,910 --fade=100` |
 | `winkt` | nur die Web-Fassung, kein Abzeichen |
 
-Damit haben alle 27 Abzeichen ein eigenes oder ein geteiltes Bild.
+Damit haben alle 36 Abzeichen ein eigenes oder ein geteiltes Bild.
 
 Die Tests arbeiten in einem eigenen, wieder gelöschten Ordner (`config/badges.php`) und rühren die echten Bilder nie an.
 
@@ -253,7 +254,7 @@ Bei jedem Push und jedem Pull Request gegen `main` läuft eine GitHub-Actions-Pi
 | Adresse | Inhalt |
 | --- | --- |
 | `/` | Startseite für Eltern: So funktioniert's, Funktionen, «Sicher für Kinder», FAQ, Weiter zu Registrierung und Anmeldung (angemeldete Eltern sehen «Zum Dashboard»). Responsiv von Handy bis Desktop. |
-| `/anleitung` | Erklärt Eltern in einfacher Sprache, wie Punkte, die zehn Level, die 27 Abzeichen und die Erinnerungen genau funktionieren — dieselben Mechanismen wie in den Abschnitten [Punkte](#punkte), [Level und Abzeichen](#level-und-abzeichen) weiter unten, nur ohne Entwickler-Jargon. Von der Startseite aus verlinkt (Navigation, Fusszeile, FAQ). |
+| `/anleitung` | Erklärt Eltern in einfacher Sprache, wie Punkte, die zehn Level, die 36 Abzeichen und die Erinnerungen genau funktionieren — dieselben Mechanismen wie in den Abschnitten [Punkte](#punkte), [Level und Abzeichen](#level-und-abzeichen) weiter unten, nur ohne Entwickler-Jargon. Von der Startseite aus verlinkt (Navigation, Fusszeile, FAQ). |
 | `/impressum`, `/datenschutz` | Impressum und Datenschutzerklärung. Die Angaben stehen **nicht im Code**, sondern in der `.env` (`LEGAL_*`, siehe [INSTALL.md](INSTALL.md#rechtliches-und-kontaktformular)). Fehlt ein Pflichtwert, steht auf der Seite sichtbar «[LEGAL_NAME fehlt in der .env]». Die E-Mail-Adresse steht nicht als ein Text im Quelltext (Schutz vor Adress-Sammlern). |
 | `/kontakt` | Kontaktformular für Fragen und Support. |
 

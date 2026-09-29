@@ -60,11 +60,11 @@ class BadgeTest extends TestCase
 
     public function test_the_catalogue_is_seeded_idempotently(): void
     {
-        $this->assertSame(27, Badge::count());
+        $this->assertSame(36, Badge::count());
 
         $this->seed(BadgeSeeder::class);
 
-        $this->assertSame(27, Badge::count());
+        $this->assertSame(36, Badge::count());
     }
 
     public function test_the_first_real_session_earns_the_first_session_badge_only_once(): void
@@ -247,7 +247,7 @@ class BadgeTest extends TestCase
             ->get(route('child.home'))
             ->assertOk()
             ->assertSee('Meine Abzeichen')
-            ->assertSee('1 von 12')
+            ->assertSee('1 von 21')
             ->assertSee(route('child.achievements'), false)
             ->assertSee('⚡');
     }
@@ -256,7 +256,7 @@ class BadgeTest extends TestCase
     {
         $child = Child::factory()->create();
 
-        $this->actingAs($child, 'child')->get(route('child.home'))->assertSee('Meine Abzeichen')->assertSee('0 von 12');
+        $this->actingAs($child, 'child')->get(route('child.home'))->assertSee('Meine Abzeichen')->assertSee('0 von 21');
     }
 
     public function test_the_home_hides_the_badge_card_when_nothing_is_earned_and_locked_ones_are_off(): void
@@ -276,7 +276,7 @@ class BadgeTest extends TestCase
         $this->actingAs($user)
             ->get(route('parent.children.statistics', $child))
             ->assertOk()
-            ->assertSee('1 von 12 verdient')
+            ->assertSee('1 von 21 verdient')
             ->assertSee('Erste Übung')
             ->assertSee('01.09.2026')
             ->assertSee('Meister der 9er-Reihe')
