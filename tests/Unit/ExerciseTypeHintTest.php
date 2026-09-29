@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\Fact;
 use App\Services\ExerciseTypes\AdditionExerciseType;
 use App\Services\ExerciseTypes\MultiplicationExerciseType;
+use App\Services\ExerciseTypes\SubtractionExerciseType;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -67,6 +68,19 @@ class ExerciseTypeHintTest extends TestCase
 
                 $this->assertHintIsCorrect($type->hint($fact), $a + $b, "{$a} + {$b}");
             }
+        }
+    }
+
+    public function test_every_subtraction_facts_hint_is_correct(): void
+    {
+        $type = new SubtractionExerciseType;
+
+        // Iterates the actual seeded facts, so the check covers exactly what a
+        // child can be asked, including the borrow/no-borrow split.
+        foreach ($type->generateFacts() as $data) {
+            $fact = new Fact($data);
+
+            $this->assertHintIsCorrect($type->hint($fact), $data['correct_answer'], "{$data['operand_a']} − {$data['operand_b']}");
         }
     }
 }
