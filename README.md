@@ -4,7 +4,7 @@
 
 # Rechenfuchs
 
-Eine kleine Webapp, mit der Kinder spielerisch und regelmässig Einmaleins und Plus bis 20 üben – als installierbare PWA auf dem iPad, mit persönlichem Homescreen-Icon pro Kind.
+Eine kleine Webapp, mit der Kinder spielerisch und regelmässig Kopfrechnen üben – Einmaleins, Plus und Minus bis 20, Verdoppeln und Halbieren – als installierbare PWA auf dem iPad, mit persönlichem Homescreen-Icon pro Kind.
 
 > Dies ist ein privates Familienprojekt. Das Repository ist öffentlich, weil der Code jemandem nützen könnte – es enthält aber **keine echten Namen, Zugangsdaten oder sonstigen persönlichen Daten** einer echten Familie. Alle `.env`-Dateien, Datenbank-Inhalte und Zugangsdaten bleiben ausschliesslich auf dem jeweiligen Server.
 
@@ -18,18 +18,22 @@ Eine kleine Webapp, mit der Kinder spielerisch und regelmässig Einmaleins und P
 - **Punkte, Level, Abzeichen, Konfetti und Töne** als Motivation, siehe [Punkte](#punkte) und [Level und Abzeichen](#level-und-abzeichen).
 - **Öffentliche Startseite** (`/`) für Eltern: erklärt in vier Schritten, wie es funktioniert, mit Funktionen, «Sicher für Kinder» und FAQ, dazu Impressum, Datenschutzerklärung und Kontaktformular, siehe [Öffentliche Seiten](#öffentliche-seiten).
 - **Admin-Bereich** (`/admin`): Für den Betreiber der Installation, siehe [unten](#admin-bereich).
-- **Erweiterbar:** Die Architektur ist so gebaut, dass später weitere Matheaufgaben-Typen (Addition, Division, …) ergänzt werden können, ohne den Kern umzubauen.
+- **Erweiterbar:** Die Architektur ist so gebaut, dass weitere Matheaufgaben-Typen (z.B. Division) ergänzt werden können, ohne den Kern umzubauen.
 
 ## Übungen
 
-Rechenfuchs hat zwei Übungen. Weitere Aufgabentypen lassen sich nach demselben Muster ergänzen (`ExerciseTypeContract`, Eintrag in `config/exercise_types.php`).
+Rechenfuchs hat vier Übungen. Weitere Aufgabentypen lassen sich nach demselben Muster ergänzen (`ExerciseTypeContract`, Eintrag in `config/exercise_types.php`).
 
 | Übung | Aufgaben | Gruppen (Eltern wählen) |
 | --- | --- | --- |
 | **Einmaleins** | 90 Aufgaben, 1×1 bis 9×10 | Reihen 1 bis 9 |
 | **Plus bis 20** | 100 Aufgaben, beide Summanden von 1 bis 10 (Einspluseins) | «Plus bis 10» (45), «Plus mit der 10» (19), «Zehnerübergang» (36) |
+| **Minus bis 20** | 110 Aufgaben, Einsminuseins ohne negative Ergebnisse | «Minus bis 10» (45), «Minus mit der 10» (29), «Zehnerübergang» (36) |
+| **Verdoppeln & Halbieren** | 50 Aufgaben (Verdoppeln bis 50, Halbieren gerader Zahlen bis 50) | «Verdoppeln bis 10» (10), «Verdoppeln bis 50» (15), «Halbieren bis 20» (10), «Halbieren bis 50» (15) |
 
-Eltern schalten pro Kind frei, welche Übungen es gibt. Einmaleins ist von Anfang an aktiv, **Plus ist aus**, bis die Eltern es in den Übungseinstellungen freischalten. Ist genau eine Übung aktiv, sieht das Kind wie bisher einen grossen Knopf. Sind mehrere aktiv, wählt es auf der Startseite (eine Karte pro Übung, «Weiter üben», wenn dort noch eine Session läuft). Der Server prüft die Auswahl selbst, ein Kind kann keine Übung starten, die nicht freigeschaltet oder vom Admin deaktiviert ist. Punkte, Level und Tagesziel sind für beide Übungen gemeinsam. Die Eltern-Statistik zeigt pro Übung eine eigene Heatmap.
+Einmaleins deckt Zyklus 2 ab, die anderen drei den Zyklus 1 des Schweizer Lehrplans 21 (siehe [`docs/lehrplan21-abgleich.md`](docs/lehrplan21-abgleich.md)).
+
+Eltern schalten pro Kind frei, welche Übungen es gibt. Einmaleins ist von Anfang an aktiv, **Plus, Minus und Verdoppeln & Halbieren sind aus**, bis die Eltern sie in den Übungseinstellungen freischalten. Bei «Verdoppeln & Halbieren» wählen die Eltern über die Aufgabenarten zugleich den Zahlenraum (Standard nur «Verdoppeln bis 10»). Ist genau eine Übung aktiv, sieht das Kind wie bisher einen grossen Knopf. Sind mehrere aktiv, wählt es auf der Startseite (eine Karte pro Übung, «Weiter üben», wenn dort noch eine Session läuft). Der Server prüft die Auswahl selbst, ein Kind kann keine Übung starten, die nicht freigeschaltet oder vom Admin deaktiviert ist. Punkte und Level führt jede Übung eigenständig (siehe [Level und Abzeichen](#level-und-abzeichen)); das Tagesziel zählt über alle Übungen zusammen. Die Eltern-Statistik zeigt pro Übung eine eigene Heatmap.
 
 ## Übungseinstellungen
 
@@ -69,6 +73,9 @@ Punkte = (10 + Tempo-Bonus) × Serien-Multiplikator     (gerundet)
   | Einmaleins: 6er bis 9er | 4,5 s |
   | Plus: bis 10, mit der 10 | 2,0 s |
   | Plus: Zehnerübergang | 3,5 s |
+  | Minus: bis 10, mit der 10 | 2,0 s |
+  | Minus: Zehnerübergang | 3,5 s |
+  | Verdoppeln & Halbieren | 2,5 s |
 
   Die erste Sekunde ist immer geschenkt: Niemand braucht buchstäblich 0 Sekunden (Aufgabe lesen und tippen dauert immer etwas), darum zählt erst die Zeit nach dieser Sekunde für den Bonus. Innerhalb der ersten Sekunde beantwortet: +10. In der Zielzeit oder langsamer: +0. Dazwischen linear. Die Zeit misst der Server, von der Ausgabe der Frage bis zum Eingang der Antwort.
 - **Serien-Multiplikator:** Zählt die richtigen Antworten in Folge innerhalb der laufenden Session: ab der 5. gilt ×1,2, ab der 10. gilt ×1,5.
@@ -79,7 +86,7 @@ Ergebnis: 0 bis 30 Punkte pro Antwort. Beispiel für eine 3er-Aufgabe (Zielzeit 
 
 Bei einer **richtigen** Antwort bleibt es wie gewohnt: 1,4 Sekunden Feedback, dann automatisch weiter. Bei einer **falschen** Antwort springt die App nicht mehr automatisch weiter: Das Kind sieht die richtige Lösung und tippt sie selbst auf derselben Zifferntastatur ein, bevor es zur nächsten Aufgabe geht ([Cover-Copy-Compare](https://perrjournal.com/index.php/perrjournal/article/view/204), eine gut belegte Methode für Rechenfakten). Nach 2 falschen Nachtipp-Versuchen erscheint ein „Weiter"-Knopf, damit niemand hängen bleibt. Das Nachtippen wird nicht an den Server geschickt oder gespeichert — der Server hat die Lösung mit der ersten (falschen) Antwort schon geliefert. Der Session-Timer läuft während der Korrektur normal weiter.
 
-Zusätzlich kann bei einer falschen Antwort ein Rechentipp erscheinen, ein kurzer vorgerechneter Lösungsweg statt nur der Lösung ([Worked-Example-Effect](https://en.wikipedia.org/wiki/Worked-example_effect)). Jeder Übungstyp hat eigene Regeln (`ExerciseTypeContract::hint()`), für jede der 90 Einmaleins- und 100 Plus-Aufgaben einzeln geprüft, nicht nur stichprobenweise:
+Zusätzlich kann bei einer falschen Antwort ein Rechentipp erscheinen, ein kurzer vorgerechneter Lösungsweg statt nur der Lösung ([Worked-Example-Effect](https://en.wikipedia.org/wiki/Worked-example_effect)). Jeder Übungstyp hat eigene Regeln (`ExerciseTypeContract::hint()`), für jede einzelne Aufgabe rechnerisch geprüft (alle Einmaleins-, Plus-, Minus- und Verdoppeln/Halbieren-Aufgaben), nicht nur stichprobenweise:
 
 | Einmaleins | Strategie |
 | --- | --- |
@@ -99,6 +106,16 @@ Zusätzlich kann bei einer falschen Antwort ein Rechentipp erscheinen, ein kurze
 | Mit der 10 (z. B. 10 + 6) | die andere Zahl einfach dranhängen |
 | Zehnerübergang (z. B. 8 + 5) | zuerst zur 10 ergänzen, dann den Rest dazuzählen |
 | Plus bis 10, sonst (z. B. 3 + 4) | vom grösseren Summanden aus weiterzählen |
+
+| Minus bis 20 | Strategie |
+| --- | --- |
+| Zehnerübergang (z. B. 13 − 8) | erst auf die 10 hinunter (13 − 3 = 10), dann den Rest abziehen (10 − 5 = 5) |
+| sonst (z. B. 17 − 4) | direkt abziehen |
+
+| Verdoppeln & Halbieren | Strategie |
+| --- | --- |
+| Doppelte von n (z. B. 7) | als fortgesetzte Addition: 7 + 7 = 14 |
+| Hälfte von n (z. B. 16) | durch zwei teilen: 16 ÷ 2 = 8 |
 
 Die Rechenwege sind pädagogisch gängige Standardstrategien, aber nicht mit einem bestimmten Lehrmittel abgeglichen. Deshalb ist der Tipp pro Kind und Übung **standardmässig aus** (Eltern-Einstellung „Rechentipp bei falschen Antworten"), mit dem Hinweis, zu prüfen, ob er zum Rechenweg der Schule passt oder eher verwirrt.
 
@@ -121,7 +138,7 @@ Die Schwellen sind mit dem echten `PointsCalculator` simuliert (schnelles/typisc
 | 9 | 46000 | Mathe-Held 🦸 |
 | 10 | 60000 | Rechenfuchs-Meister 🦊 |
 
-**Abzeichen:** Nach jeder abgeschlossenen Session prüft `BadgeEvaluator` alle noch nicht verdienten Abzeichen. Ein Abzeichen wird nie doppelt vergeben. Es gibt 18 Abzeichen. Den festen Katalog legt `BadgeSeeder` an (mehrfach ausführbar, läuft bei jedem Deployment mit `db:seed`).
+**Abzeichen:** Nach jeder abgeschlossenen Session prüft `BadgeEvaluator` alle noch nicht verdienten Abzeichen. Ein Abzeichen wird nie doppelt vergeben. Es gibt 27 Abzeichen. Den festen Katalog legt `BadgeSeeder` an (mehrfach ausführbar, läuft bei jedem Deployment mit `db:seed`).
 
 | Abzeichen | Bedingung |
 | --- | --- |
@@ -134,7 +151,13 @@ Die Schwellen sind mit dem echten `PointsCalculator` simuliert (schnelles/typisc
 | **Meister von Plus mit der 10** 🥇 | «Plus mit der 10» zu mindestens 90 % richtig, mit mindestens 22 Versuchen über mindestens 14 der 19 Aufgaben |
 | **Meister des Zehnerübergangs** 🥇 | «Zehnerübergang» zu mindestens 90 % richtig, mit mindestens 40 Versuchen über mindestens 27 der 36 Aufgaben |
 | **Plus-Blitz** ⚡ | In einer Plus-Session mindestens 10 richtige Antworten, im Schnitt unter 1,5 Sekunden (nur bei aktivem Tempo-Bonus für Plus) |
-| **Allrounder** 🌟 | Am selben Tag beide Übungen mit je mindestens 5 beantworteten Aufgaben geübt |
+| **Minus-Starter** ➖ | Erste Minus-Session mit mindestens 5 beantworteten Aufgaben |
+| **Meister von Minus bis 10 / mit der 10 / des Zehnerübergangs** 🥇 | Die jeweilige Minus-Aufgabenart zu mindestens 90 % richtig, mit genug Versuchen über genug Aufgaben |
+| **Minus-Blitz** ⚡ | In einer Minus-Session mindestens 10 richtige Antworten, im Schnitt unter 1,5 Sekunden (nur bei aktivem Tempo-Bonus) |
+| **Verdoppeln-Starter** 🔁 | Erste Übung im Verdoppeln & Halbieren mit mindestens 5 beantworteten Aufgaben |
+| **Meister im Verdoppeln / Halbieren** 🥇 | Verdoppeln bzw. Halbieren (über beide Zahlenräume) zu mindestens 90 % richtig |
+| **Verdoppeln-Blitz** ⚡ | Im Verdoppeln & Halbieren mindestens 10 richtige Antworten, im Schnitt unter 1,5 Sekunden (nur bei aktivem Tempo-Bonus) |
+| **Allrounder** 🌟 | Am selben Tag mindestens zwei Übungen mit je mindestens 5 beantworteten Aufgaben geübt |
 
 Ein Abzeichen ist nur erreichbar (und wird dem Kind nur als Ziel gezeigt), wenn seine Übung für das Kind freigeschaltet ist. Der Allrounder braucht mindestens zwei aktive Übungen, ein Speed-Abzeichen zusätzlich den Tempo-Bonus der jeweiligen Übung. Schon verdiente Abzeichen bleiben immer sichtbar. Auf der Erfolgsseite und in der Eltern-Statistik sind die Abzeichen in «Allgemein» und einen Abschnitt je Übung gegliedert.
 
@@ -188,7 +211,7 @@ Die bisher verwendeten Aufrufe (Originale in `resources/mascot/originals/`):
 | `jongliert` | `--badge=allrounder --crop=0,40,1024,910 --fade=100` |
 | `winkt` | nur die Web-Fassung, kein Abzeichen |
 
-Damit haben alle 18 Abzeichen ein eigenes oder ein geteiltes Bild.
+Damit haben alle 27 Abzeichen ein eigenes oder ein geteiltes Bild.
 
 Die Tests arbeiten in einem eigenen, wieder gelöschten Ordner (`config/badges.php`) und rühren die echten Bilder nie an.
 
@@ -230,7 +253,7 @@ Bei jedem Push und jedem Pull Request gegen `main` läuft eine GitHub-Actions-Pi
 | Adresse | Inhalt |
 | --- | --- |
 | `/` | Startseite für Eltern: So funktioniert's, Funktionen, «Sicher für Kinder», FAQ, Weiter zu Registrierung und Anmeldung (angemeldete Eltern sehen «Zum Dashboard»). Responsiv von Handy bis Desktop. |
-| `/anleitung` | Erklärt Eltern in einfacher Sprache, wie Punkte, die zehn Level, die 18 Abzeichen und die Erinnerungen genau funktionieren — dieselben Mechanismen wie in den Abschnitten [Punkte](#punkte), [Level und Abzeichen](#level-und-abzeichen) weiter unten, nur ohne Entwickler-Jargon. Von der Startseite aus verlinkt (Navigation, Fusszeile, FAQ). |
+| `/anleitung` | Erklärt Eltern in einfacher Sprache, wie Punkte, die zehn Level, die 27 Abzeichen und die Erinnerungen genau funktionieren — dieselben Mechanismen wie in den Abschnitten [Punkte](#punkte), [Level und Abzeichen](#level-und-abzeichen) weiter unten, nur ohne Entwickler-Jargon. Von der Startseite aus verlinkt (Navigation, Fusszeile, FAQ). |
 | `/impressum`, `/datenschutz` | Impressum und Datenschutzerklärung. Die Angaben stehen **nicht im Code**, sondern in der `.env` (`LEGAL_*`, siehe [INSTALL.md](INSTALL.md#rechtliches-und-kontaktformular)). Fehlt ein Pflichtwert, steht auf der Seite sichtbar «[LEGAL_NAME fehlt in der .env]». Die E-Mail-Adresse steht nicht als ein Text im Quelltext (Schutz vor Adress-Sammlern). |
 | `/kontakt` | Kontaktformular für Fragen und Support. |
 

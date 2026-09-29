@@ -41,8 +41,8 @@ Dazu passend schon vorhanden: pro Übung freischaltbar, eigene Level/Punkte/Abze
 | Kompetenz Zyklus 1 | Status | Passt ins Zifferntastatur-Format? |
 | --- | --- | --- |
 | Einspluseins bis 20 (Addition) | ✅ vorhanden («Plus bis 20») | ja |
-| **Einsminuseins bis 20 (Subtraktion)** | ❌ **fehlt ganz** | ja, direkt parallel zu Plus |
-| **Verdoppeln / Halbieren** | ❌ fehlt | ja («Doppelte von 7?», «Hälfte von 16?») |
+| **Einsminuseins bis 20 (Subtraktion)** | ✅ umgesetzt («Minus bis 20», siehe [`plan-minus-verdoppeln-halbieren.md`](plan-minus-verdoppeln-halbieren.md)) | ja, direkt parallel zu Plus |
+| **Verdoppeln / Halbieren** | ✅ umgesetzt («Verdoppeln & Halbieren») | ja («Doppelte von 7?», «Hälfte von 16?») |
 | **Plus/Minus bis 100** (Zehner/Einer, mit/ohne Übergang) | ❌ fehlt | ja, als weitere Aufgabenarten |
 | **Ergänzen auf 10/20/100** («Was fehlt auf 20?») | ❌ fehlt | ja |
 | Multiplikation Kernaufgaben (1/2/5/10×) als Zyklus-1-Einstieg | teilweise (im vollen Einmaleins enthalten, aber nicht als eigener sanfter Einstieg) | ja |

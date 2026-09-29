@@ -304,7 +304,7 @@ class PlusBadgesTest extends TestCase
             ->assertSee('Meister des Zehnerübergangs')
             ->assertSee('Allrounder')
             ->assertSee('Löse den «Zehnerübergang» zu über 90 % richtig.')
-            ->assertSee('Übe am selben Tag mit beiden Übungen.')
+            ->assertSee('Übe am selben Tag mit mindestens zwei Übungen.')
             ->assertSee('Allgemein')
             ->assertSee('Einmaleins')
             ->assertSee('Plus bis 20');

@@ -1,6 +1,6 @@
 # Plan: Minus bis 20 und Verdoppeln & Halbieren
 
-**Stand:** 29. September 2026 · **Status:** Genehmigt, wird umgesetzt.
+**Stand:** 29. September 2026 · **Status:** umgesetzt (Schritte 1 bis 5).
 
 Setzt die beiden höchstpriorisierten Lücken aus [`docs/lehrplan21-abgleich.md`](lehrplan21-abgleich.md) um: **Subtraktion bis 20** (Einsminuseins, Kern-Grundanspruch Zyklus 1) und **Verdoppeln & Halbieren** (eigene Zyklus-1-Fertigkeit und Brücke zwischen Plus und Einmaleins).
 

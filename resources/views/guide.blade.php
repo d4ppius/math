@@ -8,8 +8,8 @@
         ['🎉', 'Meilensteine', 'Für die erste geschaffte Übung und eine 7-Tage-Serie.'],
         ['⚡', 'Blitz-Abzeichen', 'Für viele richtige Antworten in einer Session, im Schnitt schnell beantwortet. Wird nie vergeben, wenn der Tempo-Bonus ausgeschaltet ist.'],
         ['👑', 'Reihen-Meister', 'Ein eigenes Abzeichen für jede Einmaleins-Reihe (1er bis 9er), sobald sie sicher sitzt.'],
-        ['🥇', 'Plus-Meister', 'Eigene Meilensteine fürs Plusrechnen: Plus bis 10, mit der 10, und der Zehnerübergang.'],
-        ['🌟', 'Allrounder', 'Für Kinder, die am selben Tag beide Übungen üben.'],
+        ['🥇', 'Rechen-Meister', 'Eigene Meilensteine für die Aufgabenarten von Plus, Minus sowie fürs Verdoppeln und Halbieren.'],
+        ['🌟', 'Allrounder', 'Für Kinder, die am selben Tag mit mindestens zwei Übungen üben.'],
     ];
 
     $settings = [
@@ -91,7 +91,7 @@
     <section class="border-t border-gray-100 py-14 sm:py-16">
         <div class="mx-auto max-w-3xl px-4 sm:px-6">
             <h2 class="font-display text-2xl font-bold text-gray-900 sm:text-3xl">🎖️ Abzeichen</h2>
-            <p class="mt-3 leading-relaxed text-gray-600">Es gibt 18 Abzeichen zum Sammeln, in fünf Kategorien. Ein Abzeichen ist nur als Ziel sichtbar, wenn es für das Kind überhaupt erreichbar ist (z. B. kein Plus-Abzeichen, solange Plus nicht freigeschaltet ist), und geht nie wieder verloren.</p>
+            <p class="mt-3 leading-relaxed text-gray-600">Es gibt 27 Abzeichen zum Sammeln, in fünf Kategorien. Ein Abzeichen ist nur als Ziel sichtbar, wenn es für das Kind überhaupt erreichbar ist (z. B. kein Plus-Abzeichen, solange Plus nicht freigeschaltet ist), und geht nie wieder verloren.</p>
 
             <div class="mt-6 grid gap-4 sm:grid-cols-2">
                 @foreach ($badgeCategories as [$icon, $title, $text])

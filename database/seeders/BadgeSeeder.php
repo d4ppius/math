@@ -193,7 +193,7 @@ class BadgeSeeder extends Seeder
         $badges[] = [
             'key' => 'allrounder',
             'name' => 'Allrounder',
-            'description' => 'Übe am selben Tag mit beiden Übungen.',
+            'description' => 'Übe am selben Tag mit mindestens zwei Übungen.',
             'icon' => '🌟',
             'criteria' => ['type' => 'all_exercises_same_day', 'min_exercises' => 2, 'min_questions' => 5],
         ];
