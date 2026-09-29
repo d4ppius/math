@@ -31,17 +31,17 @@ Das Abzeichen-System trägt beide ohne Umbau: neue Einträge in `BadgeSeeder`, n
 - Schlüssel `weekday_1` … `weekday_7` (ISO: 1 = Montag … 7 = Sonntag). Jedes ein eigenes Tier, eigenes Bild (kein geteiltes Bild).
 - Neuer Regel-Typ `weekday` in `BadgeEvaluator`: erfüllt, wenn eine abgeschlossene Session an diesem Wochentag mindestens 5 Aufgaben hatte. Alle 7 = an jedem Wochentag einmal geübt.
 - Immer erreichbar (allgemein), unabhängig von Übung und Tempo-Bonus.
-- **Vorschlag Tier ↔ Wochentag** (alle «Waldfreunde» des Fuchses — bitte anpassen, damit deine Bilder dazu passen):
+- **Tier ↔ Wochentag** (mit Marius abgestimmt):
 
   | Tag | Abzeichen-Name | Emoji-Rückfall | Bilddatei |
   | --- | --- | --- | --- |
   | Montag | Igel | 🦔 | `public/images/badges/weekday_1.png` |
-  | Dienstag | Hase | 🐰 | `weekday_2.png` |
-  | Mittwoch | Eule | 🦉 | `weekday_3.png` |
-  | Donnerstag | Bär | 🐻 | `weekday_4.png` |
-  | Freitag | Eichhörnchen | 🐿️ | `weekday_5.png` |
-  | Samstag | Waschbär | 🦝 | `weekday_6.png` |
-  | Sonntag | Reh | 🦌 | `weekday_7.png` |
+  | Dienstag | Hund | 🐶 | `weekday_2.png` |
+  | Mittwoch | Pferd | 🐴 | `weekday_3.png` |
+  | Donnerstag | Katze | 🐱 | `weekday_4.png` |
+  | Freitag | Hase | 🐰 | `weekday_5.png` |
+  | Samstag | Elefant | 🐘 | `weekday_6.png` |
+  | Sonntag | Faultier | 🦥 | `weekday_7.png` |
 
 - **Bildvorgabe** (wie die bestehenden Abzeichen): PNG, 512 × 512 Pixel, transparenter Hintergrund, Tier von Kopf bis Oberkörper (damit es auch als kleine Medaille erkennbar ist). Die Datei genau nach obiger Spalte benennen und in `public/images/badges/` ablegen — dann erscheint sie ohne Code-Änderung.
 
@@ -87,5 +87,4 @@ Die Überschriften werden künftig gezeigt, sobald es mehr als einen Abschnitt g
 
 ## Offene Entscheidungen
 
-1. **Tier ↔ Wochentag und Namen** (Tabelle oben): passt die Zuordnung, oder möchtest du andere Tiere/Namen? Davon hängen deine Bilder und die Emoji-Rückfälle ab.
-2. **Reihenfolge der Umsetzung:** Soll ich die Level-Abzeichen (brauchen keine Bilder) schon jetzt bauen und die Wochentag-Freunde nachziehen, sobald deine 7 Bilder da sind — oder alles zusammen, wenn die Bilder vorliegen?
+1. **Reihenfolge der Umsetzung:** Soll ich die Level-Abzeichen (brauchen keine Bilder) schon jetzt bauen und die Wochentag-Freunde nachziehen, sobald deine 7 Bilder da sind — oder alles zusammen, wenn die Bilder vorliegen?
