@@ -138,7 +138,7 @@ Die Schwellen sind mit dem echten `PointsCalculator` simuliert (schnelles/typisc
 | 9 | 46000 | Mathe-Held 🦸 |
 | 10 | 60000 | Rechenfuchs-Meister 🦊 |
 
-**Abzeichen:** Nach jeder abgeschlossenen Session prüft `BadgeEvaluator` alle noch nicht verdienten Abzeichen. Ein Abzeichen wird nie doppelt vergeben. Es gibt 36 Abzeichen. Den festen Katalog legt `BadgeSeeder` an (mehrfach ausführbar, läuft bei jedem Deployment mit `db:seed`).
+**Abzeichen:** Nach jeder abgeschlossenen Session prüft `BadgeEvaluator` alle noch nicht verdienten Abzeichen. Ein Abzeichen wird nie doppelt vergeben. Es gibt 43 Abzeichen. Den festen Katalog legt `BadgeSeeder` an (mehrfach ausführbar, läuft bei jedem Deployment mit `db:seed`).
 
 | Abzeichen | Bedingung |
 | --- | --- |
@@ -158,9 +158,10 @@ Die Schwellen sind mit dem echten `PointsCalculator` simuliert (schnelles/typisc
 | **Meister im Verdoppeln / Halbieren** 🥇 | Verdoppeln bzw. Halbieren (über beide Zahlenräume) zu mindestens 90 % richtig |
 | **Verdoppeln-Blitz** ⚡ | Im Verdoppeln & Halbieren mindestens 10 richtige Antworten, im Schnitt unter 1,5 Sekunden (nur bei aktivem Tempo-Bonus) |
 | **Level 2 bis 10** 🔍…🦊 (9 Stück) | Das jeweilige Level in irgendeiner Übung erreicht. Trägt das Emoji des Levels. |
+| **Freunde vom Fuchs** 🦔🐶🐴🐱🐰🐘🦥 (7 Stück) | Ein Tier pro Wochentag (Montag Igel, Dienstag Hund, Mittwoch Pferd, Donnerstag Katze, Freitag Hase, Samstag Elefant, Sonntag Faultier): eine an diesem Wochentag abgeschlossene Session mit mindestens 5 beantworteten Aufgaben. Das Mathe-Zeichen im Bild jedes Tiers (−, ×, ÷, =, <, >, ?) ist reine Gestaltung, keine Spielregel. |
 | **Allrounder** 🌟 | Am selben Tag mindestens zwei Übungen mit je mindestens 5 beantworteten Aufgaben geübt |
 
-Ein Abzeichen ist nur erreichbar (und wird dem Kind nur als Ziel gezeigt), wenn seine Übung für das Kind freigeschaltet ist. Der Allrounder braucht mindestens zwei aktive Übungen, ein Speed-Abzeichen zusätzlich den Tempo-Bonus der jeweiligen Übung. Schon verdiente Abzeichen bleiben immer sichtbar. Auf der Erfolgsseite und in der Eltern-Statistik sind die Abzeichen in «Allgemein» und einen Abschnitt je Übung gegliedert.
+Ein Abzeichen ist nur erreichbar (und wird dem Kind nur als Ziel gezeigt), wenn seine Übung für das Kind freigeschaltet ist. Der Allrounder braucht mindestens zwei aktive Übungen, ein Speed-Abzeichen zusätzlich den Tempo-Bonus der jeweiligen Übung. Schon verdiente Abzeichen bleiben immer sichtbar. Auf der Erfolgsseite und in der Eltern-Statistik sind die Abzeichen in «Meilensteine», «Level», «Freunde vom Fuchs» und einen Abschnitt je Übung gegliedert.
 
 Neue Abzeichen erscheinen auf der Zusammenfassung nach der Übung. Damit die Startseite des Kindes schlank bleibt, zeigt sie nur eine kompakte Karte «Meine Abzeichen» (Anzahl und die drei neuesten). Ein Tipp darauf öffnet die Seite **Meine Erfolge** (`/kind/erfolge`), die Statistik-Seite des Kindes: Level mit Fortschritt, Punkte, die verdienten Abzeichen mit Datum und, falls die Eltern es erlauben, darunter «Das kannst du noch schaffen»: die noch offenen Abzeichen ausgegraut, mit einer kurzen Beschreibung, wie man sie bekommt. Die Eltern-Statistik zeigt den ganzen Katalog (nicht verdiente ausgegraut).
 
@@ -172,7 +173,7 @@ Eltern schalten das pro Kind ein und aus: Kind bearbeiten → **«Abzeichen zeig
 
 Solange für ein Abzeichen kein Bild vorhanden ist, zeigt es sein Emoji. Bilder legt man als PNG in `public/images/badges/` ab, ganz ohne Code-Änderung. Die Anzeige sucht in dieser Reihenfolge:
 
-1. `public/images/badges/{key}.png` für ein einzelnes Abzeichen: `first_session.png`, `streak_7.png`, `blitz.png`, `row_mastery_1.png` bis `row_mastery_9.png`, `addition_first_session.png`, `addition_mastery_1.png` bis `addition_mastery_3.png`, `addition_blitz.png`, `allrounder.png`
+1. `public/images/badges/{key}.png` für ein einzelnes Abzeichen: `first_session.png`, `streak_7.png`, `blitz.png`, `row_mastery_1.png` bis `row_mastery_9.png`, `addition_first_session.png`, `addition_mastery_1.png` bis `addition_mastery_3.png`, `addition_blitz.png`, `allrounder.png`, `weekday_1.png` (Montag) bis `weekday_7.png` (Sonntag)
 2. `public/images/badges/{typ}.png` als gemeinsames Bild einer ganzen Gruppe. Für die Reihen-Meister genügt **ein** Bild `row_mastery.png` (die Reihen-Nummer wird als kleines Schild darübergelegt), für die drei Plus-Meister **ein** Bild `group_mastery.png` (Schild mit der Marke der Gruppe: «10», «+10», «20»). Achtung: `addition_first_session` fällt ohne eigenes Bild auf `first_session.png` zurück, `addition_blitz` auf `blitz.png`.
 
 Nicht verdiente Abzeichen zeigt die Eltern-Statistik automatisch ausgegraut, es braucht dafür kein zweites Bild.
@@ -212,7 +213,7 @@ Die bisher verwendeten Aufrufe (Originale in `resources/mascot/originals/`):
 | `jongliert` | `--badge=allrounder --crop=0,40,1024,910 --fade=100` |
 | `winkt` | nur die Web-Fassung, kein Abzeichen |
 
-Damit haben alle 36 Abzeichen ein eigenes oder ein geteiltes Bild.
+Die sieben Wochentag-Tiere («Freunde vom Fuchs») haben je ein eigenes Bild `weekday_1.png` bis `weekday_7.png`; bis sie vorhanden sind, zeigt die Medaille das Tier-Emoji.
 
 Die Tests arbeiten in einem eigenen, wieder gelöschten Ordner (`config/badges.php`) und rühren die echten Bilder nie an.
 
@@ -254,7 +255,7 @@ Bei jedem Push und jedem Pull Request gegen `main` läuft eine GitHub-Actions-Pi
 | Adresse | Inhalt |
 | --- | --- |
 | `/` | Startseite für Eltern: So funktioniert's, Funktionen, «Sicher für Kinder», FAQ, Weiter zu Registrierung und Anmeldung (angemeldete Eltern sehen «Zum Dashboard»). Responsiv von Handy bis Desktop. |
-| `/anleitung` | Erklärt Eltern in einfacher Sprache, wie Punkte, die zehn Level, die 36 Abzeichen und die Erinnerungen genau funktionieren — dieselben Mechanismen wie in den Abschnitten [Punkte](#punkte), [Level und Abzeichen](#level-und-abzeichen) weiter unten, nur ohne Entwickler-Jargon. Von der Startseite aus verlinkt (Navigation, Fusszeile, FAQ). |
+| `/anleitung` | Erklärt Eltern in einfacher Sprache, wie Punkte, die zehn Level, die 43 Abzeichen und die Erinnerungen genau funktionieren — dieselben Mechanismen wie in den Abschnitten [Punkte](#punkte), [Level und Abzeichen](#level-und-abzeichen) weiter unten, nur ohne Entwickler-Jargon. Von der Startseite aus verlinkt (Navigation, Fusszeile, FAQ). |
 | `/impressum`, `/datenschutz` | Impressum und Datenschutzerklärung. Die Angaben stehen **nicht im Code**, sondern in der `.env` (`LEGAL_*`, siehe [INSTALL.md](INSTALL.md#rechtliches-und-kontaktformular)). Fehlt ein Pflichtwert, steht auf der Seite sichtbar «[LEGAL_NAME fehlt in der .env]». Die E-Mail-Adresse steht nicht als ein Text im Quelltext (Schutz vor Adress-Sammlern). |
 | `/kontakt` | Kontaktformular für Fragen und Support. |
 

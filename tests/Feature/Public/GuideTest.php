@@ -25,7 +25,7 @@ class GuideTest extends TestCase
             ->assertSee('Rechenfuchs-Meister')
             ->assertSee('etwa 10 Wochen')
             // Abzeichen
-            ->assertSee('36 Abzeichen')
+            ->assertSee('43 Abzeichen')
             ->assertSee('Reihen-Meister')
             // Erinnerungen
             ->assertSee('Zeit zum Üben')

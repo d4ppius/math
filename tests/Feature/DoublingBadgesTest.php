@@ -51,7 +51,7 @@ class DoublingBadgesTest extends TestCase
 
     private function evaluate(Child $child, PracticeSession $session): array
     {
-        return app(BadgeEvaluator::class)->evaluate($child, $session)->pluck('key')->all();
+        return array_values(array_filter(app(BadgeEvaluator::class)->evaluate($child, $session)->pluck('key')->all(), fn ($key) => ! str_starts_with($key, 'weekday_')));
     }
 
     /** Practise facts of the given difficulty groups, all fully correct. */

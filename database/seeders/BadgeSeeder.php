@@ -215,6 +215,30 @@ class BadgeSeeder extends Seeder
             'criteria' => ['type' => 'blitz', 'exercise_type' => 'doubling', 'min_correct_in_session' => 10, 'max_avg_response_ms' => 1500],
         ];
 
+        // Freunde vom Fuchs: one animal per weekday, earned by practising on
+        // that day. Each animal's image also carries a math sign (like the fox
+        // wears "+"), but that is only artwork — the rule is the weekday.
+        $weekdayFriends = [
+            1 => ['Igel', '🦔'],
+            2 => ['Hund', '🐶'],
+            3 => ['Pferd', '🐴'],
+            4 => ['Katze', '🐱'],
+            5 => ['Hase', '🐰'],
+            6 => ['Elefant', '🐘'],
+            7 => ['Faultier', '🦥'],
+        ];
+        $weekdayNames = [1 => 'Montag', 2 => 'Dienstag', 3 => 'Mittwoch', 4 => 'Donnerstag', 5 => 'Freitag', 6 => 'Samstag', 7 => 'Sonntag'];
+
+        foreach ($weekdayFriends as $day => [$animal, $emoji]) {
+            $badges[] = [
+                'key' => "weekday_{$day}",
+                'name' => $animal,
+                'description' => "Übe an einem {$weekdayNames[$day]} mindestens 5 Aufgaben.",
+                'icon' => $emoji,
+                'criteria' => ['type' => 'weekday', 'weekday' => $day, 'min_questions' => 5],
+            ];
+        }
+
         $badges[] = [
             'key' => 'allrounder',
             'name' => 'Allrounder',

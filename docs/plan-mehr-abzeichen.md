@@ -1,45 +1,62 @@
-# Plan: Mehr Abzeichen — Level und Tierfreunde für Mathe-Zeichen
+# Plan: Mehr Abzeichen — Level und Wochentag-Tierfreunde
 
-**Stand:** 30. September 2026 · **Status:** Level-Abzeichen umgesetzt. Tierfreunde: Konzept steht, das «Wie verdient man sie» ist noch offen (siehe unten).
+**Stand:** 30. September 2026 · **Status:** Level-Abzeichen und Wochentag-Tierfreunde umgesetzt (mit Emoji-Rückfall); offen: die 7 Tier-Bilder von Marius.
 
 ## Ausgangslage
 
 Ein Kind hat alle Abzeichen in kurzer Zeit gesammelt und möchte mehr sammeln. Zwei neue Abzeichen-Familien:
 
-1. **Level-Abzeichen** — ein Abzeichen pro Level. **✅ umgesetzt** (9 Stück, Level 2–10, verdient sobald das Kind das Level in irgendeiner Übung erreicht; trägt das Level-Emoji).
-2. **Tierfreunde für Mathe-Zeichen** — je ein Tier steht für ein mathematisches Zeichen. Marius liefert die Bilder und baut sie anschliessend ein.
+1. **Level-Abzeichen** — **✅ umgesetzt** (9 Stück, Level 2–10, verdient sobald das Kind das Level in irgendeiner Übung erreicht; trägt das Level-Emoji).
+2. **Wochentag-Tierfreunde** — «Freunde vom Fuchs», je ein Tier pro Wochentag. Belohnt nebenbei das über die Woche verteilte Üben (spaced practice, siehe [`lernkonzept-plan.md`](lernkonzept-plan.md)) — anders als die bestehende 7‑Tage‑Serie, die aufeinanderfolgende Tage verlangt.
 
-## Tierfreunde: das Konzept
+## Wochentag-Tierfreunde
 
-Jedes Tier ist der Charakter zu einem Mathe-Zeichen:
+- Verdient über den **Wochentag**: eine an diesem Wochentag abgeschlossene Session mit mindestens 5 Aufgaben schaltet den Freund dieses Tages frei. Alle 7 = an jedem Wochentag einmal geübt.
+- Jedes Tier trägt zusätzlich ein **Mathe-Zeichen als Bild-Detail** (so wie der Fuchs sein «+» am Halstuch trägt). Das ist reine Gestaltung der Bilder, keine Spiel-Regel — man muss nicht mit dem Zeichen rechnen. Der Fuchs (+) bleibt das App-Maskottchen und ist kein Wochentag-Abzeichen.
+- Schlüssel `weekday_1` … `weekday_7` (ISO: 1 = Montag … 7 = Sonntag), jedes ein eigenes Bild. Immer erreichbar (allgemein), unabhängig von Übung und Tempo-Bonus.
 
-| Tier | Zeichen | Bedeutung | Passende Übung heute? |
-| --- | --- | --- | --- |
-| 🦊 Fuchs | + | Addieren | ✅ «Plus bis 20» |
-| 🦔 Igel | − | Subtrahieren | ✅ «Minus bis 20» |
-| 🐶 Hund | × | Multiplizieren | ✅ «Einmaleins» |
-| 🐴 Pferd | ÷ | Dividieren | ❌ noch keine Übung |
-| 🐱 Katze | = | Gleichheit | ❌ noch keine Übung |
-| 🐰 Hase | < | Kleiner | ❌ noch keine Übung |
-| 🐘 Elefant | > | Grösser | ❌ noch keine Übung |
-| 🦥 Faultier | ? | Knobeln | ❌ noch keine Übung |
+| Tag | Tier | Zeichen im Bild | Emoji-Rückfall | Bilddatei |
+| --- | --- | --- | --- | --- |
+| Montag | Igel | − | 🦔 | `public/images/badges/weekday_1.png` |
+| Dienstag | Hund | × | 🐶 | `weekday_2.png` |
+| Mittwoch | Pferd | ÷ | 🐴 | `weekday_3.png` |
+| Donnerstag | Katze | = | 🐱 | `weekday_4.png` |
+| Freitag | Hase | < | 🐰 | `weekday_5.png` |
+| Samstag | Elefant | > | 🐘 | `weekday_6.png` |
+| Sonntag | Faultier | ? | 🦥 | `weekday_7.png` |
 
-Der Fuchs ist schon das App-Maskottchen; die anderen sieben sind «seine Freunde».
+- **Bildvorgabe** (wie die bestehenden Abzeichen): PNG, 512 × 512 Pixel, transparenter Hintergrund, Tier von Kopf bis Oberkörper. Genau nach obiger Spalte benennen und in `public/images/badges/` ablegen — dann erscheint das Bild ohne Code-Änderung. Marius liefert die Bilder; bis dahin zeigt jedes Abzeichen sein Tier-Emoji.
 
-## Der offene Punkt: Wie werden die Tierfreunde verdient?
+## Abzeichen-Seite übersichtlich halten
 
-Nur **drei** der acht Zeichen (+, −, ×) haben heute eine Übung. Die anderen fünf (÷, =, <, >, ?) gibt es in der App noch gar nicht. Damit lässt sich «verdiene das Tier, indem du mit diesem Zeichen rechnest» heute nur für drei Tiere umsetzen. Vor der Umsetzung ist zu klären, was gemeint ist — drei denkbare Wege:
+Der Sammel-Bereich «Allgemein» wächst (Meilensteine + 9 Level + 7 Tierfreunde). Er wird darum in Untergruppen geteilt (`BadgeSections`), Reihenfolge:
 
-- **A — Fahrplan für neue Übungen:** Die Tiere sind ein Ausblick. Wir bauen die fehlenden Übungen (Division; Vergleiche =, <, >; ein Knobel-Modus) über die Zeit, und jedes Tier kommt mit seiner Übung. Grösster Umfang, aber am stimmigsten zum Konzept «jedes Tier = ein Rechenbereich».
-- **B — Jetzt nur die drei vorhandenen:** Fuchs/Igel/Hund werden verdient, indem das Kind Plus/Minus/Einmaleins meistert (oder einfach übt). Die anderen fünf Tiere kommen später mit ihren Übungen. Kleiner Schritt jetzt, Rest wächst mit.
-- **C — Sammeln ohne eigene Übung:** Die Tiere sind reine Sammel-Charaktere mit einer einfachen Regel (z. B. eines pro erreichtem Meilenstein/Anzahl Sessions), das Zeichen ist nur ihre Identität. Alle acht sofort sammelbar, aber der Bezug «Tier ↔ echtes Rechnen mit dem Zeichen» geht verloren.
+1. **Meilensteine** (Erste Übung, 7‑Tage‑Serie, Allrounder)
+2. **Level** (die 9 Level-Abzeichen)
+3. **Freunde vom Fuchs** (die 7 Wochentage)
+4. … danach wie bisher ein Abschnitt je Übung (Einmaleins, Plus, Minus, Verdoppeln & Halbieren)
 
-**Bildvorgabe** (unabhängig vom gewählten Weg, wie die bestehenden Abzeichen): PNG, 512 × 512 Pixel, transparenter Hintergrund, Tier von Kopf bis Oberkörper. Die genauen Dateinamen lege ich fest, sobald der Weg klar ist.
+Überschriften erscheinen künftig, sobald es mehr als einen Abschnitt gibt (heute nur, wenn mehrere Übungen Abzeichen haben) — nötig, damit die neuen Untergruppen benannt sind.
 
-## Abzeichen-Seite übersichtlich halten (kommt mit den Tierfreunden)
+## Schritte
 
-Der Sammel-Bereich «Allgemein» wächst (aktuell schon: Meilensteine + 9 Level). Mit den Tierfreunden wird er in Untergruppen geteilt (`BadgeSections`): **Meilensteine**, **Level**, **Freunde vom Fuchs**, danach wie bisher ein Abschnitt je Übung. Überschriften erscheinen dann, sobald es mehr als einen Abschnitt gibt.
+### 1. Level-Abzeichen — ✅ umgesetzt
 
-## Offene Entscheidung
+### 2. Wochentag-Tierfreunde (S–M) — ✅ umgesetzt
+- `weekday` in `BadgeEvaluator`, 7 Einträge in `BadgeSeeder` (Namen/Emojis laut Tabelle).
+- **Tests:** an einem Montag abgeschlossene Session (≥ 5 Aufgaben) vergibt nur den Montags-Freund; zu kurze Session vergibt nichts; für jedes Kind erreichbar; Vorschau-Sessions lösen nichts aus (laufen ohne das Session-Ende-Event, schon abgedeckt).
 
-**Welcher Weg (A / B / C) für die Tierfreunde?** Davon hängen Umfang, Regeln und Dateinamen ab. Sobald das klar ist, schreibe ich den konkreten Umsetzungsteil und du lieferst die Bilder.
+### 3. Abzeichen-Seite gruppieren (M) — ✅ umgesetzt
+- `BadgeSections` teilt den allgemeinen Bereich in Meilensteine / Level / Freunde vom Fuchs; Überschriften-Logik in `badge-sections.blade.php` anpassen.
+- **Tests:** die Untergruppen erscheinen mit Überschrift; bestehende Übungs-Abschnitte unverändert.
+
+### 4. Bilder einbauen (S) — ⏳ wartet auf die Bilder
+- Die von Marius gelieferten 7 Bilder nach `public/images/badges/weekday_1..7.png` legen (kein Code).
+
+### 5. Dokumentation (S) — ✅ umgesetzt
+- README und Anleitungsseite ergänzen (neue Abzeichen-Familie, Katalog-Zahl, Bildnamen); hartkodierte Abzeichen-Zahlen in den Tests aktualisieren.
+
+## Risiken
+
+- **Abzeichen-Zähler in Tests**: Wochentag-Abzeichen sind allgemein und für jedes Kind erreichbar, die «X von Y»-Zähler steigen also (wie schon bei den Level-Abzeichen). Betroffene Tests werden angepasst — Routinearbeit.
+- Keine Migration, nur Seed-Daten; kein Datenrisiko für bestehende Kinder.

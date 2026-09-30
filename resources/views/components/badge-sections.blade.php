@@ -1,13 +1,14 @@
 {{--
-    Badges as medal grids, split into sections per exercise (headings only appear
-    when more than one exercise has badges in the list). $earned maps badge id =>
-    the earned badge with its pivot; a badge not in it is shown locked.
+    Badges as medal grids, split into sections (Meilensteine, Level, Freunde vom
+    Fuchs, then one per exercise). Headings appear as soon as there is more than
+    one section. $earned maps badge id => the earned badge with its pivot; a badge
+    not in it is shown locked.
 --}}
 @props(['badges', 'earned', 'size' => 64, 'gridClass' => 'grid-cols-3'])
 
 @php
     $sections = app(\App\Services\Gamification\BadgeSections::class)->group($badges);
-    $headings = collect($sections)->where('exercise', true)->count() > 1;
+    $headings = count($sections) > 1;
 @endphp
 
 <div class="space-y-6">

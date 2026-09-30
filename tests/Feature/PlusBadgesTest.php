@@ -63,12 +63,12 @@ class PlusBadgesTest extends TestCase
 
     private function earned(Child $child): array
     {
-        return $child->badges()->pluck('key')->sort()->values()->all();
+        return array_values(array_filter($child->badges()->pluck('key')->sort()->values()->all(), fn ($key) => ! str_starts_with($key, 'weekday_')));
     }
 
     private function evaluate(Child $child, PracticeSession $session): array
     {
-        return app(BadgeEvaluator::class)->evaluate($child, $session)->pluck('key')->all();
+        return array_values(array_filter(app(BadgeEvaluator::class)->evaluate($child, $session)->pluck('key')->all(), fn ($key) => ! str_starts_with($key, 'weekday_')));
     }
 
     private function fastAttempts(PracticeSession $session, string $key, int $count, int $ms): void
@@ -226,12 +226,12 @@ class PlusBadgesTest extends TestCase
         $einmaleinsOnly = $this->childWith(plus: false);
         $keys = $einmaleinsOnly->attainableBadges()->pluck('key')->all();
 
-        $this->assertCount(21, $keys); // 2 general + 9 level + 10 Einmaleins
+        $this->assertCount(28, $keys); // 2 general + 9 level + 7 weekday + 10 Einmaleins
         $this->assertNotContains('addition_mastery_1', $keys);
         $this->assertNotContains('allrounder', $keys);
 
         $both = $this->childWith(plus: true);
-        $this->assertCount(27, $both->attainableBadges());
+        $this->assertCount(34, $both->attainableBadges());
     }
 
     public function test_the_plus_speed_badge_disappears_when_plus_has_no_speed_bonus_but_the_einmaleins_one_stays(): void
@@ -240,7 +240,7 @@ class PlusBadgesTest extends TestCase
 
         $this->assertNotContains('addition_blitz', $keys);
         $this->assertContains('blitz', $keys);
-        $this->assertCount(26, $keys);
+        $this->assertCount(33, $keys);
     }
 
     public function test_an_earned_plus_badge_stays_visible_after_plus_is_switched_off(): void
@@ -267,24 +267,32 @@ class PlusBadgesTest extends TestCase
     {
         $keys = Child::factory()->create()->attainableBadges()->pluck('key')->all();
 
-        $this->assertCount(21, $keys);
+        $this->assertCount(28, $keys);
         $this->assertContains('row_mastery_3', $keys);
         $this->assertContains('level_5', $keys);
         $this->assertNotContains('addition_mastery_1', $keys);
     }
 
-    public function test_the_badges_are_grouped_into_general_and_one_section_per_exercise(): void
+    public function test_the_badges_are_grouped_into_general_kinds_and_one_section_per_exercise(): void
     {
         $sections = app(BadgeSections::class)->group($this->childWith(plus: true)->attainableBadges());
 
-        $this->assertSame(['Allgemein', 'Einmaleins', 'Plus bis 20'], array_column($sections, 'label'));
-        $this->assertSame([false, true, true], array_column($sections, 'exercise'));
         $this->assertSame(
-            ['first_session', 'streak_7', 'level_2', 'level_3', 'level_4', 'level_5', 'level_6', 'level_7', 'level_8', 'level_9', 'level_10', 'allrounder'],
-            $sections[0]['badges']->pluck('key')->all(),
+            ['Meilensteine', 'Level', 'Freunde vom Fuchs', 'Einmaleins', 'Plus bis 20'],
+            array_column($sections, 'label'),
         );
-        $this->assertCount(10, $sections[1]['badges']); // blitz + 9 rows
-        $this->assertCount(5, $sections[2]['badges']);  // starter + 3 masters + blitz
+        $this->assertSame([false, false, false, true, true], array_column($sections, 'exercise'));
+        $this->assertSame(['first_session', 'streak_7', 'allrounder'], $sections[0]['badges']->pluck('key')->all());
+        $this->assertSame(
+            ['level_2', 'level_3', 'level_4', 'level_5', 'level_6', 'level_7', 'level_8', 'level_9', 'level_10'],
+            $sections[1]['badges']->pluck('key')->all(),
+        );
+        $this->assertSame(
+            ['weekday_1', 'weekday_2', 'weekday_3', 'weekday_4', 'weekday_5', 'weekday_6', 'weekday_7'],
+            $sections[2]['badges']->pluck('key')->all(),
+        );
+        $this->assertCount(10, $sections[3]['badges']); // blitz + 9 rows
+        $this->assertCount(5, $sections[4]['badges']);  // starter + 3 masters + blitz
     }
 
     public function test_the_medal_marks_plus_groups_with_their_own_short_mark(): void
@@ -295,21 +303,22 @@ class PlusBadgesTest extends TestCase
         $this->assertNull(Badge::where('key', 'blitz')->first()->overlay());
     }
 
-    public function test_the_childs_badge_page_shows_headings_only_with_several_exercises(): void
+    public function test_the_childs_badge_page_shows_the_plus_badges_and_the_section_headings(): void
     {
         $einmaleinsOnly = $this->childWith(plus: false);
         $this->actingAs($einmaleinsOnly, 'child')->get(route('child.achievements'))->assertOk()
-            ->assertSee('(0 von 21)')->assertDontSee('Plus-Starter')->assertDontSee('Plus bis 20');
+            ->assertSee('(0 von 28)')->assertDontSee('Plus-Starter')->assertDontSee('Plus bis 20');
 
         $both = $this->childWith(plus: true);
         $this->actingAs($both, 'child')->get(route('child.achievements'))->assertOk()
-            ->assertSee('(0 von 27)')
+            ->assertSee('(0 von 34)')
             ->assertSee('Plus-Starter')
             ->assertSee('Meister des Zehnerübergangs')
             ->assertSee('Allrounder')
             ->assertSee('Löse den «Zehnerübergang» zu über 90 % richtig.')
             ->assertSee('Übe am selben Tag mit mindestens zwei Übungen.')
-            ->assertSee('Allgemein')
+            ->assertSee('Meilensteine')
+            ->assertSee('Freunde vom Fuchs')
             ->assertSee('Einmaleins')
             ->assertSee('Plus bis 20');
     }
@@ -324,7 +333,7 @@ class PlusBadgesTest extends TestCase
         $child->badges()->attach(Badge::where('key', 'addition_first_session')->first()->id, ['earned_at' => '2026-09-05 10:00:00']);
 
         $this->actingAs($user)->get(route('parent.children.statistics', $child))->assertOk()
-            ->assertSee('1 von 27 verdient')
+            ->assertSee('1 von 34 verdient')
             ->assertSee('Plus-Starter')
             ->assertSee('05.09.2026')
             ->assertSee('Meister von Plus mit der 10');

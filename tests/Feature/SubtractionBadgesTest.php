@@ -51,7 +51,7 @@ class SubtractionBadgesTest extends TestCase
 
     private function evaluate(Child $child, PracticeSession $session): array
     {
-        return app(BadgeEvaluator::class)->evaluate($child, $session)->pluck('key')->all();
+        return array_values(array_filter(app(BadgeEvaluator::class)->evaluate($child, $session)->pluck('key')->all(), fn ($key) => ! str_starts_with($key, 'weekday_')));
     }
 
     private function practiceGroup(Child $child, int $group, int $factsSeen, int $attemptsEach, int $correctEach): void

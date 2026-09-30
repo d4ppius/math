@@ -46,6 +46,8 @@ class BadgeEvaluator
             'row_mastery', 'group_mastery' => $this->masteredRow($child, $criteria),
             'all_exercises_same_day' => $this->practisedAllExercisesToday($child, $session, $criteria),
             'level_reached' => $this->reachedLevel($child, $criteria['level']),
+            'weekday' => (int) $session->started_at->isoWeekday() === $criteria['weekday']
+                && $session->questions_answered >= ($criteria['min_questions'] ?? 1),
             default => false,
         };
     }
