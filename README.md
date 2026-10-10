@@ -184,7 +184,7 @@ Nicht verdiente Abzeichen zeigt die Eltern-Statistik automatisch ausgegraut, es 
 
 | Ordner | Inhalt |
 | --- | --- |
-| `resources/mascot/originals/` | Die **unbearbeiteten Originale** der Fuchs-Posen (transparente PNGs, rund 1,9 MB): `winkt` (der stehende, winkende Fuchs), `jubelt`, `flamme`, `blitz`, `krone`, `plus`, `medaille`, `sprung`, `jongliert`. Sie werden nicht ausgeliefert und dienen als Quelle für alles Weitere. |
+| `resources/mascot/originals/` | Die **unbearbeiteten Originale** der Fuchs-Posen (transparente PNGs, rund 1,9 MB): `winkt` (der stehende, winkende Fuchs), `jubelt`, `flamme`, `blitz`, `krone`, `plus`, `medaille`, `sprung`, `jongliert`, dazu die Wochentag-Tiere (bisher `faultier`). Sie werden nicht ausgeliefert und dienen als Quelle für alles Weitere. |
 | `public/images/mascot/` | Web-taugliche Fassungen der ganzen Pose (lange Seite 720 px), bereit, um den Fuchs an weiteren Stellen zu zeigen. |
 | `public/images/badges/` | Die Abzeichen-Bilder: 512 × 512 Pixel, ein Ausschnitt bis zum Oberkörper, damit der Fuchs auch in der kleinen Medaille erkennbar ist. |
 | `public/images/mascot.png` | Der stehende, winkende Fuchs auf den Kinder-Seiten und der Startseite (400 px breit, aus `winkt` abgeleitet). |
@@ -212,8 +212,9 @@ Die bisher verwendeten Aufrufe (Originale in `resources/mascot/originals/`):
 | `sprung` | `--badge=addition_blitz --crop=40,10,1470,970 --minarea=8000` |
 | `jongliert` | `--badge=allrounder --crop=0,40,1024,910 --fade=100` |
 | `winkt` | nur die Web-Fassung, kein Abzeichen |
+| `faultier` | `--badge=weekday_7 --crop=0,0,1136,1060 --fade=120` (Sonntag) |
 
-Die sieben Wochentag-Tiere («Freunde vom Fuchs») haben je ein eigenes Bild `weekday_1.png` bis `weekday_7.png`; bis sie vorhanden sind, zeigt die Medaille das Tier-Emoji.
+Die sieben Wochentag-Tiere («Freunde vom Fuchs») haben je ein eigenes Bild `weekday_1.png` bis `weekday_7.png`; vorhanden ist bisher das Faultier (`weekday_7`), die übrigen zeigen bis zur Lieferung ihr Tier-Emoji.
 
 Die Tests arbeiten in einem eigenen, wieder gelöschten Ordner (`config/badges.php`) und rühren die echten Bilder nie an.
 
