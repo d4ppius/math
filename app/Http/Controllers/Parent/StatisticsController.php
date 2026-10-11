@@ -8,6 +8,7 @@ use App\Models\ExerciseType;
 use App\Models\Fact;
 use App\Services\ExerciseTypes\ExerciseTypeRegistry;
 use App\Services\Gamification\LevelCalculator;
+use App\Services\Statistics\SessionTrends;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -15,11 +16,12 @@ use Illuminate\View\View;
 
 class StatisticsController extends Controller
 {
-    public function show(Request $request, Child $child, ExerciseTypeRegistry $registry, LevelCalculator $levelCalculator): View
+    public function show(Request $request, Child $child, ExerciseTypeRegistry $registry, LevelCalculator $levelCalculator, SessionTrends $sessionTrends): View
     {
         $this->authorize('view', $child);
 
         $heatmaps = $this->heatmaps($child, $registry, $levelCalculator);
+        $trendExercises = $heatmaps->pluck('label', 'key')->all();
 
         $weeklyPoints = $this->weeklyPoints($child);
         $goalStreak = $this->goalStreak($child);
@@ -27,6 +29,8 @@ class StatisticsController extends Controller
         return view('parent.children.statistics', [
             'child' => $child,
             'heatmaps' => $heatmaps,
+            'trendExercises' => $trendExercises,
+            'trends' => $sessionTrends->build($child, $trendExercises),
             'weeklyPoints' => $weeklyPoints,
             'goalStreak' => $goalStreak,
             'badges' => $child->attainableBadges(),

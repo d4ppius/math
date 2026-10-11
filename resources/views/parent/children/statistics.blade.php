@@ -52,6 +52,11 @@
                 </div>
             </div>
 
+            {{-- Right and wrong tasks, pace and latest rounds --}}
+            @if ($heatmaps->isNotEmpty())
+                <x-session-trends :trends="$trends" :exercises="$trendExercises" />
+            @endif
+
             {{-- Goal streak --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">{{ __('Tagesziel erreicht') }}</h3>
