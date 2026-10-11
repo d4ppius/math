@@ -5,8 +5,10 @@ namespace Tests\Feature;
 use App\Models\Child;
 use App\Models\ChildExerciseSetting;
 use App\Models\ExerciseType;
+use App\Models\Fact;
 use App\Models\Family;
 use App\Models\PracticeSession;
+use App\Models\SessionAttempt;
 use App\Models\User;
 use Database\Seeders\ExerciseTypeSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -47,6 +49,23 @@ class StatisticsTrendsPageTest extends TestCase
             'child_id' => $this->child->id, 'exercise_type_id' => ExerciseType::where('key', $key)->value('id'),
             'started_at' => now()->subDays($daysAgo)->setTime(12, 0), 'planned_duration_seconds' => 600,
             'status' => 'completed', 'questions_answered' => $answered, 'questions_correct' => $correct,
+        ]);
+    }
+
+    /** A round whose last answer came $minutes minutes after its start, so it has a measurable pace. */
+    private function timedRound(string $key, int $answered, int $correct, float $minutes, int $daysAgo = 0): void
+    {
+        $this->round($key, $answered, $correct, $daysAgo);
+        $session = PracticeSession::latest('id')->first();
+        $typeId = ExerciseType::where('key', $key)->value('id');
+        $fact = Fact::firstOrCreate(
+            ['exercise_type_id' => $typeId, 'operand_a' => 2, 'operand_b' => 3],
+            ['correct_answer' => 6, 'difficulty_group' => 2],
+        );
+        $at = $session->started_at->copy()->addSeconds((int) round($minutes * 60));
+        SessionAttempt::create([
+            'practice_session_id' => $session->id, 'fact_id' => $fact->id, 'given_answer' => 6, 'is_correct' => true,
+            'response_time_ms' => 1500, 'question_issued_at' => $at->copy()->subSecond(), 'answered_at' => $at,
         ]);
     }
 
@@ -92,5 +111,49 @@ class StatisticsTrendsPageTest extends TestCase
     public function test_the_card_is_not_shown_when_there_is_no_exercise_data_at_all(): void
     {
         $this->page()->assertDontSee('Aufgaben im Verlauf');
+    }
+
+    public function test_the_pace_card_shows_the_average_and_the_change_against_the_previous_week(): void
+    {
+        $this->enable('multiplication');
+        $this->timedRound('multiplication', 20, 20, 4);            // 5,0 per minute today
+        $this->timedRound('multiplication', 10, 10, 2, daysAgo: 1); // 5,0 yesterday, so there is a line to draw
+        $this->timedRound('multiplication', 10, 10, 5, daysAgo: 8); // 2,0 per minute last week
+
+        $html = $this->page()->assertSee('Tempo: richtige Aufgaben pro Minute')->getContent();
+
+        $this->assertStringContainsString('data-chart="tempo-multiplication-week"', $html);
+        $this->assertStringContainsString('Ø 5,0 richtige pro Minute', $html);
+        $this->assertStringContainsString('(+3,0 gegenüber der Vorwoche)', $html);
+        $this->assertStringContainsString('<polyline', $html);
+    }
+
+    public function test_a_slower_week_is_shown_with_a_minus_and_without_a_previous_period_no_comparison(): void
+    {
+        $this->enable('multiplication');
+        $this->timedRound('multiplication', 10, 10, 5);             // 2,0 per minute today
+        $this->timedRound('multiplication', 20, 20, 4, daysAgo: 8); // 5,0 per minute last week
+
+        $this->page()->assertSee('(−3,0 gegenüber der Vorwoche)', false);
+    }
+
+    public function test_the_pace_is_not_mixed_across_exercises_but_asks_to_pick_one(): void
+    {
+        $this->enable('multiplication', 'addition');
+        $this->timedRound('multiplication', 20, 20, 4);
+
+        $html = $this->page()->getContent();
+
+        $this->assertStringContainsString('Wähle eine Übung, um das Tempo zu sehen.', $html);
+        $this->assertStringContainsString('data-chart="tempo-all-week"', $html);
+        $this->assertStringContainsString('data-chart="tempo-multiplication-week"', $html);
+    }
+
+    public function test_short_rounds_give_no_pace_and_explain_why(): void
+    {
+        $this->enable('multiplication');
+        $this->timedRound('multiplication', 4, 4, 1);
+
+        $this->page()->assertSee('Eine Runde braucht dafür mindestens 5 Aufgaben.');
     }
 }
