@@ -128,6 +128,19 @@
         </div>
     </section>
 
+    {{-- Statistik --}}
+    <section class="border-t border-gray-100 py-14 sm:py-16">
+        <div class="mx-auto max-w-3xl px-4 sm:px-6">
+            <h2 class="font-display text-2xl font-bold text-gray-900 sm:text-3xl">📈 Statistik für Eltern</h2>
+            <p class="mt-3 leading-relaxed text-gray-600">Punkte allein verraten wenig, denn Tempo-Bonus und Serien verzerren sie. Darum zeigt die Statistik jedes Kindes zusätzlich:</p>
+            <ul class="mt-4 space-y-3 text-gray-600">
+                <li><strong>Richtig und falsch pro Tag</strong> als Wochen- oder Monatsgrafik, für alle Übungen zusammen oder für eine einzelne.</li>
+                <li><strong>Tempo</strong> heisst: richtige Aufgaben pro Minute, gemessen vom Start der Runde bis zur letzten Antwort. Die Grafik zeigt, ob das Kind in der gleichen Zeit mehr schafft, und vergleicht die letzte Woche bzw. den letzten Monat mit der Zeit davor. Das Tempo gilt immer pro Übung, und Runden unter 5 Aufgaben zählen nicht mit. Schaltest du schwierigere Aufgaben frei, kann es vorübergehend sinken, obwohl das Kind besser wird.</li>
+                <li><strong>Letzte Runden</strong> mit richtigen und falschen Aufgaben, Trefferquote und Tempo.</li>
+            </ul>
+        </div>
+    </section>
+
     {{-- Weitere Einstellungen --}}
     <section class="border-t border-gray-100 py-14 sm:py-16">
         <div class="mx-auto max-w-3xl px-4 sm:px-6">

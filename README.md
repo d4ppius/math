@@ -33,7 +33,7 @@ Rechenfuchs hat vier Übungen. Weitere Aufgabentypen lassen sich nach demselben 
 
 Einmaleins deckt Zyklus 2 ab, die anderen drei den Zyklus 1 des Schweizer Lehrplans 21 (siehe [`docs/lehrplan21-abgleich.md`](docs/lehrplan21-abgleich.md)).
 
-Eltern schalten pro Kind frei, welche Übungen es gibt. Einmaleins ist von Anfang an aktiv, **Plus, Minus und Verdoppeln & Halbieren sind aus**, bis die Eltern sie in den Übungseinstellungen freischalten. Bei «Verdoppeln & Halbieren» wählen die Eltern über die Aufgabenarten zugleich den Zahlenraum (Standard nur «Verdoppeln bis 10»). Ist genau eine Übung aktiv, sieht das Kind wie bisher einen grossen Knopf. Sind mehrere aktiv, wählt es auf der Startseite (eine Karte pro Übung, «Weiter üben», wenn dort noch eine Session läuft). Der Server prüft die Auswahl selbst, ein Kind kann keine Übung starten, die nicht freigeschaltet oder vom Admin deaktiviert ist. Punkte und Level führt jede Übung eigenständig (siehe [Level und Abzeichen](#level-und-abzeichen)); das Tagesziel zählt über alle Übungen zusammen. Die Eltern-Statistik zeigt pro Übung eine eigene Heatmap.
+Eltern schalten pro Kind frei, welche Übungen es gibt. Einmaleins ist von Anfang an aktiv, **Plus, Minus und Verdoppeln & Halbieren sind aus**, bis die Eltern sie in den Übungseinstellungen freischalten. Bei «Verdoppeln & Halbieren» wählen die Eltern über die Aufgabenarten zugleich den Zahlenraum (Standard nur «Verdoppeln bis 10»). Ist genau eine Übung aktiv, sieht das Kind wie bisher einen grossen Knopf. Sind mehrere aktiv, wählt es auf der Startseite (eine Karte pro Übung, «Weiter üben», wenn dort noch eine Session läuft). Der Server prüft die Auswahl selbst, ein Kind kann keine Übung starten, die nicht freigeschaltet oder vom Admin deaktiviert ist. Punkte und Level führt jede Übung eigenständig (siehe [Level und Abzeichen](#level-und-abzeichen)); das Tagesziel zählt über alle Übungen zusammen. Die Eltern-Statistik zeigt pro Übung eine eigene Heatmap. Darüber stehen die Verlaufskarten (siehe [Statistik pro Runde](#statistik-pro-runde)).
 
 ## Übungseinstellungen
 
@@ -218,6 +218,16 @@ Die bisher verwendeten Aufrufe (Originale in `resources/mascot/originals/`):
 Die sieben Wochentag-Tiere («Freunde vom Fuchs») haben je ein eigenes Bild `weekday_1.png` bis `weekday_7.png`; vorhanden sind bisher der Igel (`weekday_1`) und das Faultier (`weekday_7`), die übrigen zeigen bis zur Lieferung ihr Tier-Emoji.
 
 Die Tests arbeiten in einem eigenen, wieder gelöschten Ordner (`config/badges.php`) und rühren die echten Bilder nie an.
+
+## Statistik pro Runde
+
+Nur für Eltern (Kinder-Sicht und «Meine Erfolge» bleiben unverändert). Die Karte «Aufgaben im Verlauf» auf der Statistik-Seite eines Kindes (Komponente `resources/views/components/session-trends.blade.php`, Berechnung in `app/Services/Statistics/SessionTrends.php`, keine eigene Tabelle) zeigt, ob ein Kind besser wird:
+
+- **Richtig und falsch pro Tag:** gestapelte Balken, Woche (7 Tage) oder Monat (30 Tage), für alle Übungen zusammen oder eine einzelne. Falsch = `questions_answered − questions_correct`.
+- **Tempo:** richtige Aufgaben pro Minute als Liniendiagramm, plus Trend-Satz gegenüber der Vorwoche bzw. dem Vormonat. Gemessen wird vom `started_at` der Runde bis zur letzten Antwort (`MAX(answered_at)`), **nicht** bis `ended_at`: Bei Runden, die `sessions:close-expired` schliesst, ist das der Zeitpunkt des Cron-Laufs. Runden mit weniger als 5 Aufgaben zählen nicht ins Tempo (wohl aber in richtig/falsch). Mehrere Runden eines Tages werden nach Zeit gewichtet. Das Tempo wird nie über Übungen hinweg gemischt, bei «Alle» erscheint der Hinweis, eine Übung zu wählen.
+- **Letzte Runden:** die letzten 10 Runden mit Datum, Übung, richtig, falsch, Trefferquote und Tempo; auf dem Handy als gestapelte Zeilen.
+
+Berücksichtigt werden nur abgeschlossene Runden ohne Vorschau (`is_preview`) und mit mindestens einer Antwort, höchstens 60 Tage zurück. Alle Kombinationen aus Zeitraum und Übung werden serverseitig gerendert, Alpine blendet nur um. Tests: `SessionTrendsTest`, `StatisticsTrendsPageTest`. Hintergrund und Entscheidungen: [docs/plan-statistik-runden.md](docs/plan-statistik-runden.md).
 
 ## Tech-Stack
 

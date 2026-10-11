@@ -1,6 +1,6 @@
 # Plan: Statistik pro Runde und Verlauf (Eltern)
 
-**Stand:** 12. Oktober 2026 · **Status:** Entwurf, wartet auf Freigabe.
+**Stand:** 12. Oktober 2026 · **Status:** umgesetzt (Schritte 1 bis 5).
 
 ## Ausgangslage und Ziel
 

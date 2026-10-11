@@ -30,6 +30,9 @@ class GuideTest extends TestCase
             // Erinnerungen
             ->assertSee('Zeit zum Üben')
             ->assertSee('Tagesziel erreicht')
+            // Statistik
+            ->assertSee('Statistik für Eltern')
+            ->assertSee('richtige Aufgaben pro Minute')
             // Weitere Einstellungen
             ->assertSee('Rechentipp bei falschen Antworten');
     }
