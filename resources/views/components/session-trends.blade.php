@@ -189,4 +189,48 @@
             </div>
         @endforeach
     @endforeach
+
+    {{-- Latest rounds --}}
+    <h4 class="text-sm font-semibold text-gray-700 mb-2">{{ __('Letzte Runden') }}</h4>
+    @foreach ($trends['scopes'] as $scopeKey => $scope)
+        <div x-show="scope === '{{ $scopeKey }}'" @unless ($scopeKey === $startScope) x-cloak @endunless data-chart="rounds-{{ $scopeKey }}">
+            @if ($scope['rounds'] === [])
+                <p class="text-sm text-gray-500">{{ __('Noch keine Runden.') }}</p>
+            @else
+                {{-- Stacked on phones, one aligned row per round from sm up. --}}
+                <div class="hidden sm:grid grid-cols-[7rem_1fr_4rem_4rem_4rem_4.5rem_5rem] gap-x-3 px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                    <span>{{ __('Wann') }}</span>
+                    <span>{{ __('Übung') }}</span>
+                    <span class="text-right">{{ __('Aufgaben') }}</span>
+                    <span class="text-right">{{ __('Richtig') }}</span>
+                    <span class="text-right">{{ __('Falsch') }}</span>
+                    <span class="text-right">{{ __('Treffer') }}</span>
+                    <span class="text-right">{{ __('Tempo') }}</span>
+                </div>
+                <ul class="divide-y divide-gray-100 rounded-lg border border-gray-100">
+                    @foreach ($scope['rounds'] as $round)
+                        <li class="px-3 py-2 text-sm sm:grid sm:grid-cols-[7rem_1fr_4rem_4rem_4rem_4.5rem_5rem] sm:items-center sm:gap-x-3" data-round="{{ $round['id'] }}">
+                            <div class="flex items-baseline justify-between gap-2 sm:contents">
+                                <span class="text-gray-500">{{ $round['when'] }}</span>
+                                <span class="font-medium text-gray-800 truncate">{{ $round['exercise'] }}</span>
+                            </div>
+                            <div class="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-gray-600 sm:contents sm:text-sm">
+                                <span class="sm:text-right">{{ $round['answered'] }} <span class="sm:hidden">{{ __('Aufgaben') }}</span></span>
+                                <span class="text-green-700 sm:text-right">{{ $round['correct'] }} <span class="sm:hidden">{{ __('richtig') }}</span></span>
+                                <span class="{{ $round['wrong'] > 0 ? 'text-red-600' : 'text-gray-400' }} sm:text-right">{{ $round['wrong'] }} <span class="sm:hidden">{{ __('falsch') }}</span></span>
+                                <span class="sm:text-right">{{ $round['accuracy'] }} %</span>
+                                <span class="sm:text-right">
+                                    @if ($round['tempo'] !== null)
+                                        {{ number_format($round['tempo'], 1, ',', '') }}<span class="text-gray-400"> {{ __('/ Min.') }}</span>
+                                    @else
+                                        <span class="text-gray-300">–</span>
+                                    @endif
+                                </span>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
+    @endforeach
 </div>

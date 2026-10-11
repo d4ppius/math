@@ -156,4 +156,28 @@ class StatisticsTrendsPageTest extends TestCase
 
         $this->page()->assertSee('Eine Runde braucht dafür mindestens 5 Aufgaben.');
     }
+
+    public function test_the_latest_rounds_list_right_wrong_accuracy_and_pace(): void
+    {
+        $this->enable('multiplication', 'addition');
+        $this->timedRound('multiplication', 20, 15, 3);
+        $this->round('addition', 4, 4, daysAgo: 1);
+
+        $html = $this->page()->assertSee('Letzte Runden')->getContent();
+
+        $this->assertStringContainsString('data-chart="rounds-all"', $html);
+        $this->assertStringContainsString('data-chart="rounds-multiplication"', $html);
+        // 15 right in 3 minutes = 5,0 per minute; 15 of 20 = 75 %.
+        $this->assertMatchesRegularExpression('/75 %.*?5,0<span class="text-gray-400"> \/ Min\./s', $html);
+        // The short addition round has no pace and is not in the multiplication list.
+        $this->assertMatchesRegularExpression('/data-chart="rounds-addition".*?100 %.*?–/s', $html);
+        $this->assertDoesNotMatchRegularExpression('/data-chart="rounds-multiplication".*?Plus bis 20.*?data-chart="rounds-addition"/s', $html);
+    }
+
+    public function test_without_rounds_the_list_says_so(): void
+    {
+        $this->enable('multiplication');
+
+        $this->page()->assertSee('Noch keine Runden.');
+    }
 }
