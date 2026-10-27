@@ -1,6 +1,6 @@
 # Plan: Mehr Abzeichen — Level und Wochentag-Tierfreunde
 
-**Stand:** 30. September 2026 · **Status:** Level-Abzeichen und Wochentag-Tierfreunde umgesetzt (mit Emoji-Rückfall); Bilder: Igel (`weekday_1`), Elefant (`weekday_6`) und Faultier (`weekday_7`) eingebaut, die anderen 4 Tiere (Hund, Pferd, Katze, Hase) stehen noch aus.
+**Stand:** 30. September 2026 · **Status:** Level-Abzeichen und Wochentag-Tierfreunde umgesetzt (mit Emoji-Rückfall); Bilder: Igel (`weekday_1`), Hund (`weekday_2`), Elefant (`weekday_6`) und Faultier (`weekday_7`) eingebaut, die anderen 3 Tiere (Pferd, Katze, Hase) stehen noch aus.
 
 ## Ausgangslage
 
